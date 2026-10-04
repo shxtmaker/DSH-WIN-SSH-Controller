@@ -1,0 +1,176 @@
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 6c7ce04..4456f1c 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -9693,7 +9693,7 @@ importers:
+         version: link:../../../vendor/schemastery
+       '@earendil-works/pi-ai':
+         specifier: ^0.87.1
+-        version: 0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
++        version: 0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(supports-color@9.4.0)(ws@8.21.0)(zod@4.4.3)
+     devDependencies:
+       '@deepseek-ai/cordis':
+         specifier: workspace:~
+@@ -10296,6 +10296,97 @@ importers:
+         specifier: workspace:*
+         version: link:../../util/timeout
+ 
++  packages/remote/bundle:
++    devDependencies:
++      '@deepseek-ai/cordis':
++        specifier: workspace:~
++        version: link:../../../vendor/cordis
++
++  packages/remote/client:
++    devDependencies:
++      '@deepseek-ai/cordis':
++        specifier: workspace:~
++        version: link:../../../vendor/cordis
++      '@deepseek-ai/dsh-api-gateway':
++        specifier: workspace:*
++        version: link:../../api/gateway
++      '@deepseek-ai/dsh-client-locale':
++        specifier: workspace:*
++        version: link:../../client/locale
++      '@deepseek-ai/dsh-client-ui-layout':
++        specifier: workspace:*
++        version: link:../../client/ui-layout
++      '@deepseek-ai/dsh-client-ui-renderer':
++        specifier: workspace:*
++        version: link:../../client/ui-renderer
++      '@deepseek-ai/dsh-client-ui-sidebar':
++        specifier: workspace:*
++        version: link:../../client/ui-sidebar
++      '@deepseek-ai/dsh-client-ui-sidebar-browser':
++        specifier: workspace:*
++        version: link:../../client/ui-sidebar-browser
++      '@deepseek-ai/dsh-client-ui-sidebar-right':
++        specifier: workspace:*
++        version: link:../../client/ui-sidebar-right
++      '@deepseek-ai/dsh-client-ui-slots':
++        specifier: workspace:*
++        version: link:../../client/ui-slots
++      '@deepseek-ai/dsh-util-crypto':
++        specifier: workspace:*
++        version: link:../../util/crypto
++      '@harness-remote/controller':
++        specifier: workspace:*
++        version: link:../controller
++      '@types/react':
++        specifier: ~18.3.1
++        version: 18.3.31
++      react:
++        specifier: ^18.2.0
++        version: 18.3.1
++
++  packages/remote/controller:
++    dependencies:
++      '@deepseek-ai/schemastery':
++        specifier: link:../../../vendor/schemastery
++        version: link:../../../vendor/schemastery
++      ws:
++        specifier: ^8.21.0
++        version: 8.21.0
++      zod:
++        specifier: ^4.4.3
++        version: 4.4.3
++    devDependencies:
++      '@deepseek-ai/cordis':
++        specifier: workspace:~
++        version: link:../../../vendor/cordis
++      '@deepseek-ai/cordis-plugin-include':
++        specifier: workspace:~
++        version: link:../../../vendor/include
++      '@deepseek-ai/cordis-plugin-loader':
++        specifier: workspace:~
++        version: link:../../../vendor/loader
++      '@deepseek-ai/dsh-api-gateway':
++        specifier: workspace:*
++        version: link:../../api/gateway
++      '@deepseek-ai/dsh-app-boot':
++        specifier: workspace:*
++        version: link:../../boot/app-boot
++      '@deepseek-ai/dsh-client-connection':
++        specifier: workspace:*
++        version: link:../../client/connection
++      '@deepseek-ai/dsh-host-webserver':
++        specifier: workspace:*
++        version: link:../../host/webserver
++      '@deepseek-ai/dsh-typert-protocol':
++        specifier: workspace:*
++        version: link:../../typert/protocol
++      '@deepseek-ai/dsh-typert-registry':
++        specifier: workspace:*
++        version: link:../../typert/registry
++      '@types/ws':
++        specifier: ^8.18.1
++        version: 8.18.1
++
+   packages/runtime-diagnostics/invariants:
+     dependencies:
+       '@deepseek-ai/schemastery':
+@@ -22668,15 +22759,15 @@ snapshots:
+     transitivePeerDependencies:
+       - '@algolia/client-search'
+ 
+-  '@earendil-works/pi-ai@0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)':
++  '@earendil-works/pi-ai@0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(supports-color@9.4.0)(ws@8.21.0)(zod@4.4.3)':
+     dependencies:
+       '@anthropic-ai/sdk': 0.124.0(zod@4.4.3)
+       '@aws-sdk/client-bedrock-runtime': 3.1127.0
+       '@earendil-works/pi-telemetry': 0.87.1
+       '@google/genai': 2.21.0(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))
+       '@smithy/node-http-handler': 4.12.1
+-      http-proxy-agent: 9.1.0
+-      https-proxy-agent: 9.1.0
++      http-proxy-agent: 9.1.0(supports-color@9.4.0)
++      https-proxy-agent: 9.1.0(supports-color@9.4.0)
+       openai: 6.40.0(ws@8.21.0)(zod@4.4.3)
+       partial-json: 0.1.7
+       typebox: 1.3.27
+@@ -26859,7 +26950,7 @@ snapshots:
+     transitivePeerDependencies:
+       - supports-color
+ 
+-  http-proxy-agent@9.1.0:
++  http-proxy-agent@9.1.0(supports-color@9.4.0):
+     dependencies:
+       agent-base: 9.0.0
+       debug: 4.4.3(supports-color@9.4.0)
+@@ -26918,7 +27009,7 @@ snapshots:
+     transitivePeerDependencies:
+       - supports-color
+ 
+-  https-proxy-agent@9.1.0:
++  https-proxy-agent@9.1.0(supports-color@9.4.0):
+     dependencies:
+       agent-base: 9.0.0
+       debug: 4.4.3(supports-color@9.4.0)
+diff --git a/tsconfig.client.json b/tsconfig.client.json
+index 738ed0c..d7a16c0 100644
+--- a/tsconfig.client.json
++++ b/tsconfig.client.json
+@@ -142,6 +142,7 @@
+     { "path": "./packages/api/workspace-files/tsconfig.client.json" },
+     { "path": "./packages/client/web" },
+     { "path": "./packages/context/file-reference" },
+-    { "path": "./apps/web" }
++    { "path": "./apps/web" },
++    { "path": "./packages/remote/client/tsconfig.client.json" }
+   ]
+ }
+diff --git a/tsconfig.host.json b/tsconfig.host.json
+index 5c5c81b..ac2cac5 100644
+--- a/tsconfig.host.json
++++ b/tsconfig.host.json
+@@ -476,6 +476,9 @@
+     { "path": "./packages/lsp/tool-lsp" },
+     { "path": "./apps/cli" },
+     { "path": "./apps/desktop-host" },
+-    { "path": "./apps/desktop/tsconfig.host.json" }
++    { "path": "./apps/desktop/tsconfig.host.json" },
++    { "path": "./packages/remote/controller" },
++    { "path": "./packages/remote/client/tsconfig.host.json" },
++    { "path": "./packages/remote/bundle" }
+   ]
+ }

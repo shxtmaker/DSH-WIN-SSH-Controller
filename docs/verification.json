@@ -1,0 +1,85 @@
+{
+  "project": "DSH-WIN-SSH-Controller",
+  "verifiedAt": "2026-10-04T18:50:38.906Z",
+  "timeZone": "Asia/Shanghai",
+  "sourceCommit": "81157926491f20a77d34ed0c2936e86ed44d0529",
+  "harnessCommit": "639ed015397290b3745d163aafe02ffee4aa3f84",
+  "environment": {
+    "windowsNode": "v24.19.0",
+    "linuxNode": null,
+    "pnpm": "11.7.0"
+  },
+  "checks": [
+    {
+      "name": "role-source-and-artifact-isolation",
+      "status": "passed",
+      "evidence": "evidence/project-isolation.txt"
+    },
+    {
+      "name": "artifact-hashes-and-required-package-files",
+      "status": "passed",
+      "evidence": "evidence/artifact-verification.txt"
+    },
+    {
+      "name": "artifact-rejection-and-workspace-preservation",
+      "status": "passed",
+      "passed": 5,
+      "evidence": "evidence/project-tests.txt"
+    },
+    {
+      "name": "build-from-new-pinned-workspace",
+      "status": "passed",
+      "command": "node scripts/build.mjs --workspace .build/clean-verify --offline",
+      "evidence": "evidence/clean-build.txt"
+    },
+    {
+      "name": "proxy-and-real-loader-composition",
+      "status": "passed",
+      "passed": 4,
+      "skipped": 0,
+      "evidence": "evidence/integration-tests.txt"
+    },
+    {
+      "name": "package-publint",
+      "status": "passed",
+      "packages": [
+        "controller",
+        "client",
+        "workspace"
+      ]
+    }
+  ],
+  "sourceCodeUnchanged": true,
+  "repairedFailures": [
+    {
+      "name": "initial-build",
+      "status": "resolved",
+      "evidence": "evidence/initial-build-failure.txt",
+      "reason": "The full Desktop build depended on old lib outputs; this project now emits its required Host and Client artifacts explicitly."
+    }
+  ],
+  "warnings": [
+    "Pinned upstream installation reports non-host architecture packages and missing bins for unbuilt optional applications.",
+    "The Host Typert generator may report plugin timing warnings.",
+    "Client ./client intentionally uses the Harness closure factory format; publint reports a CJS-in-ESM warning and exits 0."
+  ],
+  "notRun": [
+    "installed-Desktop/Linux-business-flow",
+    "real-frp-recovery",
+    "real-system-service-cleanup"
+  ],
+  "artifacts": [
+    {
+      "file": "harness-remote-client-0.1.0.tgz",
+      "sha256": "5043bab44d614b087f216852e5cd32c4c0fc6f7250402de799d174c8c624f116"
+    },
+    {
+      "file": "harness-remote-controller-0.1.0.tgz",
+      "sha256": "0b05e75e071d6f15a3b702d988cf27ca3368ef44a45f03bf1e8df0772b7167d6"
+    },
+    {
+      "file": "harness-remote-workspace-0.1.0.tgz",
+      "sha256": "69114ffd07db94e5d85fc1b3b7b28341958902d9fc514ec1fe0c30109d2acc0a"
+    }
+  ]
+}

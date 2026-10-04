@@ -1,0 +1,30 @@
+# Append reviewed entries to ~/.ssh/config.
+# Replace each placeholder and verify the real host key out of band first.
+Host harness-lan
+    HostName 192.0.2.10
+    Port 22
+
+Host harness-frp
+    HostName frp.example.invalid
+    Port 6000
+
+Host harness-stcp
+    HostName 127.0.0.1
+    Port 22222
+
+Host harness-lan harness-frp harness-stcp
+    User harness
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    HostKeyAlias harness-node-01
+    StrictHostKeyChecking yes
+    BatchMode yes
+    ForwardAgent no
+    ForwardX11 no
+    PermitLocalCommand no
+    ControlMaster no
+    ControlPath none
+    ServerAliveInterval 15
+    ServerAliveCountMax 3
+    ConnectTimeout 15
+    ExitOnForwardFailure yes

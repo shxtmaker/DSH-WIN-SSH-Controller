@@ -1,0 +1,21 @@
+{
+  "role": "controller",
+  "project": "DSH-WIN-SSH-Controller",
+  "packages": [
+    "controller",
+    "client",
+    "bundle"
+  ],
+  "artifacts": [
+    "controller",
+    "client",
+    "workspace"
+  ],
+  "configs": [
+    "ssh_config.windows.example",
+    "ssh_config.macos.example"
+  ],
+  "protocolVersion": 1,
+  "version": "0.1.0",
+  "peerProject": "DSH-WIN-SSH-Agent"
+}

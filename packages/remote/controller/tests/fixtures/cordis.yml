@@ -1,0 +1,15 @@
+- id: webserver
+  name: '@deepseek-ai/dsh-host-webserver'
+  config:
+    host: 127.0.0.1
+    port: 0
+- id: typert-registry
+  name: '@deepseek-ai/dsh-typert-registry'
+- id: gateway
+  name: '@deepseek-ai/dsh-api-gateway'
+- id: connection
+  name: '@deepseek-ai/dsh-client-connection'
+- id: remote-workspace-controller
+  name: '@harness-remote/controller'
+  config:
+    helperPath: /usr/local/bin/dsh-remote-info

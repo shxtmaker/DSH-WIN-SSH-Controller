@@ -1,0 +1,99 @@
+{
+  "sourceRepository": "http://192.168.3.100:3300/lqy/DSH-WIN-SSH.git",
+  "sourceCommit": "81157926491f20a77d34ed0c2936e86ed44d0529",
+  "role": "controller",
+  "unchangedSourceFiles": [
+    {
+      "path": "packages/remote/controller/package.json",
+      "sha256": "1193470748924e2256582e93de72d9d8058486c3dea312086cdc83b43f4bd4d9"
+    },
+    {
+      "path": "packages/remote/controller/src/auth.ts",
+      "sha256": "6f2a8a96dc942699299c6614b4c1a97faff99eb18f32e69189a2c1041be7a00b"
+    },
+    {
+      "path": "packages/remote/controller/src/index.ts",
+      "sha256": "bd025027128a8917d030aec9b6aabe70fd1fe2b20782b68bcbf5dbdf809686e5"
+    },
+    {
+      "path": "packages/remote/controller/src/manager.ts",
+      "sha256": "2d6d19cf1f32617c9a080513939302d9f65c66f29f6daac6fb138df4dfce4a61"
+    },
+    {
+      "path": "packages/remote/controller/src/proxy.ts",
+      "sha256": "ea16fcafc47cac3ff3356c23c2833e074c62b16e7916e48b373e3515bb42fa38"
+    },
+    {
+      "path": "packages/remote/controller/src/ssh.ts",
+      "sha256": "22cd406a9a5fd3498b0c06026df89606a92f7a6bb00c1307d312d0aa5c55e36f"
+    },
+    {
+      "path": "packages/remote/controller/src/store.ts",
+      "sha256": "4a313de9dda2491fabffb1e91e92111af7437d013881cf2f2e62f5e2bff0b678"
+    },
+    {
+      "path": "packages/remote/controller/src/types.ts",
+      "sha256": "df67b323766240402a24f21636521ab2685f39a85abda29ed84c3b9e1ec431ed"
+    },
+    {
+      "path": "packages/remote/controller/tsconfig.json",
+      "sha256": "76c1b1633f768b4ce9ed95ffbdbe646bef33accd3acfa924dd6c5bc3133d910e"
+    },
+    {
+      "path": "packages/remote/client/package.json",
+      "sha256": "aad39daff0e143a0e73e5c474839385cd114fc6078cc6f5c0020da15c402a500"
+    },
+    {
+      "path": "packages/remote/client/src/client/assembly.tsx",
+      "sha256": "367afec04e34cd8a03f62b866429d6ae47eafeb5dc39b35971890cec4a4818be"
+    },
+    {
+      "path": "packages/remote/client/src/client/connections.tsx",
+      "sha256": "e312cafcc9bd845a82c10b79cd0d7cffe57c310f54510d6966b8210ebeb816f2"
+    },
+    {
+      "path": "packages/remote/client/src/client/index.ts",
+      "sha256": "84cad9e331fd8172555b789dcadb3e957cd7270004294ca791dbc0452d4e884f"
+    },
+    {
+      "path": "packages/remote/client/src/client/locales.ts",
+      "sha256": "50856c8f78709c5a3309203c4f99f018e5596615bd735508d8a8c46b043a9f70"
+    },
+    {
+      "path": "packages/remote/client/src/index.ts",
+      "sha256": "70cd189532382485aaeff9784cef0c4fcf42837481009fed5ba8d2e76e49f775"
+    },
+    {
+      "path": "packages/remote/client/tsconfig.client.json",
+      "sha256": "39a4abb7f8749d8417812afa12231f43d3cce85bbc17760e6cbc98683219de66"
+    },
+    {
+      "path": "packages/remote/client/tsconfig.host.json",
+      "sha256": "a65244ee49abdf78402ef4e3c39601d42d61bf2d60a5b7bbaf4f6ada2aea5c66"
+    },
+    {
+      "path": "packages/remote/client/tsconfig.json",
+      "sha256": "9ae2773ce422b78211f4ed8c2d4f6adb6737a9d0f33c4c392b1ea01a41bec759"
+    },
+    {
+      "path": "packages/remote/client/tsdown.config.ts",
+      "sha256": "0c82f453bccdc4c48f19febf992df62b3a5091a7ec6ac4e1271eb0cd3156db5c"
+    },
+    {
+      "path": "packages/remote/bundle/cordis.patch.yml",
+      "sha256": "405cd61384d2deddf11e8840548716217c93409b66ce965dbce90123ae6a4e02"
+    },
+    {
+      "path": "packages/remote/bundle/package.json",
+      "sha256": "1492a0f3f9ce2176b08c9446987fd7b7c1ee69aac2e797fcdfd54c96b0009c90"
+    },
+    {
+      "path": "packages/remote/bundle/src/index.ts",
+      "sha256": "a285c1836a9cb4c6bd8e256451cf5faeb32e67be37fb51904c07b9161731c8c5"
+    },
+    {
+      "path": "packages/remote/bundle/tsconfig.json",
+      "sha256": "4cfcdc78ccc7fb454cd97c0bf0c372d2aaa001ad32a81c99b53958fb2517b4fe"
+    }
+  ]
+}

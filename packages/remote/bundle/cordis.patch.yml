@@ -1,0 +1,7 @@
+- insert:
+    - id: remote-workspace-controller
+      name: '@harness-remote/controller'
+      config:
+        helperPath: /usr/local/bin/dsh-remote-info
+    - id: remote-workspace-client
+      name: '@harness-remote/client'

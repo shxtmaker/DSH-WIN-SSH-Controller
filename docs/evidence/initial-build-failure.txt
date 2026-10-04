@@ -1,0 +1,50 @@
+ℹ entry: lib/types/preload-platform-account.js
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ entry: lib/types/preload-welcome.js
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ entry: lib/types/preload-mandatory.js
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ entry: lib/types/preload-update-dialog.js
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ Build start
+
+ ERROR  Error: Build failed with 1 error:
+
+[plugin desktop-packaged-imports]
+RolldownError: desktop bundle: lib\types\command-installation.js imports @deepseek-ai/dsh-atomic-write, which the packaged application does not ship. This bundle may leave only , and Node builtins as bare imports; anything else must be bundled, which requires its lib/ output to exist before this bundle runs (pnpm run build:lib:host).
+    at error (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/shared/logs-aMKUxRpj.mjs:147:24)
+    at PluginContextImpl.error (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/shared/bindingify-input-options-B7_WBoOp.mjs:95:10)
+    at PluginContextImpl.moduleParsed (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/apps/desktop/scripts/desktop-bundle-imports.mjs?no-cache=80548b12-4b71-4dc5-bd23-2cd200464c53:83:12)
+    at plugin (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/shared/bindingify-input-options-B7_WBoOp.mjs:1257:18)
+    at plugin.<computed> (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/shared/bindingify-input-options-B7_WBoOp.mjs:1633:18)
+    at aggregateBindingErrorsIntoJsError (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/shared/error-C0TrL0_H.mjs:48:18)
+    at unwrapBindingResult (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/shared/error-C0TrL0_H.mjs:18:128)
+    at #build (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/shared/rolldown-build-abS241_6.mjs:3288:34)
+    at async build (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/rolldown@1.1.1/node_modules/rolldown/dist/index.mjs:42:22)
+    at async Promise.all (index 0)
+    at async buildSingle (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/tsdown@0.22.2_oxc-resolver@_f113eb69000457c8d5954142d0822f52/node_modules/tsdown/dist/build-BxT2lm9L.mjs:791:19)
+    at async Promise.all (index 0)
+    at async buildWithConfigs (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/tsdown@0.22.2_oxc-resolver@_f113eb69000457c8d5954142d0822f52/node_modules/tsdown/dist/build-BxT2lm9L.mjs:747:18)
+    at async CAC.<anonymous> (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/tsdown@0.22.2_oxc-resolver@_f113eb69000457c8d5954142d0822f52/node_modules/tsdown/dist/run.mjs:21:2)
+    at async runCLI (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/.build/upstream/node_modules/.pnpm/tsdown@0.22.2_oxc-resolver@_f113eb69000457c8d5954142d0822f52/node_modules/tsdown/dist/run.mjs:45:3)
+
+D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\.build\upstream\apps\desktop:
+[ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL] @deepseek-ai/dsh-desktop@0.2.0-rc.2 bundle: `tsdown`
+Exit status 1
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.
+file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/scripts/runtime.mjs:13
+  if (result.status !== 0) throw new Error(`${command} failed with exit code ${result.status}`)
+                                 ^
+
+Error: C:\Program Files\nodejs\node.exe failed with exit code 1
+    at run (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/scripts/runtime.mjs:13:34)
+    at pnpm (file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/scripts/runtime.mjs:20:5)
+    at file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/scripts/build.mjs:16:38
+
+Node.js v24.19.0
+
