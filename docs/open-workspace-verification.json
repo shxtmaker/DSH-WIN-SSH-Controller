@@ -63,11 +63,15 @@
     {
       "name": "preparation patch applies to pinned upstream files",
       "status": "passed"
+    },
+    {
+      "name": "installed Desktop opening after restart",
+      "status": "passed",
+      "evidence": "direct user confirmation; independent authenticated Host state probe app-ready"
     }
   ],
   "credentialValuesCaptured": false,
   "notRun": [
-    "installed Desktop click after updated Client activation",
     "real frp recovery",
     "macOS acceptance"
   ],
@@ -138,6 +142,13 @@
     "installedClientMatchesPublishedBytes": true,
     "runningConnectionPreserved": "app-ready",
     "installedRevision": "4676cd94f82044fe7b724e903ba3c3a7914e6c76",
-    "postRestartClickAcceptance": "notRun - awaiting application restart and user click"
+    "postRestartClickAcceptance": "passed - user confirmed normal opening after restart",
+    "acceptance": {
+      "confirmedAt": "2026-10-05T14:02:44.521Z",
+      "source": "direct user report",
+      "result": "已正常打开正常结果",
+      "independentHostStateProbe": "passed - app-ready",
+      "agentVisualInspection": "notRun"
+    }
   }
 }
