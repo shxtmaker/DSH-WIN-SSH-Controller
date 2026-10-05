@@ -9,6 +9,7 @@ export interface ViewState {
     readonly busy: boolean;
     readonly aliases: readonly string[];
     readonly aliasWarning?: boolean | undefined;
+    readonly hostRestartRequired?: boolean | undefined;
     readonly error?: string | undefined;
 }
 /** UI actions use only the local Host's authenticated Remote control surface. */

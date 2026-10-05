@@ -37,6 +37,7 @@ export declare const zh: {
     readonly manual: "手动配置目标";
     readonly help: "查看帮助";
     readonly aliasWarning: "暂时无法读取 SSH 别名，可直接输入已配置的别名。";
+    readonly restartRequired: "本机尚未加载自动连接接口。请完全退出 DeepSeek Harness（包括托盘）后重新打开；仅刷新页面无法完成更新。";
     readonly quickHint: "实例身份、profile、工作区和端口将自动读取。";
     readonly readyHint: "连接已就绪。如页面未自动打开，请选择一个本机会话后点击“打开远程工作区”。";
     readonly helpTitle: "本机需要配置可无交互登录的 SSH 别名；远端需要安装 Agent 并配置 dsh-remote-info。连接完成后，有本机会话时自动打开远端页面。";

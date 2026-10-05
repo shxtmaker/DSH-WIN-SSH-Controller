@@ -18,6 +18,8 @@ https://github.com/shxtmaker/DSH-WIN-SSH-Controller
 
 该方式安装 `dsh-win-ssh-controller-source`。包内包含控制端服务、远程连接页面、Typert 通信契约和组合包配置，无需另外安装三个 `.tgz` 文件，也无需运行源码构建。
 
+安装或升级完成后，完全退出 DeepSeek Harness（包括托盘进程），再重新打开。仅刷新页面不会重新加载本机服务接口。
+
 若此前出现“这个包没有声明组合包，不能作为插件管理”，重新提交上述地址安装即可。仍命中旧缓存时，在地址末尾附加修复提交 SHA：`https://github.com/shxtmaker/DSH-WIN-SSH-Controller#<commit-sha>`。
 
 使用命令行时，先完全退出 Desktop，再使用 Desktop 自带的同版本 `dsh` 执行：
@@ -57,6 +59,12 @@ dsh plugin --profile desktop list
 页面标题及必要字段标题旁的圆圈问号可点击展开帮助，再次点击或按 Esc 收起。SSH 主机密钥、无交互认证、连接入口不可达及 Agent 配置问题会显示对应处理提示。
 
 被控端需安装 Agent，并配置可执行的 `/usr/local/bin/dsh-remote-info`。若 helper 安装在其他位置，修改本插件的 `helperPath`。首次 SSH 登录仍须通过可信渠道核对主机密钥；一键连接不会自动接受未知密钥，也不会保存密码、私钥或启动 token。
+
+### 自动连接提示 HTTP 404
+
+如果升级后页面显示一键连接，但 `remoteWorkspace/quickConnect` 或 `remoteWorkspace/listAliases` 返回 HTTP 404，先完全退出 DeepSeek Harness（包括托盘进程）后重新打开。运行中的 Host 可能仍保留升级前的接口；刷新页面不能完成服务更新。新版页面检测到该情况时会显示重启提示并暂停一键连接，已保存目标的手动连接仍可使用。
+
+若完整重启后仍有提示，确认 desktop profile 中仅启用了当前安装方式，再更新到最新提交并完整重启。
 
 ## 手动配置
 

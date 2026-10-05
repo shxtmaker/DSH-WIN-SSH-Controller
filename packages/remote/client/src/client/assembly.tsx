@@ -22,6 +22,12 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
 const PANEL = 'remote-workspace' as MainPanelId
 const INITIAL: RemoteSnapshot = { phase: 'idle', generation: 0 }
 
+/** Identify only missing automation methods on the local Host, without classifying remote HTTP failures. */
+function missingAutomationRoute(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+  return /^client api: remoteWorkspace\/(listAliases|quickConnect) failed: transport failure for \/api\/remoteWorkspace\/\1: HTTP 404$/u.test(message)
+}
+
 class ViewController implements RemoteWorkspaceFace {
   private state: ViewState = { targets: [], aliases: [], connection: INITIAL, busy: false }
   private readonly listeners = new Set<() => void>()
@@ -45,7 +51,8 @@ class ViewController implements RemoteWorkspaceFace {
     if (this.state.busy) return
     this.publish({ ...this.state, busy: true, error: undefined })
     try { await run() } catch (error) {
-      this.fail(error instanceof Error ? error.message : String(error))
+      if (missingAutomationRoute(error)) this.publish({ ...this.state, hostRestartRequired: true, error: undefined })
+      else this.fail(error instanceof Error ? error.message : String(error))
     } finally { this.publish({ ...this.state, busy: false }) }
   }
 
@@ -56,10 +63,13 @@ class ViewController implements RemoteWorkspaceFace {
     if (!connection.ok) throw connection.error
     this.publish({ ...this.state, targets: targets.value, connection: connection.value })
     const aliases = await this.ctx.remote.remoteWorkspace.listAliases()
-    this.publish({ ...this.state, aliases: aliases.ok ? aliases.value : [], aliasWarning: aliases.ok ? undefined : true })
+    if (!aliases.ok && missingAutomationRoute(aliases.error)) throw aliases.error
+    this.publish({ ...this.state, aliases: aliases.ok ? aliases.value : [], aliasWarning: aliases.ok ? undefined : true,
+      hostRestartRequired: aliases.ok ? false : this.state.hostRestartRequired })
   })
 
   quickConnect = async (sshAlias: string, instanceKey: string): Promise<void> => this.action(async () => {
+    if (this.state.hostRestartRequired) return
     const result = await this.ctx.remote.remoteWorkspace.quickConnect(sshAlias.trim(), instanceKey.trim(), randomUUID())
     const targets = await this.ctx.remote.remoteWorkspace.listTargets()
     if (targets.ok) this.publish({ ...this.state, targets: targets.value })

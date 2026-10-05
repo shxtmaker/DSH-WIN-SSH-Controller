@@ -12,16 +12,20 @@ window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
 <script>
 (async () => {
   const ui = { aliases: ['harness-lan'], targets: [], state: { phase: 'idle', generation: 0 }, calls: 0,
-    opens: 0, session: false, failure: '', failAliases: false, delay: 0 };
+    opens: 0, session: false, failure: '', failAliases: false, delay: 0, missingRoutes: false };
   window.fixture = ui;
   const ok = value => ({ ok: true, value });
   const slots = new Map(); let dictionary;
   const service = {
     async listTargets() { return ok(ui.targets) }, async getState() { return ok(ui.state) },
-    async listAliases() { return ui.failAliases ? { ok: false, error: new Error('unreadable') } : ok(ui.aliases) },
+    async listAliases() {
+      if (ui.missingRoutes) throw new Error('client api: remoteWorkspace/listAliases failed: transport failure for /api/remoteWorkspace/listAliases: HTTP 404');
+      return ui.failAliases ? { ok: false, error: new Error('unreadable') } : ok(ui.aliases);
+    },
     async saveTarget(target) { ui.targets = [target]; return ok(ui.targets) },
     async quickConnect(alias, key) {
       ui.calls++;
+      if (ui.missingRoutes) throw new Error('client api: remoteWorkspace/quickConnect failed: transport failure for /api/remoteWorkspace/quickConnect: HTTP 404');
       if (ui.delay) await new Promise(resolve => setTimeout(resolve, ui.delay));
       if (ui.failure) return { ok: false, error: new Error(ui.failure) };
       const target = { id: 'auto-id', name: alias, instanceKey: key, instanceId: 'instance-a', profile: 'web',

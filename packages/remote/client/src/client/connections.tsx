@@ -11,6 +11,7 @@ export interface ViewState {
   readonly busy: boolean
   readonly aliases: readonly string[]
   readonly aliasWarning?: boolean | undefined
+  readonly hostRestartRequired?: boolean | undefined
   readonly error?: string | undefined
 }
 
@@ -131,7 +132,7 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
     <header><h1><Help label={t('title')} text={t('helpTitle')} help={t('help')} /></h1><p>{t('intro')}</p></header>
     <section style={{ display: 'grid', gap: 12, padding: 18, border: '1px solid #888', borderRadius: 8 }}>
       <h2 style={{ margin: 0, fontSize: 18 }}>{t('quick')}</h2>
-      <form onSubmit={(event) => { event.preventDefault(); if (!state.busy && !state.connection.connectionId && alias.trim()) void quickConnect(alias, instanceKey) }}
+      <form onSubmit={(event) => { event.preventDefault(); if (!state.busy && !state.hostRestartRequired && !state.connection.connectionId && alias.trim()) void quickConnect(alias, instanceKey) }}
         style={{ display: 'grid', gap: 12 }}>
         <label style={{ display: 'grid', gap: 6 }}><Help label={t('alias')} text={t('helpAlias')} help={t('help')} />
           <input list={aliasList} value={alias} required placeholder={t('aliasPlaceholder')} autoComplete="off"
@@ -145,8 +146,9 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
           </label>
         </details>
         <p style={{ margin: 0, fontSize: 13 }}>{t('quickHint')}</p>
-        {state.aliasWarning && <p role="status">{t('aliasWarning')}</p>}
-        <button type="submit" disabled={state.busy || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId}
+        {state.hostRestartRequired && <p role="alert">{t('restartRequired')}</p>}
+        {!state.hostRestartRequired && state.aliasWarning && <p role="status">{t('aliasWarning')}</p>}
+        <button type="submit" disabled={state.busy || state.hostRestartRequired || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId}
           style={{ ...BUTTON, justifySelf: 'start' }}>{state.busy ? t('connecting') : t('quickConnect')}</button>
       </form>
     </section>

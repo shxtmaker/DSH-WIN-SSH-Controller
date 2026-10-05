@@ -1,0 +1,38 @@
+{
+  "project": "DSH-WIN-SSH-Controller",
+  "date": "2026-10-05",
+  "baseCommit": "dca7a2e9a9edc55db581a81629b5bfa5169ae86f",
+  "symptom": "client api: remoteWorkspace/quickConnect failed: transport failure for /api/remoteWorkspace/quickConnect: HTTP 404",
+  "installedDesktopProbe": {
+    "status": "reproduced",
+    "authenticatedLoopback": true,
+    "getState": 200,
+    "listAliases": 404,
+    "quickConnect": 404,
+    "hostStartedBeforeInstalledPackageUpdate": true,
+    "credentialValuesCaptured": false,
+    "validSshAliasSubmitted": false,
+    "restartRetest": "notRun - awaiting full Desktop and Host restart"
+  },
+  "causeEvidence": [
+    "Harness Typert Loader caches imported manifests per package until process restart.",
+    "Harness plugin-manager reports restart-required when replacing an existing dependency.",
+    "Fresh distributed-CLI installation with real Loader composition exposes authenticated automation routes successfully."
+  ],
+  "changes": [
+    "Detect only the exact local listAliases and quickConnect missing-route transport errors.",
+    "Display a localized full-application restart instruction and disable automatic connection while the service is unavailable.",
+    "Keep saved-target manual connection available; restore automatic connection after successful alias route refresh.",
+    "Document complete exit, including the tray, after installation and upgrade."
+  ],
+  "checks": [
+    { "name": "new browser regression before production change", "status": "failed as expected - restart instruction absent" },
+    { "name": "Host and Client TypeScript build and package", "status": "passed" },
+    { "name": "packaged Client browser regression", "status": "passed", "hostResponses": "deterministic fixture", "screenshot": "evidence/restart-required.png" },
+    { "name": "distributed CLI isolated Git installation and real Loader HTTP routes", "status": "passed" },
+    { "name": "project and Git-package regressions", "status": "passed", "tests": 7 },
+    { "name": "archive hashes and generated runtime consistency", "status": "passed" }
+  ],
+  "notRun": ["Desktop post-restart route verification", "real SSH Linux connection", "real frp recovery", "macOS acceptance"],
+  "publication": { "status": "pending" }
+}

@@ -4757,7 +4757,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						}), (0, react_jsx_runtime.jsxs)("form", {
 							onSubmit: (event) => {
 								event.preventDefault();
-								if (!state.busy && !state.connection.connectionId && alias.trim()) quickConnect(alias, instanceKey);
+								if (!state.busy && !state.hostRestartRequired && !state.connection.connectionId && alias.trim()) quickConnect(alias, instanceKey);
 							},
 							style: {
 								display: "grid",
@@ -4823,13 +4823,17 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 									},
 									children: t("quickHint")
 								}),
-								state.aliasWarning && (0, react_jsx_runtime.jsx)("p", {
+								state.hostRestartRequired && (0, react_jsx_runtime.jsx)("p", {
+									role: "alert",
+									children: t("restartRequired")
+								}),
+								!state.hostRestartRequired && state.aliasWarning && (0, react_jsx_runtime.jsx)("p", {
 									role: "status",
 									children: t("aliasWarning")
 								}),
 								(0, react_jsx_runtime.jsx)("button", {
 									type: "submit",
-									disabled: state.busy || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId,
+									disabled: state.busy || state.hostRestartRequired || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId,
 									style: {
 										...BUTTON,
 										justifySelf: "start"
@@ -5077,6 +5081,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			manual: "手动配置目标",
 			help: "查看帮助",
 			aliasWarning: "暂时无法读取 SSH 别名，可直接输入已配置的别名。",
+			restartRequired: "本机尚未加载自动连接接口。请完全退出 DeepSeek Harness（包括托盘）后重新打开；仅刷新页面无法完成更新。",
 			quickHint: "实例身份、profile、工作区和端口将自动读取。",
 			readyHint: "连接已就绪。如页面未自动打开，请选择一个本机会话后点击“打开远程工作区”。",
 			helpTitle: "本机需要配置可无交互登录的 SSH 别名；远端需要安装 Agent 并配置 dsh-remote-info。连接完成后，有本机会话时自动打开远端页面。",
@@ -5145,6 +5150,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			manual: "Manual target configuration",
 			help: "Show help",
 			aliasWarning: "SSH aliases could not be read. Enter an existing alias directly.",
+			restartRequired: "The local connection service has not loaded the automatic connection methods. Fully quit DeepSeek Harness, including the tray, then reopen it. Reloading the page does not complete the update.",
 			quickHint: "Instance identity, profile, workspace and port are discovered automatically.",
 			readyHint: "Connected. If the page did not open automatically, select a local session and click Open remote workspace.",
 			helpTitle: "Configure a non-interactive SSH alias locally and install the Agent and dsh-remote-info remotely. A successful connection opens the remote page automatically when a local session is selected.",
@@ -5181,6 +5187,11 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			phase: "idle",
 			generation: 0
 		};
+		/** Identify only missing automation methods on the local Host, without classifying remote HTTP failures. */
+		function missingAutomationRoute(error) {
+			const message = error instanceof Error ? error.message : String(error);
+			return /^client api: remoteWorkspace\/(listAliases|quickConnect) failed: transport failure for \/api\/remoteWorkspace\/\1: HTTP 404$/u.test(message);
+		}
 		var ViewController = class {
 			ctx;
 			state = {
@@ -5220,7 +5231,12 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				try {
 					await run();
 				} catch (error) {
-					this.fail(error instanceof Error ? error.message : String(error));
+					if (missingAutomationRoute(error)) this.publish({
+						...this.state,
+						hostRestartRequired: true,
+						error: void 0
+					});
+					else this.fail(error instanceof Error ? error.message : String(error));
 				} finally {
 					this.publish({
 						...this.state,
@@ -5239,13 +5255,16 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					connection: connection.value
 				});
 				const aliases = await this.ctx.remote.remoteWorkspace.listAliases();
+				if (!aliases.ok && missingAutomationRoute(aliases.error)) throw aliases.error;
 				this.publish({
 					...this.state,
 					aliases: aliases.ok ? aliases.value : [],
-					aliasWarning: aliases.ok ? void 0 : true
+					aliasWarning: aliases.ok ? void 0 : true,
+					hostRestartRequired: aliases.ok ? false : this.state.hostRestartRequired
 				});
 			});
 			quickConnect = async (sshAlias, instanceKey) => this.action(async () => {
+				if (this.state.hostRestartRequired) return;
 				const result = await this.ctx.remote.remoteWorkspace.quickConnect(sshAlias.trim(), instanceKey.trim(), randomUUID());
 				const targets = await this.ctx.remote.remoteWorkspace.listTargets();
 				if (targets.ok) this.publish({
