@@ -1,12 +1,67 @@
 {
   "project": "DSH-WIN-SSH-Controller",
-  "verifiedAt": "2026-10-05T11:34:35.1058796+00:00",
+  "verifiedAt": "2026-10-05T19:34:35.1058796+08:00",
   "timeZone": "Asia/Shanghai",
   "sourceBranch": "codex/automatic-ssh-connection",
   "baseCommit": "e2652263813f099de3e4dd4b364c421ecd5da208",
-  "sourceRevision": "local working tree",
+  "sourceRevision": "5df2d360a53ae5b4636bf34efea7d51a9c9dc965",
   "packageVersion": "0.1.0",
-  "publication": "notRun",
+  "publication": {
+    "status": "passed",
+    "implementationCommit": "5df2d360a53ae5b4636bf34efea7d51a9c9dc965",
+    "branch": "main",
+    "verifiedAt": "2026-10-05T13:18:39.8081328+00:00",
+    "remotes": [
+      {
+        "artifacts": [
+          {
+            "status": "passed",
+            "file": "harness-remote-client-0.1.0.tgz",
+            "sha256": "824e46ad9ed5f72fa787aee8dd92a75d4c17db69e2be71d77e2af6cae1f08e2c"
+          },
+          {
+            "status": "passed",
+            "file": "harness-remote-controller-0.1.0.tgz",
+            "sha256": "85a390917086a2697c2e225ef4c5eb8628ec81529bf4f8d13493f982f41e0803"
+          },
+          {
+            "status": "passed",
+            "file": "harness-remote-workspace-0.1.0.tgz",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3"
+          }
+        ],
+        "remote": "github",
+        "verifiedAt": "2026-10-05T21:18:15.1229168+08:00",
+        "commit": "5df2d360a53ae5b4636bf34efea7d51a9c9dc965",
+        "mainRef": "passed",
+        "checksumManifest": "passed"
+      },
+      {
+        "checksumManifest": "passed",
+        "verifiedAt": "2026-10-05T21:18:11.5367912+08:00",
+        "remote": "gitea",
+        "artifacts": [
+          {
+            "status": "passed",
+            "sha256": "824e46ad9ed5f72fa787aee8dd92a75d4c17db69e2be71d77e2af6cae1f08e2c",
+            "file": "harness-remote-client-0.1.0.tgz"
+          },
+          {
+            "status": "passed",
+            "sha256": "85a390917086a2697c2e225ef4c5eb8628ec81529bf4f8d13493f982f41e0803",
+            "file": "harness-remote-controller-0.1.0.tgz"
+          },
+          {
+            "status": "passed",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3",
+            "file": "harness-remote-workspace-0.1.0.tgz"
+          }
+        ],
+        "mainRef": "passed",
+        "commit": "5df2d360a53ae5b4636bf34efea7d51a9c9dc965"
+      }
+    ]
+  },
   "protocolVersion": 1,
   "harnessVersion": "0.2.0-rc.2",
   "businessSourceChanged": true,
@@ -77,8 +132,7 @@
     "installed-Desktop-visual-and-interaction-acceptance",
     "real-SSH-controller-Linux-business-flow",
     "real-frp-recovery",
-    "macOS-runtime-acceptance",
-    "remote-publication"
+    "macOS-runtime-acceptance"
   ],
   "artifacts": [
     {
