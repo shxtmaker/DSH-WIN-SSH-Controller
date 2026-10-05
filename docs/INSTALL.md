@@ -66,6 +66,20 @@ dsh plugin --profile desktop list
 
 若完整重启后仍有提示，确认 desktop profile 中仅启用了当前安装方式，再更新到最新提交并完整重启。
 
+### SSH helper 无法执行
+
+Agent 安装完成后，还需要配置 SSH 使用的 helper 入口。控制端默认执行 `/usr/local/bin/dsh-remote-info`；该文件不存在、无法执行或未设置 Agent 所需环境变量时，自动连接会停止。Shell 的 126、127 退出状态分别表示无法执行、命令不存在，页面会提示检查 helper。
+
+无法使用 sudo 时，可将 Agent 的 wrapper 安装到运行 Harness 的 Linux 账号的 `~/.local/bin/dsh-remote-info`，只允许该账号修改和执行。按 Agent 安装说明填写实际 `DSH_HOME`、允许实例键和已安装 helper 的绝对路径。随后在本机 desktop profile 的 `cordis.patch.yml` 中添加控制端覆盖配置，例如：
+
+```yaml
+- id: remote-workspace-controller
+  config:
+    helperPath: /home/harness/.local/bin/dsh-remote-info
+```
+
+将示例账号改为实际 Linux 账号。`helperPath` 使用远端绝对路径；已有控制端覆盖条目时修改该条目，避免重复 ID。重新加载插件配置后，使用公开身份读取命令验证 wrapper；不要将含 `launchUrl` 的完整描述复制到聊天或日志。
+
 ## 手动配置
 
 需要维护 LAN、frp TCP 或 STCP 多个入口时，展开“手动配置目标”。各入口必须指向同一个实例。可以通过以下命令读取公开身份，填写目标后保存：

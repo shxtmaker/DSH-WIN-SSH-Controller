@@ -56,3 +56,14 @@ it('reports malformed helper JSON without including credential fragments in the 
   process(undefined, '', 0, '{"launchUrl":"secret-token",')
   await expect(discover('harness-lan', 'default', '/usr/local/bin/dsh-remote-info', new AbortController().signal)).rejects.toThrow(/^remote-workspace: invalid helper response$/u)
 })
+
+it.each([
+  [127, 'bash: 行 1: /usr/local/bin/dsh-remote-info: 没有那个文件或目录'],
+  [126, 'bash: /usr/local/bin/dsh-remote-info: 权限不够'],
+  [126, 'bash: /usr/local/bin/dsh-remote-info: Permission denied'],
+  [1, 'CONFIG_REQUIRED\n'], [1, 'UNSAFE_PATH\n'], [1, 'UNSAFE_FILE\n'], [1, 'BAD_DESCRIPTOR\n'],
+])('classifies helper execution failure %i without depending on shell locale or leaking stderr', async (exitCode, stderr) => {
+  process({}, stderr + '\nprivate-token-must-not-escape', exitCode)
+  await expect(discoverTarget('harness-lan', 'default', '/usr/local/bin/dsh-remote-info', new AbortController().signal))
+    .rejects.toThrow(/^remote-workspace: SSH_HELPER$/u)
+})

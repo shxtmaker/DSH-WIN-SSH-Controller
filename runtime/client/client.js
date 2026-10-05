@@ -5109,7 +5109,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			errorAuth: "SSH 无交互认证失败。请配置 SSH 密钥或 ssh-agent，并确认该别名可无交互登录。",
 			errorAlias: "无法解析 SSH 别名。请核对本机 SSH 配置中的 Host 名称。",
 			errorUnreachable: "无法访问 SSH 入口。请检查远端 SSH 服务、网络和所用 frp 通道。",
-			errorHelper: "无法读取远端实例。请确认已安装 Agent、配置实例键，并将 helperPath 指向正确的 dsh-remote-info。"
+			errorHelper: "远端 helper 缺失、不可执行或配置不正确。请确认已安装 Agent，并将 helperPath 指向配置了 DSH_HOME 和实例键的可执行 dsh-remote-info。"
 		};
 		/** English fallback dictionary. */
 		const en = {
@@ -5178,7 +5178,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			errorAuth: "Non-interactive SSH authentication failed. Configure an SSH key or ssh-agent and verify unattended login.",
 			errorAlias: "The SSH alias could not be resolved. Check the Host name in your local SSH configuration.",
 			errorUnreachable: "The SSH endpoint is unreachable. Check SSH, the network and any frp tunnel.",
-			errorHelper: "Remote information is unavailable. Check the Agent, instance key and helperPath for dsh-remote-info."
+			errorHelper: "The remote helper is missing, not executable or incorrectly configured. Install the Agent and point helperPath to an executable dsh-remote-info configured with DSH_HOME and the instance key."
 		};
 		//#endregion
 		//#region lib/types/client/assembly.js

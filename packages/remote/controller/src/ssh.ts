@@ -89,11 +89,15 @@ async function helper(alias: string, instanceKey: string, helperPath: string, si
     if (timedOut) throw new Error('remote-workspace: SSH_UNREACHABLE')
     // oxlint-disable-next-line typescript/no-unnecessary-condition -- stdout events can change this while childExit is pending.
     if (oversized || code !== 0) {
+      // Remote shell statuses are stable across locales and describe the command, rather than SSH authentication.
+      if (code === 126 || code === 127) throw new Error('remote-workspace: SSH_HELPER')
       if (/Host key verification failed|REMOTE HOST IDENTIFICATION HAS CHANGED/u.test(stderr)) throw new Error('remote-workspace: SSH_HOST_KEY')
       if (/Permission denied/u.test(stderr)) throw new Error('remote-workspace: SSH_AUTH')
       if (/Could not resolve hostname/u.test(stderr)) throw new Error('remote-workspace: SSH_ALIAS')
       if (/Connection refused|Connection timed out|No route to host/u.test(stderr)) throw new Error('remote-workspace: SSH_UNREACHABLE')
-      if (/not found|No such file|BAD_INPUT|INFO_FAILED/u.test(stderr)) throw new Error('remote-workspace: SSH_HELPER')
+      if (/not found|No such file|BAD_INPUT|INFO_FAILED|CONFIG_REQUIRED|UNSAFE_PATH|UNSAFE_FILE|BAD_DESCRIPTOR|LINUX_REQUIRED/u.test(stderr)) {
+        throw new Error('remote-workspace: SSH_HELPER')
+      }
       throw new Error('remote-workspace: SSH helper failed')
     }
     try { return JSON.parse(stdout) as unknown } catch {

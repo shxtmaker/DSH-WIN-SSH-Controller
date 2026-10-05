@@ -65,7 +65,7 @@ export declare const zh: {
     readonly errorAuth: "SSH 无交互认证失败。请配置 SSH 密钥或 ssh-agent，并确认该别名可无交互登录。";
     readonly errorAlias: "无法解析 SSH 别名。请核对本机 SSH 配置中的 Host 名称。";
     readonly errorUnreachable: "无法访问 SSH 入口。请检查远端 SSH 服务、网络和所用 frp 通道。";
-    readonly errorHelper: "无法读取远端实例。请确认已安装 Agent、配置实例键，并将 helperPath 指向正确的 dsh-remote-info。";
+    readonly errorHelper: "远端 helper 缺失、不可执行或配置不正确。请确认已安装 Agent，并将 helperPath 指向配置了 DSH_HOME 和实例键的可执行 dsh-remote-info。";
 };
 /** English fallback dictionary. */
 export declare const en: Record<keyof typeof zh, string>;

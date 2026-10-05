@@ -1,0 +1,85 @@
+{
+  "project": "DSH-WIN-SSH-Controller",
+  "date": "2026-10-05",
+  "baseCommit": "a057ce3fdabe0591c808b6d8fbe7695b9ad4528c",
+  "symptom": "remote-workspace: SSH helper failed",
+  "reproduction": {
+    "transport": "real host-key-verified SSH",
+    "alias": "dsh-ubuntu",
+    "helperPath": "/usr/local/bin/dsh-remote-info",
+    "exitCode": 127,
+    "stdoutBytes": 0,
+    "stderrSignal": "bash: 行 1: /usr/local/bin/dsh-remote-info: 没有那个文件或目录"
+  },
+  "cause": "The fixed wrapper path was absent. The remote Agent and private default descriptor already existed. The Controller classified English stderr fragments but did not classify locale-independent command exit statuses.",
+  "environmentRepair": {
+    "status": "passed",
+    "helperPath": "/home/lqy/.local/bin/dsh-remote-info",
+    "wrapperMode": "0700",
+    "runsAsHarnessUser": true,
+    "sudoUsed": false,
+    "remoteHarnessRestarted": false,
+    "sshOrFrpConfigurationChanged": false,
+    "desktopOverrideBackedUpWithinProfile": true,
+    "runtimeApplication": "applied"
+  },
+  "checks": [
+    {
+      "name": "exact helper regression before production change",
+      "status": "failed as expected"
+    },
+    {
+      "name": "helper exit statuses, helper protocol errors and existing Controller integration tests",
+      "status": "passed",
+      "tests": 29
+    },
+    {
+      "name": "real public identity over SSH through configured wrapper",
+      "status": "passed"
+    },
+    {
+      "name": "live installed Desktop Host quickConnect",
+      "status": "passed",
+      "finalPhase": "app-ready",
+      "coverage": [
+        "SSH helper",
+        "owned local forwarding",
+        "remote cookie authentication",
+        "pinned identity validation",
+        "remote event stream"
+      ]
+    },
+    {
+      "name": "Host and Client TypeScript build and packaging",
+      "status": "passed"
+    },
+    {
+      "name": "packaged Client browser interactions and helper guidance",
+      "status": "passed",
+      "hostResponses": "deterministic fixture"
+    },
+    {
+      "name": "project and Git package regressions",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "archive hashes and generated runtime consistency",
+      "status": "passed"
+    },
+    {
+      "name": "distributed CLI isolated Git installation and actual Loader routes",
+      "status": "passed"
+    }
+  ],
+  "credentialValuesRecorded": false,
+  "notRun": [
+    "installed Desktop visual interaction",
+    "remote file or model operations",
+    "real frp recovery",
+    "macOS acceptance"
+  ],
+  "publication": {
+    "status": "pending"
+  }
+}
