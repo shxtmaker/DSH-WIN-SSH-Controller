@@ -6,6 +6,7 @@ import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import type {} from '@deepseek-ai/dsh-app-boot'
 import { ConnectionManager } from './manager.ts'
 import { TargetStore } from './store.ts'
+import { listSshAliases } from './aliases.ts'
 import type { RemoteSnapshot, RemoteTarget } from './types.ts'
 
 export type { RemoteEndpoint, RemoteIdentity, RemotePhase, RemoteSnapshot, RemoteTarget } from './types.ts'
@@ -44,6 +45,22 @@ export default class RemoteWorkspaceController extends TypertRemoteService {
    */
   @Remote
   listTargets(): Promise<RemoteTarget[]> { return this.manager.listTargets() }
+
+  /** Read selectable aliases from the user's OpenSSH configuration.
+   * @returns literal Host names without credentials or SSH configuration content.
+   */
+  @Remote
+  listAliases(): Promise<string[]> { return listSshAliases() }
+
+  /** Discover, save and connect a target through strict OpenSSH verification.
+   * @param sshAlias - configured SSH alias. @param instanceKey - Companion key.
+   * @param operationId - idempotency key for this connection intent.
+   * @returns authenticated connection state.
+   */
+  @Remote
+  quickConnect(sshAlias: string, instanceKey: string, operationId: string): Promise<RemoteSnapshot> {
+    return this.manager.quickConnect(sshAlias, instanceKey, operationId)
+  }
 
   /**
    * Persist one complete target without credentials.

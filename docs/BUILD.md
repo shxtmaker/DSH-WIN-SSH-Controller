@@ -12,6 +12,7 @@ node --test tests/project.test.mjs
 node scripts/prepare-upstream.mjs
 node scripts/build.mjs
 node scripts/test-integration.mjs
+node scripts/test-client.mjs
 node scripts/verify-artifacts.mjs out/remote
 node scripts/test-git-install.mjs --harness /absolute/path/to/built-harness
 ```
@@ -34,7 +35,9 @@ node scripts/test-git-install.mjs --harness /absolute/path/to/built-harness
 
 ## 检查
 
-test 检查本端源码、构建补丁和安装包隔离，并验证破损包、额外包和错误校验清单被拒绝。test:integration 在本项目构建目录运行认证代理和真实 Loader 组合测试。
+test 检查本端源码、构建补丁和安装包隔离，并验证破损包、额外包和错误校验清单被拒绝。test:integration 在本项目构建目录运行认证代理、真实 Loader 组合、一键连接、SSH 发现和别名读取测试。
+
+`test:client` 从 `runtime/client/client.js` 加载实际 Client 工厂，使用本地固定 Host 响应与真实 React 在无头 Chromium 中检查最少输入、点击帮助、Esc 收起、重复连接抑制、自动选择目标、自动打开和错误提示，并检查窄屏页面没有横向溢出。需要准备并构建本项目 Harness 工作区，以及可用的 Playwright Chromium 或本机 Edge。截图写入 `out/verification/`。此项属于安装包页面的隔离浏览器验证，不等同于已安装 Desktop 或实机 SSH 验收。
 
 `test-git-install.mjs` 在临时 profile 中执行真实 Git 安装，验证组合包识别、运行入口、Typert 导出及 Client 模块，并通过 Harness 的运行时解析器与真实 Loader 加载安装后的控制端。认证 HTTP 状态查询及未认证访问拒绝均纳入检查。Client 模块工厂在隔离环境执行，检查其模块身份与挂载契约是否和 Host 一致。临时测试目录在结束时清理。
 

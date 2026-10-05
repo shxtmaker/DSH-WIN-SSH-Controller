@@ -55,6 +55,8 @@ const _harness_remote_controller_remoteWorkspace_getState_result$schema = () => 
   'generation': z.number().readonly(),
   'reason': z.string().readonly().optional(),
 }))
+let _harness_remote_controller_remoteWorkspace_listAliases_result$schema$value
+const _harness_remote_controller_remoteWorkspace_listAliases_result$schema = () => (_harness_remote_controller_remoteWorkspace_listAliases_result$schema$value ??= z.array(z.string()))
 let _harness_remote_controller_remoteWorkspace_listTargets_result$schema$value
 const _harness_remote_controller_remoteWorkspace_listTargets_result$schema = () => (_harness_remote_controller_remoteWorkspace_listTargets_result$schema$value ??= z.array(z.object({
   'id': z.string().readonly(),
@@ -70,6 +72,26 @@ const _harness_remote_controller_remoteWorkspace_listTargets_result$schema = () 
   'sshAlias': z.string().readonly(),
 })).readonly(),
 })))
+let _harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema$value
+const _harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema$value
+const _harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema = () => (_harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema$value
+const _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema = () => (_harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_quickConnect_result$schema$value
+const _harness_remote_controller_remoteWorkspace_quickConnect_result$schema = () => (_harness_remote_controller_remoteWorkspace_quickConnect_result$schema$value ??= z.object({
+  'phase': z.union([z.literal("error"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required")]).readonly(),
+  'connectionId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'targetId': z.string().readonly().optional(),
+  'endpointId': z.string().readonly().optional(),
+  'hostName': z.string().readonly().optional(),
+  'instanceId': z.string().readonly().optional(),
+  'bootId': z.string().readonly().optional(),
+  'profile': z.string().readonly().optional(),
+  'workspaceHint': z.string().readonly().optional(),
+  'generation': z.number().readonly(),
+  'reason': z.string().readonly().optional(),
+}))
 let _harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema$value
 const _harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema$value ??= z.object({
   'id': z.string().readonly(),
@@ -164,7 +186,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_connect_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":64,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":81,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/createOpenTicket',
@@ -189,7 +211,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/createOpenTicket:result',
         create: _harness_remote_controller_remoteWorkspace_createOpenTicket_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":89,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":106,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/disconnect',
@@ -214,7 +236,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_disconnect_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":81,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":98,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/getState',
@@ -229,7 +251,22 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_getState_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":73,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":90,"column":3},
+    },
+    {
+      id: 'dsh-win-ssh-controller-source#remoteWorkspace/listAliases',
+      service: 'remoteWorkspace',
+      namespace: 'remoteWorkspace',
+      method: 'listAliases',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/listAliases:result',
+        create: _harness_remote_controller_remoteWorkspace_listAliases_result$schema,
+      },
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":53,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/listTargets',
@@ -244,7 +281,52 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/listTargets:result',
         create: _harness_remote_controller_remoteWorkspace_listTargets_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":46,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":47,"column":3},
+    },
+    {
+      id: 'dsh-win-ssh-controller-source#remoteWorkspace/quickConnect',
+      service: 'remoteWorkspace',
+      namespace: 'remoteWorkspace',
+      method: 'quickConnect',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'sshAlias',
+          wire: 'sshAlias',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/quickConnect:sshAlias',
+            create: _harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema,
+          },
+        },
+        {
+          name: 'instanceKey',
+          wire: 'instanceKey',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/quickConnect:instanceKey',
+            create: _harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema,
+          },
+        },
+        {
+          name: 'operationId',
+          wire: 'operationId',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/quickConnect:operationId',
+            create: _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
+        create: _harness_remote_controller_remoteWorkspace_quickConnect_result$schema,
+      },
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":61,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/saveTarget',
@@ -269,7 +351,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/saveTarget:result',
         create: _harness_remote_controller_remoteWorkspace_saveTarget_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":54,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":71,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/watch',
@@ -286,7 +368,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_watch_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":97,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":114,"column":3},
     },
   ],
   model: {
@@ -305,6 +387,20 @@ export const TYPERT = {
             "signature": "@Remote listTargets(): Promise<RemoteTarget[]>",
             "summary": "Read configured remote attachment targets.",
             "jsDoc": "/**\n * Read configured remote attachment targets.\n * @returns all non-secret target records.\n */"
+          },
+          {
+            "kind": "method",
+            "name": "listAliases",
+            "signature": "@Remote listAliases(): Promise<string[]>",
+            "summary": "Read selectable aliases from the user's OpenSSH configuration.",
+            "jsDoc": "/** Read selectable aliases from the user's OpenSSH configuration.\n * @returns literal Host names without credentials or SSH configuration content.\n */"
+          },
+          {
+            "kind": "method",
+            "name": "quickConnect",
+            "signature": "@Remote quickConnect(sshAlias: string, instanceKey: string, operationId: string): Promise<RemoteSnapshot>",
+            "summary": "Discover, save and connect a target through strict OpenSSH verification.",
+            "jsDoc": "/** Discover, save and connect a target through strict OpenSSH verification.\n * @param sshAlias - configured SSH alias. @param instanceKey - Companion key.\n * @param operationId - idempotency key for this connection intent.\n * @returns authenticated connection state.\n */"
           },
           {
             "kind": "method",

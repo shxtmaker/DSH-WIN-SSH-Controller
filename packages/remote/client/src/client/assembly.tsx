@@ -23,7 +23,7 @@ const PANEL = 'remote-workspace' as MainPanelId
 const INITIAL: RemoteSnapshot = { phase: 'idle', generation: 0 }
 
 class ViewController implements RemoteWorkspaceFace {
-  private state: ViewState = { targets: [], connection: INITIAL, busy: false }
+  private state: ViewState = { targets: [], aliases: [], connection: INITIAL, busy: false }
   private readonly listeners = new Set<() => void>()
 
   constructor(private readonly ctx: Context) {}
@@ -42,6 +42,7 @@ class ViewController implements RemoteWorkspaceFace {
   fail = (message: string): void => { this.publish({ ...this.state, error: message }) }
 
   private async action(run: () => Promise<void>): Promise<void> {
+    if (this.state.busy) return
     this.publish({ ...this.state, busy: true, error: undefined })
     try { await run() } catch (error) {
       this.fail(error instanceof Error ? error.message : String(error))
@@ -54,6 +55,17 @@ class ViewController implements RemoteWorkspaceFace {
     const connection = await this.ctx.remote.remoteWorkspace.getState()
     if (!connection.ok) throw connection.error
     this.publish({ ...this.state, targets: targets.value, connection: connection.value })
+    const aliases = await this.ctx.remote.remoteWorkspace.listAliases()
+    this.publish({ ...this.state, aliases: aliases.ok ? aliases.value : [], aliasWarning: aliases.ok ? undefined : true })
+  })
+
+  quickConnect = async (sshAlias: string, instanceKey: string): Promise<void> => this.action(async () => {
+    const result = await this.ctx.remote.remoteWorkspace.quickConnect(sshAlias.trim(), instanceKey.trim(), randomUUID())
+    const targets = await this.ctx.remote.remoteWorkspace.listTargets()
+    if (targets.ok) this.publish({ ...this.state, targets: targets.value })
+    if (!result.ok) throw result.error
+    this.publish({ ...this.state, connection: result.value })
+    if (this.ctx.sidebarRight.mounted.getSnapshot() !== undefined) await this.openReady()
   })
 
   save = async (target: RemoteTarget): Promise<void> => this.action(async () => {
@@ -66,6 +78,7 @@ class ViewController implements RemoteWorkspaceFace {
     const result = await this.ctx.remote.remoteWorkspace.connect(targetId, endpointId, randomUUID())
     if (!result.ok) throw result.error
     this.publish({ ...this.state, connection: result.value })
+    if (this.ctx.sidebarRight.mounted.getSnapshot() !== undefined) await this.openReady()
   })
 
   disconnect = async (): Promise<void> => this.action(async () => {
@@ -76,15 +89,17 @@ class ViewController implements RemoteWorkspaceFace {
     this.publish({ ...this.state, connection: result.value })
   })
 
-  open = async (): Promise<void> => this.action(async () => {
+  open = async (): Promise<void> => this.action(() => this.openReady())
+
+  private async openReady(): Promise<void> {
+    if (this.ctx.sidebarRight.mounted.getSnapshot() === undefined) throw new Error('remote-workspace: NO_SESSION')
     const id = this.state.connection.connectionId
     if (id === undefined) throw new Error('remote-workspace: no active connection')
     const result = await this.ctx.remote.remoteWorkspace.createOpenTicket(id)
     if (!result.ok) throw result.error
     this.ctx.layout.selectPanel(null)
-    if (this.ctx.sidebarRight.mounted.getSnapshot() === undefined) throw new Error('select a local session')
     this.ctx.sidebarRight.openTab('browser', { params: { url: result.value } })
-  })
+  }
 
   observe(connection: RemoteSnapshot): void { this.publish({ ...this.state, connection }) }
 }

@@ -50,6 +50,9 @@ export interface RemoteDescriptor {
   readonly launchUrl: string
 }
 
+/** Public SSH helper identity, excluding the launch credential. */
+export type DiscoveredTarget = Omit<RemoteDescriptor, 'launchUrl'>
+
 /** Authenticated Companion identity with no credential fields. */
 export interface RemoteIdentity {
   readonly protocolVersion: 1

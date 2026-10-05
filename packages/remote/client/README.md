@@ -35,6 +35,8 @@ The workspace bundle mounts its Host entry; Client modules supply the page when 
 
 No fields are accepted by this plugin. It requires the controller's generated `remoteWorkspace` contract and the local Browser and right Sidebar services.
 
+The default page asks for one SSH alias and discovers instance details automatically. Custom instance keys and manual multi-route configuration are collapsed. Circular question-mark buttons beside titles open help on click and close on another click or Escape. Successful connection opens Browser automatically when a local Session is selected; otherwise it keeps the connection and shows the opening instructions.
+
 -----
 
 <a id="understand-the-implementation"></a>

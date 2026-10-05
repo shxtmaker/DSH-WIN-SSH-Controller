@@ -25,6 +25,16 @@ export default class RemoteWorkspaceController extends TypertRemoteService {
      * @returns all non-secret target records.
      */
     listTargets(): Promise<RemoteTarget[]>;
+    /** Read selectable aliases from the user's OpenSSH configuration.
+     * @returns literal Host names without credentials or SSH configuration content.
+     */
+    listAliases(): Promise<string[]>;
+    /** Discover, save and connect a target through strict OpenSSH verification.
+     * @param sshAlias - configured SSH alias. @param instanceKey - Companion key.
+     * @param operationId - idempotency key for this connection intent.
+     * @returns authenticated connection state.
+     */
+    quickConnect(sshAlias: string, instanceKey: string, operationId: string): Promise<RemoteSnapshot>;
     /**
      * Persist one complete target without credentials.
      * @param target - complete non-secret record.

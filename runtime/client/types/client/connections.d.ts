@@ -7,6 +7,8 @@ export interface ViewState {
     readonly targets: readonly RemoteTarget[];
     readonly connection: RemoteSnapshot;
     readonly busy: boolean;
+    readonly aliases: readonly string[];
+    readonly aliasWarning?: boolean | undefined;
     readonly error?: string | undefined;
 }
 /** UI actions use only the local Host's authenticated Remote control surface. */
@@ -15,6 +17,7 @@ export interface RemoteWorkspaceFace {
     subscribe: (listener: () => void) => () => void;
     refresh: () => Promise<void>;
     save: (target: RemoteTarget) => Promise<void>;
+    quickConnect: (sshAlias: string, instanceKey: string) => Promise<void>;
     connect: (targetId: string, endpointId: string) => Promise<void>;
     disconnect: () => Promise<void>;
     open: () => Promise<void>;
@@ -23,7 +26,7 @@ export interface RemoteWorkspaceFace {
 type PageProps = PropsRuntime<'main'> & PropsLocale<'remoteWorkspace'> & InjectFace<RemoteWorkspaceFace>;
 type IndicatorProps = PropsLocale<'remoteWorkspace'> & InjectFace<RemoteWorkspaceFace>;
 /** Render target configuration and one-connection actions in the main pane. */
-export declare function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, connect, disconnect, open, fail }: PageProps): ReactNode;
+export declare function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quickConnect, connect, disconnect, open }: PageProps): ReactNode;
 /** Keep the actual execution host and remote workspace visible over the local shell. */
 export declare function RemoteIndicator({ t, getSnapshot, subscribe }: IndicatorProps): ReactNode;
 export {};

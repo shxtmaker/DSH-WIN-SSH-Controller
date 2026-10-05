@@ -1,6 +1,12 @@
-import type { RemoteDescriptor } from './types.ts';
+import type { DiscoveredTarget, RemoteDescriptor } from './types.ts';
 /** Run the fixed helper over a separate non-interactive SSH process. */
 export declare function discover(alias: string, instanceKey: string, helperPath: string, signal: AbortSignal): Promise<RemoteDescriptor>;
+/** Read public instance facts over a host-key-verified SSH connection.
+ * @param alias - configured OpenSSH alias. @param instanceKey - Companion key.
+ * @param helperPath - fixed executable. @param signal - operation lifetime.
+ * @returns identity and port with no launch credential.
+ */
+export declare function discoverTarget(alias: string, instanceKey: string, helperPath: string, signal: AbortSignal): Promise<DiscoveredTarget>;
 /** One SSH local forward created by this plugin; stop never targets another process. */
 export interface OwnedForward {
     readonly port: number;

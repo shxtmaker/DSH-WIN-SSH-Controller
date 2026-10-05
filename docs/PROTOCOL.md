@@ -25,6 +25,10 @@ helper 从标准输入接收一行 JSON：
 
 输入上限为 4096 字节，描述文件和输出上限为 65536 字节。错误码写入 stderr，进程返回非零状态。完整描述只在控制端 Host 的当前连接内使用，不进入持久化目标或 UI。
 
+一键连接的首次登记使用 `--identity`，仅将公开身份和端口写入目标记录。后续连接使用正常模式获取临时启动凭据，并核对已保存的实例 ID、实例键、profile 和端口。相同 SSH 别名和实例键的已有记录优先复用，远端返回的新身份不会自动覆盖原记录。该流程兼容协议版本 1，无需更新被控端。
+
+本地认证控制接口新增 `remoteWorkspace/listAliases` 和 `remoteWorkspace/quickConnect`。前者仅返回具体 SSH 别名；后者接收 `sshAlias`、`instanceKey` 和 `operationId`，返回连接状态。未认证访问被拒绝，发现期间拒绝并发连接；卸载时取消并等待正在进行的发现。
+
 ## Web 身份与就绪
 
 控制端将 launchUrl 的临时 token 换取 Host 内存中的 Cookie，再访问 GET /api/remote-workspace/identity。响应包含 protocolVersion、instanceKey、instanceId、bootId、profile、workspaceHint、version 和 capabilities。当前 Companion 声明 web 与 remote.mux 能力。

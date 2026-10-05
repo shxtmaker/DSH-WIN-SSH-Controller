@@ -27,6 +27,8 @@ Attach one approved Linux Harness instance from Desktop without changing its Hos
 
 The workspace bundle mounts this service in the Desktop Host.
 
+Quick connection needs only a configured SSH alias and the Companion key, normally `default`. The service reads public identity with `--identity`, generates a local target ID and saves the discovered profile, workspace and Web port. Existing alias/key records retain their identity pins. Literal aliases from the user SSH config and bounded `Include` files are offered as suggestions; no SSH configuration content is returned to the page.
+
 ### Minimal configuration
 
 ```yaml
@@ -76,7 +78,7 @@ None; model requests run in the attached remote Harness and are not rewritten by
 
 These constraints apply to this attachment owner:
 
-- Only one remote attachment is active at a time; the target must be configured with its stable instance identity.
+- Only one remote attachment is active at a time; quick connection discovers and pins stable instance identity through host-key-verified SSH.
 - The controller requires a reachable Linux Companion and does not install, restart, or manage SSH, frp, or remote Harness.
 - A Browser can open only after SSH discovery, Harness Cookie authentication, live identity confirmation, and event-stream readiness succeed.
 

@@ -12,7 +12,9 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     createOpenTicket: (connectionId: string) => Promise<RemoteResult<string>>
     disconnect: (connectionId: string) => Promise<RemoteResult<RemoteSnapshot>>
     getState: () => Promise<RemoteResult<RemoteSnapshot>>
+    listAliases: () => Promise<RemoteResult<string[]>>
     listTargets: () => Promise<RemoteResult<RemoteTarget[]>>
+    quickConnect: (sshAlias: string, instanceKey: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
     saveTarget: (target: RemoteTarget) => Promise<RemoteResult<RemoteTarget[]>>
     watch: (signal?: AbortSignal) => RemoteStreamHandle<RemoteSnapshot, never>
   }
@@ -21,7 +23,9 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'remoteWorkspace/createOpenTicket': (connectionId: string) => Promise<RemoteResult<string>>
     'remoteWorkspace/disconnect': (connectionId: string) => Promise<RemoteResult<RemoteSnapshot>>
     'remoteWorkspace/getState': () => Promise<RemoteResult<RemoteSnapshot>>
+    'remoteWorkspace/listAliases': () => Promise<RemoteResult<string[]>>
     'remoteWorkspace/listTargets': () => Promise<RemoteResult<RemoteTarget[]>>
+    'remoteWorkspace/quickConnect': (sshAlias: string, instanceKey: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
     'remoteWorkspace/saveTarget': (target: RemoteTarget) => Promise<RemoteResult<RemoteTarget[]>>
     'remoteWorkspace/watch': (signal?: AbortSignal) => RemoteStreamHandle<RemoteSnapshot, never>
   }

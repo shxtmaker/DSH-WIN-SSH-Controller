@@ -6,6 +6,9 @@ export declare class ConnectionManager {
     private readonly helperPath;
     private current;
     private connecting;
+    private pending;
+    private disposed;
+    private settlement;
     private state;
     private readonly listeners;
     /** @param targets - non-secret target store. @param helperPath - fixed Linux helper executable path. */
@@ -24,6 +27,14 @@ export declare class ConnectionManager {
      * @returns authenticated connection snapshot.
      */
     connect(targetId: string, endpointId: string, operationId: string): Promise<RemoteSnapshot>;
+    /** Read public identity, pin new targets, and attach using only an SSH alias.
+     * @param sshAlias - reviewed OpenSSH alias. @param instanceKey - Companion key, normally default.
+     * @param operationId - caller operation id.
+     * @returns authenticated attachment state; existing identity pins are never replaced.
+     */
+    quickConnect(sshAlias: string, instanceKey: string, operationId: string): Promise<RemoteSnapshot>;
+    private checkAvailable;
+    private attach;
     /** @param connectionId - attachment to release. @returns idle or unchanged state. */
     disconnect(connectionId: string): Promise<RemoteSnapshot>;
     /** @param connectionId - active attachment. @returns one-use, short-lived local URL. */

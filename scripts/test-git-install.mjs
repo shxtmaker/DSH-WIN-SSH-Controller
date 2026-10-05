@@ -116,6 +116,26 @@ try {
     assert.deepEqual(await response.json(), { type: 'server-response', rpcId: 'git-controller-state', result: { ok: true, value: { phase: 'idle', generation: 0 } } })
     console.log('PASS installed Controller: real Loader composition and authenticated Typert HTTP state route; unauthenticated access rejected')
 
+    const quickBody = JSON.stringify({ type: 'client-request', rpcId: 'git-controller-quick', method: 'remoteWorkspace/quickConnect',
+      payload: { args: { sshAlias: '-invalid', instanceKey: 'default', operationId: 'git-quick-test' } } })
+    const quickDenied = await fetch(`${origin}/api/remoteWorkspace/quickConnect`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: quickBody })
+    assert.equal(quickDenied.status, 401)
+    const quickInvalid = await fetch(`${origin}/api/remoteWorkspace/quickConnect`, {
+      method: 'POST', headers: { 'content-type': 'application/json', cookie: browserCookie }, body: quickBody,
+    })
+    assert.equal(quickInvalid.status, 200)
+    assert.equal((await quickInvalid.json()).result.ok, false)
+    assert.deepEqual(await ctx.remoteWorkspace.listTargets(), [])
+    const aliasResponse = await fetch(`${origin}/api/remoteWorkspace/listAliases`, {
+      method: 'POST', headers: { 'content-type': 'application/json', cookie: browserCookie },
+      body: JSON.stringify({ type: 'client-request', rpcId: 'git-controller-aliases', method: 'remoteWorkspace/listAliases', payload: { args: {} } }),
+    })
+    assert.equal(aliasResponse.status, 200)
+    const aliases = (await aliasResponse.json()).result
+    assert.equal(aliases.ok, true)
+    assert.ok(aliases.value.every(alias => /^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/u.test(alias)))
+    console.log('PASS installed quick connection routes: unauthenticated 401, malformed alias rejected without persistence, public alias enumeration')
+
     let clientModule
     runInNewContext(await readFile(require.resolve(`${name}/client`), 'utf8'), { window: { __ModuleLoader__: { load: module => { clientModule = module } } } })
     assert.equal(clientModule.id, name)

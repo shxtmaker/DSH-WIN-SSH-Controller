@@ -1,4 +1,4 @@
-import { dirname, join } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import z from "@deepseek-ai/schemastery";
 import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 import { randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
@@ -6,7 +6,8 @@ import { createServer, request } from "node:http";
 import WebSocket from "ws";
 import { connect, createConnection, createServer as createServer$1 } from "node:net";
 import { spawn } from "node:child_process";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { glob, mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { homedir } from "node:os";
 //#region lib/types/auth.js
 /** Authenticate the one approved remote authority and verify its live identity. */
 async function read(port, authority, path, cookie) {
@@ -480,7 +481,7 @@ function validHelperPath(path) {
 function childExit(child) {
 	return new Promise((resolve, reject) => {
 		child.once("error", reject);
-		child.once("exit", (code) => {
+		child.once("close", (code) => {
 			resolve(code);
 		});
 	});
@@ -488,16 +489,52 @@ function childExit(child) {
 function descriptor(value) {
 	if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error("remote-workspace: invalid helper response");
 	const row = value;
-	if (row.protocolVersion !== 1 || typeof row.instanceId !== "string" || row.instanceId.length < 1 || typeof row.bootId !== "string" || row.bootId.length < 1 || typeof row.instanceKey !== "string" || typeof row.profile !== "string" || typeof row.workspaceHint !== "string" || typeof row.launchUrl !== "string" || !Number.isInteger(row.port) || row.port < 1 || row.port > 65535) throw new Error("remote-workspace: invalid helper response");
-	return row;
+	if (row.protocolVersion !== 1 || typeof row.instanceId !== "string" || row.instanceId.length < 1 || typeof row.bootId !== "string" || row.bootId.length < 1 || typeof row.instanceKey !== "string" || !/^[A-Za-z0-9_-]{1,64}$/u.test(row.instanceKey) || typeof row.profile !== "string" || row.profile.length < 1 || row.profile.length > 4096 || typeof row.workspaceHint !== "string" || row.workspaceHint.length > 4096 || typeof row.port !== "number" || !Number.isInteger(row.port) || row.port < 1 || row.port > 65535) throw new Error("remote-workspace: invalid helper response");
+	return {
+		protocolVersion: 1,
+		instanceId: row.instanceId,
+		bootId: row.bootId,
+		instanceKey: row.instanceKey,
+		profile: row.profile,
+		workspaceHint: row.workspaceHint,
+		port: row.port
+	};
 }
 /** Run the fixed helper over a separate non-interactive SSH process. */
 async function discover(alias, instanceKey, helperPath, signal) {
+	const value = await helper(alias, instanceKey, helperPath, signal, false);
+	const info = descriptor(value);
+	if (typeof value !== "object" || value === null || !("launchUrl" in value) || typeof value.launchUrl !== "string") throw new Error("remote-workspace: invalid helper response");
+	return {
+		...info,
+		launchUrl: value.launchUrl
+	};
+}
+/** Read public instance facts over a host-key-verified SSH connection.
+* @param alias - configured OpenSSH alias. @param instanceKey - Companion key.
+* @param helperPath - fixed executable. @param signal - operation lifetime.
+* @returns identity and port with no launch credential.
+*/
+async function discoverTarget(alias, instanceKey, helperPath, signal) {
+	const info = descriptor(await helper(alias, instanceKey, helperPath, signal, true));
+	return {
+		protocolVersion: info.protocolVersion,
+		instanceKey: info.instanceKey,
+		instanceId: info.instanceId,
+		bootId: info.bootId,
+		profile: info.profile,
+		workspaceHint: info.workspaceHint,
+		port: info.port
+	};
+}
+async function helper(alias, instanceKey, helperPath, signal, identityOnly) {
+	signal.throwIfAborted();
 	if (!validAlias(alias) || !/^[A-Za-z0-9_-]{1,64}$/u.test(instanceKey) || !validHelperPath(helperPath)) throw new Error("remote-workspace: invalid SSH discovery configuration");
 	const child = spawn("ssh", [
 		...SSH_OPTIONS,
 		alias,
-		helperPath
+		helperPath,
+		...identityOnly ? ["--identity"] : []
 	], {
 		shell: false,
 		windowsHide: true,
@@ -507,9 +544,14 @@ async function discover(alias, instanceKey, helperPath, signal) {
 		child.kill();
 	};
 	signal.addEventListener("abort", stop, { once: true });
-	const timeout = setTimeout(stop, 2e4);
+	let timedOut = false;
+	const timeout = setTimeout(() => {
+		timedOut = true;
+		stop();
+	}, 2e4);
 	let stdout = "";
 	let oversized = false;
+	let stderr = "";
 	child.stdout.setEncoding("utf8");
 	child.stdout.on("data", (chunk) => {
 		stdout += chunk;
@@ -518,7 +560,10 @@ async function discover(alias, instanceKey, helperPath, signal) {
 			child.kill();
 		}
 	});
-	child.stderr.resume();
+	child.stderr.setEncoding("utf8");
+	child.stderr.on("data", (chunk) => {
+		stderr = (stderr + chunk).slice(-8192);
+	});
 	child.stdin.on("error", () => {});
 	child.stdin.end(JSON.stringify({
 		protocolVersion: 1,
@@ -527,8 +572,20 @@ async function discover(alias, instanceKey, helperPath, signal) {
 	try {
 		const code = await childExit(child);
 		signal.throwIfAborted();
-		if (oversized || code !== 0) throw new Error("remote-workspace: SSH helper failed");
-		return descriptor(JSON.parse(stdout));
+		if (timedOut) throw new Error("remote-workspace: SSH_UNREACHABLE");
+		if (oversized || code !== 0) {
+			if (/Host key verification failed|REMOTE HOST IDENTIFICATION HAS CHANGED/u.test(stderr)) throw new Error("remote-workspace: SSH_HOST_KEY");
+			if (/Permission denied/u.test(stderr)) throw new Error("remote-workspace: SSH_AUTH");
+			if (/Could not resolve hostname/u.test(stderr)) throw new Error("remote-workspace: SSH_ALIAS");
+			if (/Connection refused|Connection timed out|No route to host/u.test(stderr)) throw new Error("remote-workspace: SSH_UNREACHABLE");
+			if (/not found|No such file|BAD_INPUT|INFO_FAILED/u.test(stderr)) throw new Error("remote-workspace: SSH_HELPER");
+			throw new Error("remote-workspace: SSH helper failed");
+		}
+		try {
+			return JSON.parse(stdout);
+		} catch {
+			throw new Error("remote-workspace: invalid helper response");
+		}
 	} finally {
 		clearTimeout(timeout);
 		signal.removeEventListener("abort", stop);
@@ -645,6 +702,9 @@ var ConnectionManager = class {
 	helperPath;
 	current;
 	connecting = false;
+	pending;
+	disposed = false;
+	settlement;
 	state = {
 		phase: "idle",
 		generation: 0
@@ -675,29 +735,101 @@ var ConnectionManager = class {
 	* @returns authenticated connection snapshot.
 	*/
 	async connect(targetId, endpointId, operationId) {
-		if (!/^[A-Za-z0-9_-]{1,64}$/u.test(operationId)) throw new Error("remote-workspace: invalid operation id");
-		if (this.current !== void 0) {
-			if (this.current.operationId === operationId) return this.state;
-			throw new Error("remote-workspace: disconnect the active target first");
-		}
-		if (this.connecting) throw new Error("remote-workspace: a connection is already starting");
+		this.checkAvailable(operationId);
+		if (this.current?.operationId === operationId) return this.state;
 		this.connecting = true;
-		let target, endpoint;
+		const settled = Promise.withResolvers();
+		this.settlement = settled.promise;
 		try {
 			const found = (await this.targets.list()).find((item) => item.id === targetId);
 			const route = found?.endpoints.find((item) => item.id === endpointId);
 			if (found === void 0 || route === void 0) throw new Error("remote-workspace: unknown target or endpoint");
-			target = found;
-			endpoint = route;
+			return await this.attach(found, route, operationId);
 		} finally {
 			this.connecting = false;
+			settled.resolve();
 		}
+	}
+	/** Read public identity, pin new targets, and attach using only an SSH alias.
+	* @param sshAlias - reviewed OpenSSH alias. @param instanceKey - Companion key, normally default.
+	* @param operationId - caller operation id.
+	* @returns authenticated attachment state; existing identity pins are never replaced.
+	*/
+	async quickConnect(sshAlias, instanceKey, operationId) {
+		this.checkAvailable(operationId);
+		if (this.current?.operationId === operationId) return this.state;
+		this.connecting = true;
+		const settled = Promise.withResolvers();
+		this.settlement = settled.promise;
+		const lifetime = new AbortController();
+		this.pending = lifetime;
+		this.publish({
+			phase: "discovering",
+			hostName: sshAlias,
+			generation: this.state.generation + 1
+		});
+		try {
+			if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/u.test(sshAlias) || !/^[A-Za-z0-9_-]{1,64}$/u.test(instanceKey)) throw new Error("remote-workspace: invalid SSH discovery configuration");
+			const targets = await this.targets.list();
+			lifetime.signal.throwIfAborted();
+			const existing = targets.find((item) => item.instanceKey === instanceKey && item.endpoints.some((route) => route.sshAlias === sshAlias));
+			if (existing !== void 0) {
+				const endpoint = existing.endpoints.find((route) => route.sshAlias === sshAlias);
+				if (endpoint === void 0) throw new Error("remote-workspace: unknown endpoint");
+				return await this.attach(existing, endpoint, operationId, lifetime);
+			}
+			const info = await discoverTarget(sshAlias, instanceKey, this.helperPath, lifetime.signal);
+			lifetime.signal.throwIfAborted();
+			if (info.instanceKey !== instanceKey) throw new IdentityMismatch("remote-workspace: configured instance identity mismatch");
+			const target = {
+				id: randomUUID(),
+				name: sshAlias,
+				instanceKey,
+				instanceId: info.instanceId,
+				profile: info.profile,
+				workspaceHint: info.workspaceHint,
+				remotePort: info.port,
+				endpoints: [{
+					id: "ssh",
+					kind: "lan",
+					sshAlias
+				}]
+			};
+			await this.targets.save(target);
+			lifetime.signal.throwIfAborted();
+			return await this.attach(target, target.endpoints[0], operationId, lifetime);
+		} catch (error) {
+			if (!this.disposed && !lifetime.signal.aborted) this.publish({
+				...this.state,
+				connectionId: void 0,
+				phase: this.failurePhase(error),
+				reason: this.failureReason(error)
+			});
+			throw error;
+		} finally {
+			if (this.pending === lifetime) this.pending = void 0;
+			this.connecting = false;
+			settled.resolve();
+		}
+	}
+	checkAvailable(operationId) {
+		if (this.disposed) throw new Error("remote-workspace: controller disposed");
+		if (!/^[A-Za-z0-9_-]{1,64}$/u.test(operationId)) throw new Error("remote-workspace: invalid operation id");
+		if (this.current !== void 0) {
+			if (this.current.operationId === operationId) return;
+			throw new Error("remote-workspace: disconnect the active target first");
+		}
+		if (this.connecting) throw new Error("remote-workspace: a connection is already starting");
+	}
+	async attach(target, endpoint, operationId, lifetime = new AbortController()) {
+		lifetime.signal.throwIfAborted();
+		if (this.disposed) throw new Error("remote-workspace: controller disposed");
 		const active = {
 			id: randomUUID(),
 			operationId,
 			target,
 			endpoint,
-			lifetime: new AbortController(),
+			lifetime,
 			forward: void 0,
 			proxy: void 0,
 			retrying: false
@@ -706,8 +838,8 @@ var ConnectionManager = class {
 		this.publish({
 			phase: "ssh-auth",
 			connectionId: active.id,
-			targetId,
-			endpointId,
+			targetId: target.id,
+			endpointId: endpoint.id,
 			hostName: target.name,
 			instanceId: target.instanceId,
 			profile: target.profile,
@@ -783,8 +915,11 @@ var ConnectionManager = class {
 	}
 	/** Release local resources on Host plugin disposal. */
 	async dispose() {
+		this.disposed = true;
+		this.pending?.abort(/* @__PURE__ */ new Error("remote-workspace: controller disposed"));
 		const id = this.current?.id;
 		if (id !== void 0) await this.disconnect(id);
+		await this.settlement;
 	}
 	publish(state) {
 		this.state = state;
@@ -1003,6 +1138,49 @@ var TargetStore = class {
 	}
 };
 //#endregion
+//#region lib/types/aliases.js
+/** Read literal OpenSSH Host aliases without exposing configuration or executing commands. */
+/** Enumerate selectable Host aliases from the user config and its Include files.
+* @param home - user home containing .ssh/config.
+* @returns unique literal aliases; patterns and negated hosts are omitted.
+*/
+async function listSshAliases(home = homedir()) {
+	const base = join(home, ".ssh");
+	const visited = /* @__PURE__ */ new Set();
+	const aliases = /* @__PURE__ */ new Set();
+	let bytes = 0;
+	async function read(path) {
+		if (visited.has(path)) return;
+		if (visited.size >= 64) throw new Error("remote-workspace: SSH config include limit");
+		visited.add(path);
+		let content;
+		try {
+			content = await readFile(path, "utf8");
+		} catch (error) {
+			if (error instanceof Error && "code" in error && error.code === "ENOENT") return;
+			throw error;
+		}
+		bytes += Buffer.byteLength(content);
+		if (bytes > 1048576) throw new Error("remote-workspace: SSH config size limit");
+		let inMatch = false;
+		for (const line of content.split(/\r?\n/u)) {
+			const parts = line.replace(/^\s*(Host|Include|Match)\s*=/iu, "$1 ").match(/"[^"\r\n]*"|'[^'\r\n]*'|#[^\r\n]*|[^\s#]+/gu)?.filter((part) => !part.startsWith("#")).map((part) => part.replace(/^["']|["']$/gu, "")) ?? [];
+			const key = parts.shift()?.toLowerCase();
+			if (key === "match") inMatch = true;
+			if (key === "host") {
+				inMatch = false;
+				for (const alias of parts) if (/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/u.test(alias)) aliases.add(alias);
+			}
+			if (key === "include" && !inMatch) for (const part of parts) {
+				const expanded = part.startsWith("~/") ? join(home, part.slice(2)) : isAbsolute(part) ? part : resolve(base, part);
+				for await (const match of glob(expanded.replaceAll("\\", "/"))) await read(match);
+			}
+		}
+	}
+	await read(join(base, "config"));
+	return [...aliases].sort((a, b) => a.localeCompare(b));
+}
+//#endregion
 //#region lib/types/index.js
 /** Local Desktop Host control plane for one attached remote Harness. */
 var __runInitializers = function(thisArg, initializers, value) {
@@ -1047,6 +1225,8 @@ let RemoteWorkspaceController = (() => {
 	let _classSuper = TypertRemoteService;
 	let _instanceExtraInitializers = [];
 	let _listTargets_decorators;
+	let _listAliases_decorators;
+	let _quickConnect_decorators;
 	let _saveTarget_decorators;
 	let _connect_decorators;
 	let _getState_decorators;
@@ -1057,6 +1237,8 @@ let RemoteWorkspaceController = (() => {
 		static {
 			const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(_classSuper[Symbol.metadata] ?? null) : void 0;
 			_listTargets_decorators = [Remote];
+			_listAliases_decorators = [Remote];
+			_quickConnect_decorators = [Remote];
 			_saveTarget_decorators = [Remote];
 			_connect_decorators = [Remote];
 			_getState_decorators = [Remote];
@@ -1071,6 +1253,28 @@ let RemoteWorkspaceController = (() => {
 				access: {
 					has: (obj) => "listTargets" in obj,
 					get: (obj) => obj.listTargets
+				},
+				metadata: _metadata
+			}, null, _instanceExtraInitializers);
+			__esDecorate(this, null, _listAliases_decorators, {
+				kind: "method",
+				name: "listAliases",
+				static: false,
+				private: false,
+				access: {
+					has: (obj) => "listAliases" in obj,
+					get: (obj) => obj.listAliases
+				},
+				metadata: _metadata
+			}, null, _instanceExtraInitializers);
+			__esDecorate(this, null, _quickConnect_decorators, {
+				kind: "method",
+				name: "quickConnect",
+				static: false,
+				private: false,
+				access: {
+					has: (obj) => "quickConnect" in obj,
+					get: (obj) => obj.quickConnect
 				},
 				metadata: _metadata
 			}, null, _instanceExtraInitializers);
@@ -1161,6 +1365,20 @@ let RemoteWorkspaceController = (() => {
 		*/
 		listTargets() {
 			return this.manager.listTargets();
+		}
+		/** Read selectable aliases from the user's OpenSSH configuration.
+		* @returns literal Host names without credentials or SSH configuration content.
+		*/
+		listAliases() {
+			return listSshAliases();
+		}
+		/** Discover, save and connect a target through strict OpenSSH verification.
+		* @param sshAlias - configured SSH alias. @param instanceKey - Companion key.
+		* @param operationId - idempotency key for this connection intent.
+		* @returns authenticated connection state.
+		*/
+		quickConnect(sshAlias, instanceKey, operationId) {
+			return this.manager.quickConnect(sshAlias, instanceKey, operationId);
 		}
 		/**
 		* Persist one complete target without credentials.

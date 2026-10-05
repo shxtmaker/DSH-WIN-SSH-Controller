@@ -27,6 +27,8 @@ kind: "package-reference"
 
 workspace bundle 在 Desktop Host 中挂载此服务。
 
+一键连接只需已配置的 SSH 别名和通常为 `default` 的实例键。服务通过 `--identity` 读取公开身份，生成本机目标 ID，保存远端 profile、工作区和 Web 端口。相同别名与实例键的已有记录保留原身份绑定。本机 SSH 配置及受限 `Include` 文件中的具体别名作为输入建议，SSH 配置正文不会返回页面。
+
 ### 最小配置
 
 ```yaml
@@ -76,7 +78,7 @@ workspace bundle 在 Desktop Host 中挂载此服务。
 
 此附着控制器有以下约束：
 
-- 同时只允许一个活动远端附着；目标必须配置稳定的实例身份。
+- 同时只允许一个活动远端附着；一键连接通过已核对主机密钥的 SSH 读取并绑定稳定的实例身份。
 - 控制器要求 Linux Companion 可达，不安装、重启或管理 SSH、frp 或远端 Harness。
 - 只有 SSH 发现、Harness Cookie 认证、实时身份核对和事件流就绪全部成功后才能打开 Browser。
 

@@ -73,4 +73,21 @@ it('serves the controller state through authenticated Typert HTTP after Loader c
     type: 'server-response', rpcId: 'remote-state-test',
     result: { ok: true, value: { phase: 'idle', generation: 0 } },
   })
+  const quickBody = JSON.stringify({ type: 'client-request', rpcId: 'quick-test', method: 'remoteWorkspace/quickConnect',
+    payload: { args: { sshAlias: '-invalid', instanceKey: 'default', operationId: 'quick-test' } } })
+  const denied = await fetch(`${origin}/api/remoteWorkspace/quickConnect`, {
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: quickBody,
+  })
+  expect(denied.status).toBe(401)
+  const invalid = await fetch(`${origin}/api/remoteWorkspace/quickConnect`, {
+    method: 'POST', headers: { 'content-type': 'application/json', cookie }, body: quickBody,
+  })
+  expect(invalid.status).toBe(200)
+  expect(await invalid.json()).toMatchObject({ result: { ok: false } })
+  expect(await ctx.remoteWorkspace.listTargets()).toEqual([])
+  const aliases = await fetch(`${origin}/api/remoteWorkspace/listAliases`, {
+    method: 'POST', headers: { 'content-type': 'application/json', cookie },
+    body: JSON.stringify({ type: 'client-request', rpcId: 'alias-test', method: 'remoteWorkspace/listAliases', payload: { args: {} } }),
+  })
+  expect(await aliases.json()).toMatchObject({ result: { ok: true, value: expect.any(Array) } })
 })

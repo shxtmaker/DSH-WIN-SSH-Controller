@@ -1,7 +1,7 @@
 /** Plugin-owned OpenSSH processes. Aliases and the fixed helper path are the only remote inputs. */
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process'
 import { createConnection, createServer } from 'node:net'
-import type { RemoteDescriptor } from './types.ts'
+import type { DiscoveredTarget, RemoteDescriptor } from './types.ts'
 
 const SSH_OPTIONS = [
   '-T', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=yes',
@@ -21,48 +21,84 @@ function validHelperPath(path: string): boolean {
 function childExit(child: ChildProcessWithoutNullStreams): Promise<number | null> {
   return new Promise((resolve, reject) => {
     child.once('error', reject)
-    child.once('exit', (code) =>{  resolve(code) })
+    child.once('close', (code) =>{  resolve(code) })
   })
 }
 
-function descriptor(value: unknown): RemoteDescriptor {
+function descriptor(value: unknown): DiscoveredTarget {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new Error('remote-workspace: invalid helper response')
   const row = value as Record<string, unknown>
   if (row.protocolVersion !== 1 || typeof row.instanceId !== 'string' || row.instanceId.length < 1
     || typeof row.bootId !== 'string' || row.bootId.length < 1
-    || typeof row.instanceKey !== 'string' || typeof row.profile !== 'string'
-    || typeof row.workspaceHint !== 'string' || typeof row.launchUrl !== 'string'
-    || !Number.isInteger(row.port) || (row.port as number) < 1 || (row.port as number) > 65535) {
+    || typeof row.instanceKey !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/u.test(row.instanceKey)
+    || typeof row.profile !== 'string' || row.profile.length < 1 || row.profile.length > 4096
+    || typeof row.workspaceHint !== 'string' || row.workspaceHint.length > 4096
+    || typeof row.port !== 'number' || !Number.isInteger(row.port) || row.port < 1 || row.port > 65535) {
     throw new Error('remote-workspace: invalid helper response')
   }
-  return row as unknown as RemoteDescriptor
+  return { protocolVersion: 1, instanceId: row.instanceId, bootId: row.bootId,
+    instanceKey: row.instanceKey, profile: row.profile, workspaceHint: row.workspaceHint, port: row.port }
 }
 
 /** Run the fixed helper over a separate non-interactive SSH process. */
 export async function discover(alias: string, instanceKey: string, helperPath: string, signal: AbortSignal): Promise<RemoteDescriptor> {
+  const value = await helper(alias, instanceKey, helperPath, signal, false)
+  const info = descriptor(value)
+  if (typeof value !== 'object' || value === null || !('launchUrl' in value) || typeof value.launchUrl !== 'string') {
+    throw new Error('remote-workspace: invalid helper response')
+  }
+  return { ...info, launchUrl: value.launchUrl }
+}
+
+/** Read public instance facts over a host-key-verified SSH connection.
+ * @param alias - configured OpenSSH alias. @param instanceKey - Companion key.
+ * @param helperPath - fixed executable. @param signal - operation lifetime.
+ * @returns identity and port with no launch credential.
+ */
+export async function discoverTarget(alias: string, instanceKey: string, helperPath: string, signal: AbortSignal): Promise<DiscoveredTarget> {
+  const info = descriptor(await helper(alias, instanceKey, helperPath, signal, true))
+  return { protocolVersion: info.protocolVersion, instanceKey: info.instanceKey, instanceId: info.instanceId,
+    bootId: info.bootId, profile: info.profile, workspaceHint: info.workspaceHint, port: info.port }
+}
+
+async function helper(alias: string, instanceKey: string, helperPath: string, signal: AbortSignal, identityOnly: boolean): Promise<unknown> {
+  signal.throwIfAborted()
   if (!validAlias(alias) || !/^[A-Za-z0-9_-]{1,64}$/u.test(instanceKey) || !validHelperPath(helperPath)) {
     throw new Error('remote-workspace: invalid SSH discovery configuration')
   }
-  const child = spawn('ssh', [...SSH_OPTIONS, alias, helperPath], { shell: false, windowsHide: true, stdio: 'pipe' })
+  const child = spawn('ssh', [...SSH_OPTIONS, alias, helperPath, ...(identityOnly ? ['--identity'] : [])], { shell: false, windowsHide: true, stdio: 'pipe' })
   const stop = (): void => { child.kill() }
   signal.addEventListener('abort', stop, { once: true })
-  const timeout = setTimeout(stop, 20_000)
+  let timedOut = false
+  const timeout = setTimeout(() => { timedOut = true; stop() }, 20_000)
   let stdout = ''
   let oversized = false
+  let stderr = ''
   child.stdout.setEncoding('utf8')
   child.stdout.on('data', (chunk: string) => {
     stdout += chunk
     if (Buffer.byteLength(stdout, 'utf8') > 65_536) { oversized = true; child.kill() }
   })
-  child.stderr.resume()
+  child.stderr.setEncoding('utf8')
+  child.stderr.on('data', (chunk: string) => { stderr = (stderr + chunk).slice(-8192) })
   child.stdin.on('error', () => { /* SSH exit is reported by childExit. */ })
   child.stdin.end(JSON.stringify({ protocolVersion: 1, instanceKey }) + '\n')
   try {
     const code = await childExit(child)
     signal.throwIfAborted()
+    if (timedOut) throw new Error('remote-workspace: SSH_UNREACHABLE')
     // oxlint-disable-next-line typescript/no-unnecessary-condition -- stdout events can change this while childExit is pending.
-    if (oversized || code !== 0) throw new Error('remote-workspace: SSH helper failed')
-    return descriptor(JSON.parse(stdout) as unknown)
+    if (oversized || code !== 0) {
+      if (/Host key verification failed|REMOTE HOST IDENTIFICATION HAS CHANGED/u.test(stderr)) throw new Error('remote-workspace: SSH_HOST_KEY')
+      if (/Permission denied/u.test(stderr)) throw new Error('remote-workspace: SSH_AUTH')
+      if (/Could not resolve hostname/u.test(stderr)) throw new Error('remote-workspace: SSH_ALIAS')
+      if (/Connection refused|Connection timed out|No route to host/u.test(stderr)) throw new Error('remote-workspace: SSH_UNREACHABLE')
+      if (/not found|No such file|BAD_INPUT|INFO_FAILED/u.test(stderr)) throw new Error('remote-workspace: SSH_HELPER')
+      throw new Error('remote-workspace: SSH helper failed')
+    }
+    try { return JSON.parse(stdout) as unknown } catch {
+      throw new Error('remote-workspace: invalid helper response')
+    }
   } finally {
     clearTimeout(timeout)
     signal.removeEventListener('abort', stop)

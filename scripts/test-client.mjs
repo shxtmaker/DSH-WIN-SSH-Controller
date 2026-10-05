@@ -1,0 +1,96 @@
+/** Verify the packaged Client factory in a browser with deterministic local Host responses. */
+import assert from 'node:assert/strict'
+import { createServer } from 'node:http'
+import { readFile, mkdir } from 'node:fs/promises'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
+import { parseArgs } from 'node:util'
+import { root, workspace } from './runtime.mjs'
+const { values } = parseArgs({ options: { workspace: { type: 'string' } } })
+const target = workspace(values.workspace)
+const webRequire = createRequire(join(target, 'apps/web/package.json'))
+const reactRequire = createRequire(join(target, 'packages/client/ui-renderer/package.json'))
+const { chromium } = webRequire('playwright')
+const files = new Map([
+  ['/', join(root, 'tests/client-fixture.html')], ['/plugin.js', join(root, 'runtime/client/client.js')],
+  ['/react.js', join(dirname(reactRequire.resolve('react/package.json')), 'umd/react.development.js')],
+  ['/react-dom.js', join(dirname(webRequire.resolve('react-dom/package.json')), 'umd/react-dom.development.js')],
+])
+const server = createServer(async (req, res) => {
+  const file = files.get(req.url)
+  if (!file) { res.writeHead(404); res.end(); return }
+  try { res.setHeader('content-type', req.url === '/' ? 'text/html; charset=utf-8' : 'text/javascript'); res.end(await readFile(file)) }
+  catch { res.writeHead(500); res.end() }
+})
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+let browser
+try {
+  try { browser = await chromium.launch({ headless: true }) }
+  catch { browser = await chromium.launch({ channel: 'msedge', headless: true }) }
+  const page = await browser.newPage({ viewport: { width: 1080, height: 1000 } })
+  const errors = []
+  page.on('pageerror', error => errors.push(error.message))
+  const origin = `http://127.0.0.1:${server.address().port}`
+  await page.goto(origin)
+  const alias = page.getByPlaceholder('选择或输入，如 harness-lan')
+  await alias.waitFor()
+  await page.waitForFunction(() => document.querySelector('input[list]')?.value === 'harness-lan')
+  assert.equal(await page.locator('input:visible').count(), 1)
+  const help = page.getByRole('button', { name: '查看帮助: SSH 别名', exact: true })
+  assert.equal(await help.getAttribute('aria-expanded'), 'false')
+  await help.click()
+  assert.equal(await help.getAttribute('aria-expanded'), 'true')
+  assert.match(await page.getByRole('note').filter({ hasText: '用户名、地址、密钥和跳板机' }).innerText(), /无需重复填写/u)
+  await help.press('Escape')
+  assert.equal(await help.getAttribute('aria-expanded'), 'false')
+  const shape = await help.evaluate(element => ({ radius: getComputedStyle(element).borderRadius, width: element.clientWidth, height: element.clientHeight }))
+  assert.equal(shape.radius, '50%'); assert.equal(shape.width, shape.height)
+  await page.getByText('高级选项', { exact: true }).click()
+  assert.equal(await page.locator('input:visible').count(), 2)
+  await page.locator('input:visible').nth(1).fill('team')
+  await page.getByText('高级选项', { exact: true }).click()
+  await mkdir(join(root, 'out/verification'), { recursive: true })
+  await page.screenshot({ path: join(root, 'out/verification/quick-connection.png'), fullPage: true })
+  await help.click()
+  await page.screenshot({ path: join(root, 'out/verification/click-help.png'), fullPage: true })
+  await help.click()
+  await page.evaluate(() => { window.fixture.delay = 150 })
+  await page.getByRole('button', { name: '一键连接', exact: true }).dblclick()
+  await page.getByRole('heading', { name: '连接状态: 已连接', exact: true }).waitFor()
+  assert.equal(await page.evaluate(() => window.fixture.calls), 1)
+  assert.equal(await page.evaluate(() => window.fixture.opens), 0)
+  assert.equal(await page.locator('select').first().inputValue(), 'auto-id')
+  assert.equal(await page.evaluate(() => window.fixture.targets[0].instanceKey), 'team')
+  await page.getByRole('button', { name: '打开远程工作区', exact: true }).click()
+  await page.getByRole('alert').filter({ hasText: '请先选择一个本机会话' }).waitFor()
+  await page.evaluate(() => { window.fixture.session = true })
+  await page.getByRole('button', { name: '打开远程工作区', exact: true }).click()
+  await page.waitForFunction(() => window.fixture.opens === 1)
+  await page.screenshot({ path: join(root, 'out/verification/connected.png'), fullPage: true })
+  await page.getByRole('button', { name: '断开', exact: true }).click()
+  await page.getByText('手动配置目标', { exact: true }).click()
+  await page.getByRole('button', { name: '查看帮助: 远端 Web 端口', exact: true }).click()
+  await page.getByRole('note').filter({ hasText: '此处不是 SSH 端口或 frp 端口' }).waitFor()
+  await page.getByText('手动配置目标', { exact: true }).click()
+  await page.getByRole('button', { name: '一键连接', exact: true }).click()
+  await page.waitForFunction(() => window.fixture.opens === 2)
+  await page.getByRole('button', { name: '断开', exact: true }).click()
+  await page.evaluate(() => { window.fixture.failure = 'remote-workspace: SSH_HOST_KEY' })
+  await page.getByRole('button', { name: '一键连接', exact: true }).click()
+  await page.getByRole('alert').filter({ hasText: 'SSH 主机密钥尚未确认或已变化' }).waitFor()
+  await page.evaluate(() => { window.fixture.failure = ''; window.fixture.failAliases = true })
+  await page.getByRole('button', { name: '刷新', exact: true }).click()
+  await page.getByRole('status').filter({ hasText: '暂时无法读取 SSH 别名' }).waitFor()
+  await alias.fill('manual-alias')
+  await page.getByRole('button', { name: '一键连接', exact: true }).click()
+  await page.waitForFunction(() => window.fixture.opens === 3)
+  await page.getByRole('button', { name: '断开', exact: true }).click()
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.screenshot({ path: join(root, 'out/verification/narrow-connection.png'), fullPage: true })
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
+  assert.deepEqual(errors, [])
+  console.log('PASS packaged Client: minimal input, circular click/keyboard help, duplicate suppression, auto selection/open, no-session hint, actionable SSH errors, manual alias fallback and narrow layout')
+} finally {
+  await browser?.close()
+  await new Promise(resolve => server.close(resolve))
+}

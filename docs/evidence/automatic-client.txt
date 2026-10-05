@@ -1,0 +1,1 @@
+PASS packaged Client: minimal input, circular click/keyboard help, duplicate suppression, auto selection/open, no-session hint, actionable SSH errors, manual alias fallback and narrow layout

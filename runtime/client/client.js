@@ -4133,6 +4133,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"generation": number().readonly(),
 			"reason": string().readonly().optional()
 		});
+		let _harness_remote_controller_remoteWorkspace_listAliases_result$schema$value;
+		const _harness_remote_controller_remoteWorkspace_listAliases_result$schema = () => _harness_remote_controller_remoteWorkspace_listAliases_result$schema$value ??= array(string());
 		let _harness_remote_controller_remoteWorkspace_listTargets_result$schema$value;
 		const _harness_remote_controller_remoteWorkspace_listTargets_result$schema = () => _harness_remote_controller_remoteWorkspace_listTargets_result$schema$value ??= array(object({
 			"id": string().readonly(),
@@ -4152,6 +4154,38 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"sshAlias": string().readonly()
 			})).readonly()
 		}));
+		let _harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema$value;
+		const _harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema = () => _harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema$value ??= string();
+		let _harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema$value;
+		const _harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema = () => _harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema$value ??= string();
+		let _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema$value;
+		const _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema = () => _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema$value ??= string();
+		let _harness_remote_controller_remoteWorkspace_quickConnect_result$schema$value;
+		const _harness_remote_controller_remoteWorkspace_quickConnect_result$schema = () => _harness_remote_controller_remoteWorkspace_quickConnect_result$schema$value ??= object({
+			"phase": union([
+				literal("error"),
+				literal("idle"),
+				literal("ssh-auth"),
+				literal("discovering"),
+				literal("forwarding"),
+				literal("authenticating"),
+				literal("app-ready"),
+				literal("disconnected"),
+				literal("reconnecting"),
+				literal("identity-mismatch"),
+				literal("auth-required")
+			]).readonly(),
+			"connectionId": union([_undefined(), string()]).readonly().optional(),
+			"targetId": string().readonly().optional(),
+			"endpointId": string().readonly().optional(),
+			"hostName": string().readonly().optional(),
+			"instanceId": string().readonly().optional(),
+			"bootId": string().readonly().optional(),
+			"profile": string().readonly().optional(),
+			"workspaceHint": string().readonly().optional(),
+			"generation": number().readonly(),
+			"reason": string().readonly().optional()
+		});
 		let _harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema$value;
 		const _harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema = () => _harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema$value ??= object({
 			"id": string().readonly(),
@@ -4264,7 +4298,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/remote/controller/src/index.ts",
-						"line": 64,
+						"line": 81,
 						"column": 3
 					}
 				},
@@ -4291,7 +4325,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/remote/controller/src/index.ts",
-						"line": 89,
+						"line": 106,
 						"column": 3
 					}
 				},
@@ -4318,7 +4352,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/remote/controller/src/index.ts",
-						"line": 81,
+						"line": 98,
 						"column": 3
 					}
 				},
@@ -4336,7 +4370,25 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/remote/controller/src/index.ts",
-						"line": 73,
+						"line": 90,
+						"column": 3
+					}
+				},
+				{
+					id: "dsh-win-ssh-controller-source#remoteWorkspace/listAliases",
+					service: "remoteWorkspace",
+					namespace: "remoteWorkspace",
+					method: "listAliases",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "dsh-win-ssh-controller-source#remoteWorkspace/listAliases:result",
+						create: _harness_remote_controller_remoteWorkspace_listAliases_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/remote/controller/src/index.ts",
+						"line": 53,
 						"column": 3
 					}
 				},
@@ -4354,7 +4406,56 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/remote/controller/src/index.ts",
-						"line": 46,
+						"line": 47,
+						"column": 3
+					}
+				},
+				{
+					id: "dsh-win-ssh-controller-source#remoteWorkspace/quickConnect",
+					service: "remoteWorkspace",
+					namespace: "remoteWorkspace",
+					method: "quickConnect",
+					invocation: { kind: "direct" },
+					parameters: [
+						{
+							name: "sshAlias",
+							wire: "sshAlias",
+							source: "json",
+							codec: {
+								mode: "strict",
+								typeSymbol: "dsh-win-ssh-controller-source#remoteWorkspace/quickConnect:sshAlias",
+								create: _harness_remote_controller_remoteWorkspace_quickConnect_parameter_0$schema
+							}
+						},
+						{
+							name: "instanceKey",
+							wire: "instanceKey",
+							source: "json",
+							codec: {
+								mode: "strict",
+								typeSymbol: "dsh-win-ssh-controller-source#remoteWorkspace/quickConnect:instanceKey",
+								create: _harness_remote_controller_remoteWorkspace_quickConnect_parameter_1$schema
+							}
+						},
+						{
+							name: "operationId",
+							wire: "operationId",
+							source: "json",
+							codec: {
+								mode: "strict",
+								typeSymbol: "dsh-win-ssh-controller-source#remoteWorkspace/quickConnect:operationId",
+								create: _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema
+							}
+						}
+					],
+					result: {
+						mode: "strict",
+						typeSymbol: "dsh-win-ssh-controller-source/types#RemoteSnapshot",
+						create: _harness_remote_controller_remoteWorkspace_quickConnect_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/remote/controller/src/index.ts",
+						"line": 61,
 						"column": 3
 					}
 				},
@@ -4381,7 +4482,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/remote/controller/src/index.ts",
-						"line": 54,
+						"line": 71,
 						"column": 3
 					}
 				},
@@ -4401,7 +4502,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/remote/controller/src/index.ts",
-						"line": 97,
+						"line": 114,
 						"column": 3
 					}
 				}
@@ -4435,6 +4536,97 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			tcp: "",
 			stcp: ""
 		};
+		const PHASES = {
+			idle: "phaseIdle",
+			"ssh-auth": "phaseSsh",
+			discovering: "phaseDiscovering",
+			forwarding: "phaseForwarding",
+			authenticating: "phaseAuthenticating",
+			"app-ready": "phaseReady",
+			disconnected: "phaseDisconnected",
+			reconnecting: "phaseReconnecting",
+			"identity-mismatch": "phaseMismatch",
+			"auth-required": "phaseAuthRequired",
+			error: "phaseError"
+		};
+		const ERRORS = {
+			"remote-workspace: SSH_HOST_KEY": "errorHostKey",
+			"remote-workspace: SSH_AUTH": "errorAuth",
+			"remote-workspace: SSH_ALIAS": "errorAlias",
+			"remote-workspace: SSH_UNREACHABLE": "errorUnreachable",
+			"remote-workspace: SSH_HELPER": "errorHelper",
+			"remote-workspace: NO_SESSION": "noSession"
+		};
+		const INPUT = {
+			padding: 9,
+			borderRadius: 6,
+			border: "1px solid #888",
+			background: "transparent",
+			color: "inherit",
+			minWidth: 0
+		};
+		const BUTTON = {
+			padding: "8px 14px",
+			borderRadius: 6,
+			border: "1px solid #888",
+			cursor: "pointer"
+		};
+		function Help({ label, text, help }) {
+			const [shown, setShown] = (0, react.useState)(false);
+			const id = (0, react.useId)();
+			return (0, react_jsx_runtime.jsxs)("span", {
+				style: { display: "block" },
+				children: [(0, react_jsx_runtime.jsxs)("span", {
+					style: {
+						display: "inline-flex",
+						alignItems: "center",
+						gap: 7
+					},
+					children: [label, (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						"aria-label": `${help}: ${label}`,
+						"aria-expanded": shown,
+						"aria-controls": id,
+						onClick: (event) => {
+							event.preventDefault();
+							setShown(!shown);
+						},
+						onKeyDown: (event) => {
+							if (event.key === "Escape") {
+								event.preventDefault();
+								setShown(false);
+							}
+						},
+						style: {
+							width: 19,
+							height: 19,
+							padding: 0,
+							lineHeight: "17px",
+							borderRadius: "50%",
+							border: "1px solid currentColor",
+							color: "inherit",
+							background: "transparent",
+							cursor: "pointer",
+							fontSize: 12,
+							fontWeight: 600
+						},
+						children: "?"
+					})]
+				}), (0, react_jsx_runtime.jsx)("span", {
+					id,
+					role: "note",
+					hidden: !shown,
+					style: {
+						display: shown ? "block" : void 0,
+						fontSize: 13,
+						fontWeight: 400,
+						lineHeight: 1.6,
+						marginTop: shown ? 8 : 0
+					},
+					children: text
+				})]
+			});
+		}
 		function fromTarget(target) {
 			return {
 				id: target.id,
@@ -4478,21 +4670,48 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			};
 		}
 		/** Render target configuration and one-connection actions in the main pane. */
-		function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, connect, disconnect, open, fail }) {
+		function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quickConnect, connect, disconnect, open }) {
 			const state = (0, react.useSyncExternalStore)(subscribe, getSnapshot, getSnapshot);
-			const [selected, setSelected] = (0, react.useState)("");
+			const [selected, setSelected] = (0, react.useState)(void 0);
 			const [form, setForm] = (0, react.useState)(EMPTY);
 			const [endpoint, setEndpoint] = (0, react.useState)("");
+			const [alias, setAlias] = (0, react.useState)("");
+			const [instanceKey, setInstanceKey] = (0, react.useState)("default");
+			const aliasList = (0, react.useId)();
 			(0, react.useEffect)(() => {
 				refresh();
 			}, [refresh]);
+			(0, react.useEffect)(() => {
+				if (state.aliases.length === 1) setAlias((current) => current || state.aliases[0] || "");
+			}, [state.aliases]);
+			(0, react.useEffect)(() => {
+				const id = state.connection.targetId;
+				const target = state.targets.find((item) => item.id === id);
+				if (target !== void 0) {
+					setSelected(target.id);
+					setForm(fromTarget(target));
+					setEndpoint(state.connection.endpointId ?? target.endpoints[0]?.id ?? "");
+				}
+			}, [state.connection.targetId, state.targets]);
+			(0, react.useEffect)(() => {
+				if (selected === void 0 && state.targets.length > 0) {
+					const target = state.targets[0];
+					setSelected(target.id);
+					setForm(fromTarget(target));
+					setEndpoint(target.endpoints[0]?.id ?? "");
+				}
+			}, [selected, state.targets]);
 			const endpoints = state.targets.find((item) => item.id === selected)?.endpoints ?? toTarget(form).endpoints;
-			const field = (key, label) => (0, react_jsx_runtime.jsxs)("label", {
+			const field = (key, label, help) => (0, react_jsx_runtime.jsxs)("label", {
 				style: {
 					display: "grid",
-					gap: 4
+					gap: 6
 				},
-				children: [label, (0, react_jsx_runtime.jsx)("input", {
+				children: [(0, react_jsx_runtime.jsx)(Help, {
+					label,
+					text: t(help),
+					help: t("help")
+				}), (0, react_jsx_runtime.jsx)("input", {
 					value: form[key],
 					onChange: (event) => {
 						setForm({
@@ -4500,28 +4719,135 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							[key]: event.target.value
 						});
 					},
-					style: {
-						padding: 7,
-						borderRadius: 6,
-						border: "1px solid #888"
-					}
+					disabled: state.busy || !!state.connection.connectionId,
+					style: INPUT
 				})]
 			}, key);
 			return (0, react_jsx_runtime.jsxs)("section", {
 				style: {
 					padding: 24,
 					maxWidth: 780,
+					width: "100%",
+					boxSizing: "border-box",
 					display: "grid",
+					alignContent: "start",
 					gap: 20,
 					overflowY: "auto"
 				},
 				children: [
-					(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsx)("h1", { children: t("title") }), (0, react_jsx_runtime.jsx)("p", { children: t("intro") })] }),
-					(0, react_jsx_runtime.jsxs)("label", { children: [
-						t("saved"),
-						" ",
-						(0, react_jsx_runtime.jsxs)("select", {
-							value: selected,
+					(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsx)("h1", { children: (0, react_jsx_runtime.jsx)(Help, {
+						label: t("title"),
+						text: t("helpTitle"),
+						help: t("help")
+					}) }), (0, react_jsx_runtime.jsx)("p", { children: t("intro") })] }),
+					(0, react_jsx_runtime.jsxs)("section", {
+						style: {
+							display: "grid",
+							gap: 12,
+							padding: 18,
+							border: "1px solid #888",
+							borderRadius: 8
+						},
+						children: [(0, react_jsx_runtime.jsx)("h2", {
+							style: {
+								margin: 0,
+								fontSize: 18
+							},
+							children: t("quick")
+						}), (0, react_jsx_runtime.jsxs)("form", {
+							onSubmit: (event) => {
+								event.preventDefault();
+								if (!state.busy && !state.connection.connectionId && alias.trim()) quickConnect(alias, instanceKey);
+							},
+							style: {
+								display: "grid",
+								gap: 12
+							},
+							children: [
+								(0, react_jsx_runtime.jsxs)("label", {
+									style: {
+										display: "grid",
+										gap: 6
+									},
+									children: [
+										(0, react_jsx_runtime.jsx)(Help, {
+											label: t("alias"),
+											text: t("helpAlias"),
+											help: t("help")
+										}),
+										(0, react_jsx_runtime.jsx)("input", {
+											list: aliasList,
+											value: alias,
+											required: true,
+											placeholder: t("aliasPlaceholder"),
+											autoComplete: "off",
+											disabled: state.busy || !!state.connection.connectionId,
+											onChange: (event) => {
+												setAlias(event.target.value);
+											},
+											style: INPUT
+										}),
+										(0, react_jsx_runtime.jsx)("datalist", {
+											id: aliasList,
+											children: state.aliases.map((item) => (0, react_jsx_runtime.jsx)("option", { value: item }, item))
+										})
+									]
+								}),
+								(0, react_jsx_runtime.jsxs)("details", { children: [(0, react_jsx_runtime.jsx)("summary", {
+									style: { cursor: "pointer" },
+									children: t("advanced")
+								}), (0, react_jsx_runtime.jsxs)("label", {
+									style: {
+										display: "grid",
+										gap: 6,
+										marginTop: 12
+									},
+									children: [(0, react_jsx_runtime.jsx)(Help, {
+										label: t("instanceKey"),
+										text: t("helpInstanceKey"),
+										help: t("help")
+									}), (0, react_jsx_runtime.jsx)("input", {
+										value: instanceKey,
+										required: true,
+										disabled: state.busy || !!state.connection.connectionId,
+										onChange: (event) => {
+											setInstanceKey(event.target.value);
+										},
+										style: INPUT
+									})]
+								})] }),
+								(0, react_jsx_runtime.jsx)("p", {
+									style: {
+										margin: 0,
+										fontSize: 13
+									},
+									children: t("quickHint")
+								}),
+								state.aliasWarning && (0, react_jsx_runtime.jsx)("p", {
+									role: "status",
+									children: t("aliasWarning")
+								}),
+								(0, react_jsx_runtime.jsx)("button", {
+									type: "submit",
+									disabled: state.busy || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId,
+									style: {
+										...BUTTON,
+										justifySelf: "start"
+									},
+									children: state.busy ? t("connecting") : t("quickConnect")
+								})
+							]
+						})]
+					}),
+					(0, react_jsx_runtime.jsxs)("label", {
+						style: {
+							display: "grid",
+							gap: 6
+						},
+						children: [t("saved"), (0, react_jsx_runtime.jsxs)("select", {
+							value: selected ?? "",
+							disabled: state.busy || !!state.connection.connectionId,
+							style: INPUT,
 							onChange: (event) => {
 								const value = event.target.value;
 								setSelected(value);
@@ -4536,44 +4862,41 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 								value: target.id,
 								children: target.name
 							}, target.id))]
-						})
-					] }),
-					(0, react_jsx_runtime.jsxs)("div", {
-						style: {
-							display: "grid",
-							gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-							gap: 12
-						},
-						children: [
-							field("id", t("targetId")),
-							field("name", t("name")),
-							field("instanceKey", t("instanceKey")),
-							field("instanceId", t("instanceId")),
-							field("profile", t("profile")),
-							field("workspaceHint", t("workspace")),
-							field("remotePort", t("port")),
-							field("lan", t("lan")),
-							field("tcp", t("tcp")),
-							field("stcp", t("stcp"))
-						]
+						})]
 					}),
-					(0, react_jsx_runtime.jsxs)("div", { children: [
+					(0, react_jsx_runtime.jsxs)("details", { children: [
+						(0, react_jsx_runtime.jsx)("summary", {
+							style: { cursor: "pointer" },
+							children: t("manual")
+						}),
+						(0, react_jsx_runtime.jsxs)("div", {
+							style: {
+								display: "grid",
+								gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
+								gap: 12,
+								margin: "14px 0"
+							},
+							children: [
+								field("id", t("targetId"), "helpTargetId"),
+								field("name", t("name"), "helpName"),
+								field("instanceKey", t("instanceKey"), "helpInstanceKey"),
+								field("instanceId", t("instanceId"), "helpIdentity"),
+								field("profile", t("profile"), "helpProfile"),
+								field("workspaceHint", t("workspace"), "helpWorkspace"),
+								field("remotePort", t("port"), "helpPort"),
+								field("lan", t("lan"), "helpRoutes"),
+								field("tcp", t("tcp"), "helpRoutes"),
+								field("stcp", t("stcp"), "helpRoutes")
+							]
+						}),
 						(0, react_jsx_runtime.jsx)("button", {
 							type: "button",
-							disabled: state.busy,
+							style: BUTTON,
+							disabled: state.busy || !!state.connection.connectionId,
 							onClick: () => {
 								save(toTarget(form));
 							},
 							children: t("save")
-						}),
-						" ",
-						(0, react_jsx_runtime.jsx)("button", {
-							type: "button",
-							disabled: state.busy,
-							onClick: () => {
-								refresh();
-							},
-							children: t("refresh")
 						})
 					] }),
 					(0, react_jsx_runtime.jsxs)("section", {
@@ -4584,11 +4907,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							borderRadius: 8
 						},
 						children: [
-							(0, react_jsx_runtime.jsxs)("h2", { children: [
-								t("status"),
-								": ",
-								state.connection.phase
-							] }),
+							(0, react_jsx_runtime.jsxs)("h2", {
+								style: { fontSize: 18 },
+								children: [
+									t("status"),
+									": ",
+									t(PHASES[state.connection.phase])
+								]
+							}),
 							(0, react_jsx_runtime.jsxs)("p", { children: [
 								state.connection.hostName ?? t("inactive"),
 								" · ",
@@ -4596,40 +4922,44 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 								" · ",
 								state.connection.workspaceHint ?? "—"
 							] }),
-							state.connection.reason && (0, react_jsx_runtime.jsx)("p", { children: state.connection.reason }),
-							(0, react_jsx_runtime.jsxs)("label", { children: [
-								t("endpoint"),
-								" ",
-								(0, react_jsx_runtime.jsxs)("select", {
-									value: endpoint,
-									onChange: (event) => {
-										setEndpoint(event.target.value);
-									},
-									children: [(0, react_jsx_runtime.jsx)("option", {
-										value: "",
-										children: "—"
-									}), endpoints.map((item) => (0, react_jsx_runtime.jsxs)("option", {
-										value: item.id,
-										children: [
-											item.kind,
-											": ",
-											item.sshAlias
-										]
-									}, item.id))]
-								})
-							] }),
+							state.connection.reason && (0, react_jsx_runtime.jsx)("p", { children: ERRORS[state.connection.reason] ? t(ERRORS[state.connection.reason]) : state.connection.reason }),
+							(0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)(Help, {
+								label: t("endpoint"),
+								text: t("helpRoutes"),
+								help: t("help")
+							}), (0, react_jsx_runtime.jsxs)("select", {
+								value: endpoint,
+								disabled: state.busy || !!state.connection.connectionId,
+								style: INPUT,
+								onChange: (event) => {
+									setEndpoint(event.target.value);
+								},
+								children: [(0, react_jsx_runtime.jsx)("option", {
+									value: "",
+									children: "—"
+								}), endpoints.map((item) => (0, react_jsx_runtime.jsxs)("option", {
+									value: item.id,
+									children: [
+										item.kind,
+										": ",
+										item.sshAlias
+									]
+								}, item.id))]
+							})] }),
 							" ",
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
-								disabled: state.busy || !selected || !endpoint || state.connection.phase === "app-ready",
+								style: BUTTON,
+								disabled: state.busy || !selected || !endpoint || !!state.connection.connectionId,
 								onClick: () => {
-									connect(selected, endpoint);
+									if (selected) connect(selected, endpoint);
 								},
 								children: t("connect")
 							}),
 							" ",
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
+								style: BUTTON,
 								disabled: state.busy || !state.connection.connectionId,
 								onClick: () => {
 									disconnect();
@@ -4639,14 +4969,24 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							" ",
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
+								style: BUTTON,
 								disabled: state.busy || state.connection.phase !== "app-ready",
 								onClick: () => {
-									open().catch(() => {
-										fail(t("noSession"));
-									});
+									open();
 								},
 								children: t("open")
-							})
+							}),
+							" ",
+							(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								style: BUTTON,
+								disabled: state.busy,
+								onClick: () => {
+									refresh();
+								},
+								children: t("refresh")
+							}),
+							state.connection.phase === "app-ready" && (0, react_jsx_runtime.jsx)("p", { children: t("readyHint") })
 						]
 					}),
 					state.error && (0, react_jsx_runtime.jsxs)("p", {
@@ -4654,7 +4994,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						children: [
 							t("error"),
 							": ",
-							state.error
+							ERRORS[state.error] ? t(ERRORS[state.error]) : state.error
 						]
 					})
 				]
@@ -4691,7 +5031,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					" / ",
 					connection.workspaceHint,
 					" (",
-					connection.phase,
+					t(PHASES[connection.phase]),
 					")"
 				]
 			});
@@ -4702,7 +5042,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const zh = {
 			panel: "远程工作区",
 			title: "远程工作区",
-			intro: "连接你控制的 Linux Harness 实例。",
+			intro: "选择 SSH 别名，一键连接你的 Linux Harness。",
 			saved: "已保存目标",
 			newTarget: "新建目标",
 			targetId: "目标 ID",
@@ -4727,13 +5067,50 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			refresh: "刷新",
 			error: "操作失败",
 			location: "当前执行位置",
-			inactive: "未连接"
+			inactive: "未连接",
+			quick: "快速连接",
+			alias: "SSH 别名",
+			aliasPlaceholder: "选择或输入，如 harness-lan",
+			quickConnect: "一键连接",
+			connecting: "正在连接…",
+			advanced: "高级选项",
+			manual: "手动配置目标",
+			help: "查看帮助",
+			aliasWarning: "暂时无法读取 SSH 别名，可直接输入已配置的别名。",
+			quickHint: "实例身份、profile、工作区和端口将自动读取。",
+			readyHint: "连接已就绪。如页面未自动打开，请选择一个本机会话后点击“打开远程工作区”。",
+			helpTitle: "本机需要配置可无交互登录的 SSH 别名；远端需要安装 Agent 并配置 dsh-remote-info。连接完成后，有本机会话时自动打开远端页面。",
+			helpAlias: "这里填写本机 ~/.ssh/config 中 Host 后面的名称，如 harness-lan。用户名、地址、密钥和跳板机沿用 SSH 配置，无需重复填写。首次使用须通过可信渠道核对主机密钥并完成一次 SSH 登录。",
+			helpInstanceKey: "远端 Agent 默认使用 default，通常无需修改。只有远端配置了其他实例键时才需要填写对应值。",
+			helpIdentity: "一键连接会从已核对主机密钥的远端读取并保存实例身份。已有目标的身份变化时会停止连接；请确认远端重装或更换情况后再修改。",
+			helpProfile: "远端 Harness 的运行 profile，可自动读取。手动配置时须与 Agent 返回的值完全一致。",
+			helpWorkspace: "远端返回的工作区路径，仅用于显示执行位置，不会创建目录或修改远端工作区。",
+			helpPort: "远端 Harness 监听的 Web 端口，可自动读取。此处不是 SSH 端口或 frp 端口。",
+			helpRoutes: "仅填写实际使用的 SSH 别名。局域网、frp TCP 和 STCP 入口须指向同一个实例；连接入口默认选择第一个，可手动切换。",
+			helpTargetId: "本机保存记录的唯一 ID。一键连接自动生成；手动配置使用字母、数字、下划线或连字符。",
+			helpName: "用于区分已保存目标的名称。一键连接默认使用 SSH 别名。",
+			phaseIdle: "未连接",
+			phaseSsh: "正在验证 SSH",
+			phaseDiscovering: "正在读取实例信息",
+			phaseForwarding: "正在建立隧道",
+			phaseAuthenticating: "正在验证远端身份",
+			phaseReady: "已连接",
+			phaseDisconnected: "连接已断开",
+			phaseReconnecting: "正在重新连接",
+			phaseMismatch: "实例身份不匹配",
+			phaseAuthRequired: "需要重新认证",
+			phaseError: "连接失败",
+			errorHostKey: "SSH 主机密钥尚未确认或已变化。请通过可信渠道核对密钥，再在终端完成 SSH 登录。",
+			errorAuth: "SSH 无交互认证失败。请配置 SSH 密钥或 ssh-agent，并确认该别名可无交互登录。",
+			errorAlias: "无法解析 SSH 别名。请核对本机 SSH 配置中的 Host 名称。",
+			errorUnreachable: "无法访问 SSH 入口。请检查远端 SSH 服务、网络和所用 frp 通道。",
+			errorHelper: "无法读取远端实例。请确认已安装 Agent、配置实例键，并将 helperPath 指向正确的 dsh-remote-info。"
 		};
 		/** English fallback dictionary. */
 		const en = {
 			panel: "Remote Workspace",
 			title: "Remote Workspace",
-			intro: "Connect a Linux Harness instance you control.",
+			intro: "Choose an SSH alias to connect your Linux Harness.",
 			saved: "Saved target",
 			newTarget: "New target",
 			targetId: "Target ID",
@@ -4758,7 +5135,44 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			refresh: "Refresh",
 			error: "Operation failed",
 			location: "Execution location",
-			inactive: "Disconnected"
+			inactive: "Disconnected",
+			quick: "Quick connection",
+			alias: "SSH alias",
+			aliasPlaceholder: "Choose or enter, e.g. harness-lan",
+			quickConnect: "Connect now",
+			connecting: "Connecting…",
+			advanced: "Advanced options",
+			manual: "Manual target configuration",
+			help: "Show help",
+			aliasWarning: "SSH aliases could not be read. Enter an existing alias directly.",
+			quickHint: "Instance identity, profile, workspace and port are discovered automatically.",
+			readyHint: "Connected. If the page did not open automatically, select a local session and click Open remote workspace.",
+			helpTitle: "Configure a non-interactive SSH alias locally and install the Agent and dsh-remote-info remotely. A successful connection opens the remote page automatically when a local session is selected.",
+			helpAlias: "Enter the Host name from your local ~/.ssh/config, e.g. harness-lan. SSH supplies the user, address, key and jump host. Verify the host key through a trusted channel and log in once before first use.",
+			helpInstanceKey: "The Agent uses default unless configured otherwise. Change this only to match a custom remote instance key.",
+			helpIdentity: "Quick connection reads and pins the identity through host-key-verified SSH. Changed identities on saved targets stop the connection. Verify any remote reinstall or replacement before editing the pin.",
+			helpProfile: "Automatically read from the remote Harness. Manual configuration must exactly match the value returned by the Agent.",
+			helpWorkspace: "The remote workspace path describes the execution location. This field does not create directories or change the remote workspace.",
+			helpPort: "The remote Harness Web listening port is discovered automatically. This is not the SSH or frp port.",
+			helpRoutes: "Enter only aliases you use. LAN, frp TCP and STCP must reach the same instance. The first route is selected by default; you can switch it.",
+			helpTargetId: "A unique local record ID, generated by quick connection. Manual IDs accept letters, numbers, underscores and hyphens.",
+			helpName: "The name shown for saved targets. Quick connection uses the SSH alias.",
+			phaseIdle: "Disconnected",
+			phaseSsh: "Verifying SSH",
+			phaseDiscovering: "Reading instance information",
+			phaseForwarding: "Starting tunnel",
+			phaseAuthenticating: "Verifying remote identity",
+			phaseReady: "Connected",
+			phaseDisconnected: "Connection lost",
+			phaseReconnecting: "Reconnecting",
+			phaseMismatch: "Instance identity mismatch",
+			phaseAuthRequired: "Authentication required",
+			phaseError: "Connection failed",
+			errorHostKey: "The SSH host key is unconfirmed or has changed. Verify it through a trusted channel, then log in from a terminal.",
+			errorAuth: "Non-interactive SSH authentication failed. Configure an SSH key or ssh-agent and verify unattended login.",
+			errorAlias: "The SSH alias could not be resolved. Check the Host name in your local SSH configuration.",
+			errorUnreachable: "The SSH endpoint is unreachable. Check SSH, the network and any frp tunnel.",
+			errorHelper: "Remote information is unavailable. Check the Agent, instance key and helperPath for dsh-remote-info."
 		};
 		//#endregion
 		//#region lib/types/client/assembly.js
@@ -4771,6 +5185,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			ctx;
 			state = {
 				targets: [],
+				aliases: [],
 				connection: INITIAL,
 				busy: false
 			};
@@ -4796,6 +5211,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				});
 			};
 			async action(run) {
+				if (this.state.busy) return;
 				this.publish({
 					...this.state,
 					busy: true,
@@ -4822,6 +5238,26 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					targets: targets.value,
 					connection: connection.value
 				});
+				const aliases = await this.ctx.remote.remoteWorkspace.listAliases();
+				this.publish({
+					...this.state,
+					aliases: aliases.ok ? aliases.value : [],
+					aliasWarning: aliases.ok ? void 0 : true
+				});
+			});
+			quickConnect = async (sshAlias, instanceKey) => this.action(async () => {
+				const result = await this.ctx.remote.remoteWorkspace.quickConnect(sshAlias.trim(), instanceKey.trim(), randomUUID());
+				const targets = await this.ctx.remote.remoteWorkspace.listTargets();
+				if (targets.ok) this.publish({
+					...this.state,
+					targets: targets.value
+				});
+				if (!result.ok) throw result.error;
+				this.publish({
+					...this.state,
+					connection: result.value
+				});
+				if (this.ctx.sidebarRight.mounted.getSnapshot() !== void 0) await this.openReady();
 			});
 			save = async (target) => this.action(async () => {
 				const result = await this.ctx.remote.remoteWorkspace.saveTarget(target);
@@ -4838,6 +5274,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					...this.state,
 					connection: result.value
 				});
+				if (this.ctx.sidebarRight.mounted.getSnapshot() !== void 0) await this.openReady();
 			});
 			disconnect = async () => this.action(async () => {
 				const id = this.state.connection.connectionId;
@@ -4849,15 +5286,16 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					connection: result.value
 				});
 			});
-			open = async () => this.action(async () => {
+			open = async () => this.action(() => this.openReady());
+			async openReady() {
+				if (this.ctx.sidebarRight.mounted.getSnapshot() === void 0) throw new Error("remote-workspace: NO_SESSION");
 				const id = this.state.connection.connectionId;
 				if (id === void 0) throw new Error("remote-workspace: no active connection");
 				const result = await this.ctx.remote.remoteWorkspace.createOpenTicket(id);
 				if (!result.ok) throw result.error;
 				this.ctx.layout.selectPanel(null);
-				if (this.ctx.sidebarRight.mounted.getSnapshot() === void 0) throw new Error("select a local session");
 				this.ctx.sidebarRight.openTab("browser", { params: { url: result.value } });
-			});
+			}
 			observe(connection) {
 				this.publish({
 					...this.state,

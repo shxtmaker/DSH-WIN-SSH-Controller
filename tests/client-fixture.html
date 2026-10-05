@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>远程工作区</title>
+<style>body{margin:0;background:#f5f6f8;color:#202735;font:14px system-ui,sans-serif}button,input,select{font:inherit}button:disabled{cursor:default;opacity:.5}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #356bc6;outline-offset:3px}h1{font-size:26px;margin:0 0 12px}p{line-height:1.6}section{box-sizing:border-box}#app>section{margin:auto;max-width:820px;background:white;min-height:100vh}</style>
+<div id="app"></div>
+<script src="/react.js"></script><script src="/react-dom.js"></script>
+<script>
+window.dshDesktop = {};
+window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
+</script>
+<script src="/plugin.js"></script>
+<script>
+(async () => {
+  const ui = { aliases: ['harness-lan'], targets: [], state: { phase: 'idle', generation: 0 }, calls: 0,
+    opens: 0, session: false, failure: '', failAliases: false, delay: 0 };
+  window.fixture = ui;
+  const ok = value => ({ ok: true, value });
+  const slots = new Map(); let dictionary;
+  const service = {
+    async listTargets() { return ok(ui.targets) }, async getState() { return ok(ui.state) },
+    async listAliases() { return ui.failAliases ? { ok: false, error: new Error('unreadable') } : ok(ui.aliases) },
+    async saveTarget(target) { ui.targets = [target]; return ok(ui.targets) },
+    async quickConnect(alias, key) {
+      ui.calls++;
+      if (ui.delay) await new Promise(resolve => setTimeout(resolve, ui.delay));
+      if (ui.failure) return { ok: false, error: new Error(ui.failure) };
+      const target = { id: 'auto-id', name: alias, instanceKey: key, instanceId: 'instance-a', profile: 'web',
+        workspaceHint: '/srv/project', remotePort: 4321, endpoints: [{ id: 'ssh', kind: 'lan', sshAlias: alias }] };
+      ui.targets = [target];
+      ui.state = { phase: 'app-ready', generation: 1, connectionId: 'connection-a', targetId: target.id,
+        endpointId: 'ssh', hostName: alias, instanceId: target.instanceId, profile: target.profile, workspaceHint: target.workspaceHint };
+      return ok(ui.state);
+    },
+    async connect() { return ok({ ...ui.state, phase: 'app-ready', connectionId: 'connection-a' }) },
+    async disconnect() { ui.state = { phase: 'idle', generation: 2 }; return ok(ui.state) },
+    async createOpenTicket() { return ok('http://127.0.0.1/example-ticket') },
+  };
+  const ctx = {
+    remote: { remoteWorkspace: service, async $mount() { return async () => {} },
+      $stream() { return { async *[Symbol.asyncIterator]() {}, dispose() {} } } },
+    inject(_names, callback) { callback(ctx) }, effect(callback) { callback() },
+    locale: { register(_namespace, dictionaries) { dictionary = dictionaries.zh }, bind() { return key => dictionary[key] } },
+    slots: { inject(_name, callback) { callback() }, register(props, Component) { slots.set(props.name, { props, Component }) } },
+    sidebarRight: { mounted: { getSnapshot() { return ui.session ? {} : undefined } }, openTab() { ui.opens++ } },
+    layout: { selectPanel() {} },
+  };
+  const jsx = (type, props, key) => React.createElement(type, key === undefined ? props : { ...props, key });
+  const client = window.clientModule.factory(name => name === 'react' ? React : name === 'react/jsx-runtime' ? { jsx, jsxs: jsx, Fragment: React.Fragment } : (() => { throw Error(name) })());
+  await client.apply(ctx);
+  const { props, Component } = slots.get('main');
+  const face = props.inject();
+  ReactDOM.createRoot(document.getElementById('app')).render(React.createElement(Component, { ...face, t: key => dictionary[key] }));
+})();
+</script></html>

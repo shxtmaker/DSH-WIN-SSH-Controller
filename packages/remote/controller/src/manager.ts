@@ -2,7 +2,7 @@
 import { randomUUID } from 'node:crypto'
 import { authenticate, probeEventStream, readIdentity } from './auth.ts'
 import { AuthProxy } from './proxy.ts'
-import { discover, forward, type OwnedForward } from './ssh.ts'
+import { discover, discoverTarget, forward, type OwnedForward } from './ssh.ts'
 import { TargetStore } from './store.ts'
 import type { RemoteEndpoint, RemoteSnapshot, RemoteTarget } from './types.ts'
 
@@ -24,6 +24,9 @@ interface ActiveConnection {
 export class ConnectionManager {
   private current: ActiveConnection | undefined
   private connecting = false
+  private pending: AbortController | undefined
+  private disposed = false
+  private settlement: Promise<void> | undefined
   private state: RemoteSnapshot = { phase: 'idle', generation: 0 }
   private readonly listeners = new Set<(state: RemoteSnapshot) => void>()
 
@@ -47,27 +50,83 @@ export class ConnectionManager {
    * @returns authenticated connection snapshot.
    */
   async connect(targetId: string, endpointId: string, operationId: string): Promise<RemoteSnapshot> {
-    if (!/^[A-Za-z0-9_-]{1,64}$/u.test(operationId)) throw new Error('remote-workspace: invalid operation id')
-    if (this.current !== undefined) {
-      if (this.current.operationId === operationId) return this.state
-      throw new Error('remote-workspace: disconnect the active target first')
-    }
-    if (this.connecting) throw new Error('remote-workspace: a connection is already starting')
+    this.checkAvailable(operationId)
+    if (this.current?.operationId === operationId) return this.state
     this.connecting = true
-    let target: RemoteTarget, endpoint: RemoteEndpoint
+    const settled = Promise.withResolvers<void>()
+    this.settlement = settled.promise
     try {
       const found = (await this.targets.list()).find(item => item.id === targetId)
       const route = found?.endpoints.find(item => item.id === endpointId)
       if (found === undefined || route === undefined) throw new Error('remote-workspace: unknown target or endpoint')
-      target = found
-      endpoint = route
-    } finally { this.connecting = false }
+      return await this.attach(found, route, operationId)
+    } finally { this.connecting = false; settled.resolve() }
+  }
+
+  /** Read public identity, pin new targets, and attach using only an SSH alias.
+   * @param sshAlias - reviewed OpenSSH alias. @param instanceKey - Companion key, normally default.
+   * @param operationId - caller operation id.
+   * @returns authenticated attachment state; existing identity pins are never replaced.
+   */
+  async quickConnect(sshAlias: string, instanceKey: string, operationId: string): Promise<RemoteSnapshot> {
+    this.checkAvailable(operationId)
+    if (this.current?.operationId === operationId) return this.state
+    this.connecting = true
+    const settled = Promise.withResolvers<void>()
+    this.settlement = settled.promise
+    const lifetime = new AbortController()
+    this.pending = lifetime
+    this.publish({ phase: 'discovering', hostName: sshAlias, generation: this.state.generation + 1 })
+    try {
+      if (!/^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/u.test(sshAlias) || !/^[A-Za-z0-9_-]{1,64}$/u.test(instanceKey)) {
+        throw new Error('remote-workspace: invalid SSH discovery configuration')
+      }
+      const targets = await this.targets.list()
+      lifetime.signal.throwIfAborted()
+      const existing = targets.find(item => item.instanceKey === instanceKey && item.endpoints.some(route => route.sshAlias === sshAlias))
+      if (existing !== undefined) {
+        const endpoint = existing.endpoints.find(route => route.sshAlias === sshAlias)
+        if (endpoint === undefined) throw new Error('remote-workspace: unknown endpoint')
+        return await this.attach(existing, endpoint, operationId, lifetime)
+      }
+      const info = await discoverTarget(sshAlias, instanceKey, this.helperPath, lifetime.signal)
+      lifetime.signal.throwIfAborted()
+      if (info.instanceKey !== instanceKey) throw new IdentityMismatch('remote-workspace: configured instance identity mismatch')
+      const target: RemoteTarget = { id: randomUUID(), name: sshAlias, instanceKey, instanceId: info.instanceId,
+        profile: info.profile, workspaceHint: info.workspaceHint, remotePort: info.port,
+        endpoints: [{ id: 'ssh', kind: 'lan', sshAlias }] }
+      await this.targets.save(target)
+      lifetime.signal.throwIfAborted()
+      return await this.attach(target, target.endpoints[0]!, operationId, lifetime)
+    } catch (error) {
+      if (!this.disposed && !lifetime.signal.aborted) this.publish({ ...this.state, connectionId: undefined, phase: this.failurePhase(error), reason: this.failureReason(error) })
+      throw error
+    } finally {
+      if (this.pending === lifetime) this.pending = undefined
+      this.connecting = false
+      settled.resolve()
+    }
+  }
+
+  private checkAvailable(operationId: string): void {
+    if (this.disposed) throw new Error('remote-workspace: controller disposed')
+    if (!/^[A-Za-z0-9_-]{1,64}$/u.test(operationId)) throw new Error('remote-workspace: invalid operation id')
+    if (this.current !== undefined) {
+      if (this.current.operationId === operationId) return
+      throw new Error('remote-workspace: disconnect the active target first')
+    }
+    if (this.connecting) throw new Error('remote-workspace: a connection is already starting')
+  }
+
+  private async attach(target: RemoteTarget, endpoint: RemoteEndpoint, operationId: string, lifetime = new AbortController()): Promise<RemoteSnapshot> {
+    lifetime.signal.throwIfAborted()
+    if (this.disposed) throw new Error('remote-workspace: controller disposed')
     const active: ActiveConnection = {
-      id: randomUUID(), operationId, target, endpoint, lifetime: new AbortController(),
+      id: randomUUID(), operationId, target, endpoint, lifetime,
       forward: undefined, proxy: undefined, retrying: false,
     }
     this.current = active
-    this.publish({ phase: 'ssh-auth', connectionId: active.id, targetId, endpointId,
+    this.publish({ phase: 'ssh-auth', connectionId: active.id, targetId: target.id, endpointId: endpoint.id,
       hostName: target.name, instanceId: target.instanceId, profile: target.profile,
       workspaceHint: target.workspaceHint, generation: this.state.generation + 1 })
     try {
@@ -126,8 +185,11 @@ export class ConnectionManager {
 
   /** Release local resources on Host plugin disposal. */
   async dispose(): Promise<void> {
+    this.disposed = true
+    this.pending?.abort(new Error('remote-workspace: controller disposed'))
     const id = this.current?.id
     if (id !== undefined) await this.disconnect(id)
+    await this.settlement
   }
 
   private publish(state: RemoteSnapshot): void {

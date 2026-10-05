@@ -1,0 +1,15 @@
+✔ the Git bundle includes consistent Host, Client and Typert runtime contracts (10.7025ms)
+✔ missing Git bundle metadata and stale Typert contracts are rejected (2288.4449ms)
+✔ the standalone project contains only its own role and installable packages (97.5733ms)
+✔ a modified installation archive is rejected (14.6235ms)
+✔ an archive from the other role is rejected (13.0142ms)
+✔ duplicate or missing checksum rows are rejected (13.9916ms)
+✔ preparation refuses an existing workspace without overwriting its content (77.8262ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2934.6246

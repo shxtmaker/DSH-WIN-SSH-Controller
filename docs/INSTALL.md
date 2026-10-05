@@ -48,17 +48,29 @@ dsh plugin --profile desktop list
 
 可参考 [Windows SSH 示例](../configs/ssh_config.windows.example) 或 [macOS SSH 示例](../configs/ssh_config.macos.example) 配置 LAN、frp TCP、STCP visitor 的 SSH alias。先通过独立可信渠道核对主机密钥，再确认无交互登录。
 
-读取被控端公开身份：
+## 一键连接
+
+进入 Desktop 的“远程工作区”页，在“SSH 别名”中选择或输入已配置的别名，然后点击“一键连接”。程序会读取本机 `~/.ssh/config` 及其 `Include` 文件中的具体 `Host` 名称；仅有一个别名时自动填入。未列出的别名仍可直接输入。用户名、地址、密钥和跳板机沿用系统 OpenSSH 配置。
+
+远端使用默认实例键 `default` 时，只需一个 SSH 别名。自定义实例键在“高级选项”中填写。程序通过固定 helper 的 `--identity` 模式自动读取实例 ID、profile、工作区和 Web 端口，生成目标 ID 并保存目标，然后建立隧道、完成远端认证和身份核对。再次使用相同别名和实例键时复用已有目标，不覆盖已保存的身份。
+
+页面标题及必要字段标题旁的圆圈问号可点击展开帮助，再次点击或按 Esc 收起。SSH 主机密钥、无交互认证、连接入口不可达及 Agent 配置问题会显示对应处理提示。
+
+被控端需安装 Agent，并配置可执行的 `/usr/local/bin/dsh-remote-info`。若 helper 安装在其他位置，修改本插件的 `helperPath`。首次 SSH 登录仍须通过可信渠道核对主机密钥；一键连接不会自动接受未知密钥，也不会保存密码、私钥或启动 token。
+
+## 手动配置
+
+需要维护 LAN、frp TCP 或 STCP 多个入口时，展开“手动配置目标”。各入口必须指向同一个实例。可以通过以下命令读取公开身份，填写目标后保存：
 
 ```powershell
 '{"protocolVersion":1,"instanceKey":"default"}' | ssh harness-lan /usr/local/bin/dsh-remote-info --identity
 ```
 
-默认固定 helperPath 是 /usr/local/bin/dsh-remote-info，须与被控端安装位置一致。进入 Desktop 的“远程工作区”页，填写 instanceKey、instanceId、profile、workspaceHint、remotePort，以及实际使用的 SSH alias。remotePort 使用身份输出的 port。
+`instanceKey`、`instanceId`、`profile`、`workspaceHint`、`remotePort` 须与身份输出一致。`remotePort` 是 Web 端口，不是 SSH 端口。已保存实例身份变化时连接会停止，请核对被控端是否重装或更换后再修改记录。
 
 ## 连接与断开
 
-选择目标和入口后点击“连接”。实例身份、认证和事件流均就绪后显示 app-ready。先选中一个本机会话，再点击“打开远程工作区”，完整远端 Web 在 Browser 侧栏打开。
+已保存目标自动选择第一个入口，选择目标后可直接点击“连接”。实例身份、认证和事件流均就绪后显示“已连接”。已有选中的本机会话时，一键连接和已保存目标连接会自动在 Browser 侧栏打开完整远端 Web；没有本机会话时保留连接，选择一个会话后点击“打开远程工作区”。
 
 连接中断时，本地代理暂停转发并尝试重新附着。重新认证和身份核对通过后恢复转发。断开只释放本插件的本地端口、Cookie 和 SSH 进程；远端 Harness 继续运行。
 

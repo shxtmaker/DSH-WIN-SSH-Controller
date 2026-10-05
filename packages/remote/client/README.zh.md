@@ -35,6 +35,8 @@ workspace bundle 挂载 Host 入口；Desktop 加载 Client 模块后提供页�
 
 此插件不接受配置字段。它需要 controller 生成的 `remoteWorkspace` 合约，以及本地 Browser 和右侧 Sidebar 服务。
 
+默认页面仅要求输入一个 SSH 别名，实例信息自动读取。自定义实例键和手动多入口配置默认折叠。标题旁的圆圈问号通过点击展开帮助，再次点击或按 Esc 收起。连接成功后，已有选中的本机会话时自动打开 Browser；否则保留连接并显示打开步骤。
+
 -----
 
 <a id="understand-the-implementation"></a>

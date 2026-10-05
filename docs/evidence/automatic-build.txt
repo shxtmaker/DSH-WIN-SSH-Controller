@@ -1,0 +1,102 @@
+native/system/packages/darwin-arm64      | [WARN] Unsupported platform: wanted: {"cpu":["arm64"],"os":["darwin"],"libc":["any"]} (current: {"os":"win32","cpu":"x64","libc":"unknown"})
+native/system/packages/darwin-x64        | [WARN] Unsupported platform: wanted: {"cpu":["x64"],"os":["darwin"],"libc":["any"]} (current: {"os":"win32","cpu":"x64","libc":"unknown"})
+native/system/packages/linux-arm64       | [WARN] Unsupported platform: wanted: {"cpu":["arm64"],"os":["linux"],"libc":["any"]} (current: {"os":"win32","cpu":"x64","libc":"unknown"})
+native/system/packages/linux-x64         | [WARN] Unsupported platform: wanted: {"cpu":["x64"],"os":["linux"],"libc":["any"]} (current: {"os":"win32","cpu":"x64","libc":"unknown"})
+Scope: all 342 workspace projects
+Already up to date
+Done in 366ms using pnpm v11.7.0
+ℹ tsdown v0.22.2 powered by rolldown v1.1.1
+ℹ config file: D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\.build\upstream\tsdown.remote.config.mjs 
+ℹ entry: lib/types/index.js
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ entry: lib/types/index.js
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ entry: lib/types/index.js
+ℹ target: es2024
+ℹ tsconfig: tsconfig.json
+ℹ Build start
+ℹ lib\index.js  1.43 kB │ gzip: 0.81 kB
+ℹ 1 files, total: 1.43 kB
+ℹ lib\index.js  0.15 kB │ gzip: 0.14 kB
+ℹ 1 files, total: 0.15 kB
+✔ Build complete in 8916ms
+[PLUGIN_TIMINGS] Your build spent significant time in plugin `dsh-typert-generator`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+✔ Build complete in 8918ms
+ℹ lib\index.js  51.48 kB │ gzip: 13.58 kB
+ℹ 1 files, total: 51.48 kB
+[PLUGIN_TIMINGS] Your build spent significant time in plugin `tsdown:deps`. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+✔ Build complete in 8922ms
+ℹ tsdown v0.22.2 powered by rolldown v1.1.1
+ℹ config file: D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\.build\upstream\packages\remote\client\tsdown.config.ts 
+ℹ [@harness-remote/client] entry: lib/types/index.js
+ℹ [@harness-remote/client] target: es2024
+ℹ [@harness-remote/client] tsconfig: tsconfig.json
+ℹ [@harness-remote/client/client] entry: lib/types/client/index.js
+ℹ [@harness-remote/client/client] tsconfig: tsconfig.json
+ℹ Build start
+ℹ [@harness-remote/client] [ESM] lib\index.js  0.16 kB │ gzip: 0.14 kB
+ℹ [@harness-remote/client] [ESM] 1 files, total: 0.16 kB
+✔ [@harness-remote/client] Build complete in 37ms
+ℹ [@harness-remote/client/client] Hint: consider adding deps.onlyBundle option to avoid unintended bundling of dependencies, or set deps.onlyBundle: false to disable this hint.
+See more at https://tsdown.dev/options/dependencies#deps-onlybundle
+Detected dependencies in bundle:
+- zod
+ℹ [@harness-remote/client/client] [CJS] lib\client.js      184.97 kB │ gzip: 35.35 kB
+ℹ [@harness-remote/client/client] [CJS] lib\client.js.map  450.64 kB │ gzip: 80.87 kB
+ℹ [@harness-remote/client/client] [CJS] 2 files, total: 635.61 kB
+✔ [@harness-remote/client/client] Build complete in 96ms
+package: @harness-remote/controller@0.1.0
+Tarball Contents
+lib/index.js
+lib/typert.host.d.ts
+lib/typert.host.js
+lib/typert.remote-client.d.ts
+lib/typert.remote-client.js
+lib/types/aliases.d.ts
+lib/types/auth.d.ts
+lib/types/index.d.ts
+lib/types/manager.d.ts
+lib/types/proxy.d.ts
+lib/types/ssh.d.ts
+lib/types/store.d.ts
+lib/types/types.d.ts
+LICENSE
+package.json
+README.i18n.yaml
+README.md
+README.zh.md
+Tarball Details
+D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote\harness-remote-controller-0.1.0.tgz
+package: @harness-remote/client@0.1.0
+Tarball Contents
+lib/client.js
+lib/index.js
+lib/types/client/assembly.d.ts
+lib/types/client/connections.d.ts
+lib/types/client/index.d.ts
+lib/types/client/locales.d.ts
+lib/types/index.d.ts
+LICENSE
+package.json
+README.i18n.yaml
+README.md
+README.zh.md
+Tarball Details
+D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote\harness-remote-client-0.1.0.tgz
+package: @harness-remote/workspace@0.1.0
+Tarball Contents
+cordis.patch.yml
+lib/index.js
+lib/types/index.d.ts
+LICENSE
+package.json
+README.i18n.yaml
+README.md
+README.zh.md
+Tarball Details
+D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote\harness-remote-workspace-0.1.0.tgz
+Packed DSH-WIN-SSH-Controller: D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote
