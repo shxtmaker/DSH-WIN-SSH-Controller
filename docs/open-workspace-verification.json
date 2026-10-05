@@ -19,17 +19,125 @@
     "Restore the prior panel on opening failure and show the error beside connection controls."
   ],
   "checks": [
-    { "name": "packaged Client selected-session/global-panel regression", "status": "passed" },
-    { "name": "no-session refusal before ticket creation", "status": "passed" },
-    { "name": "Browser failure restores panel and displays error", "status": "passed" },
-    { "name": "session changes during ticket request cannot open in another session", "status": "passed" },
-    { "name": "Host and Client TypeScript build and packaging", "status": "passed" },
-    { "name": "project and Git package regressions", "status": "passed", "tests": 7 },
-    { "name": "artifact hashes and runtime consistency", "status": "passed" },
-    { "name": "distributed CLI isolated Git installation and actual Loader routes", "status": "passed" },
-    { "name": "live installed Host proxy page in a real browser", "status": "passed", "ticketExchangeHttp": 204, "rootHttp": 200, "applicationRootRendered": true, "pageErrors": 0 }
+    {
+      "name": "packaged Client selected-session/global-panel regression",
+      "status": "passed"
+    },
+    {
+      "name": "no-session refusal before ticket creation",
+      "status": "passed"
+    },
+    {
+      "name": "Browser failure restores panel and displays error",
+      "status": "passed"
+    },
+    {
+      "name": "session changes during ticket request cannot open in another session",
+      "status": "passed"
+    },
+    {
+      "name": "Host and Client TypeScript build and packaging",
+      "status": "passed"
+    },
+    {
+      "name": "project and Git package regressions",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "artifact hashes and runtime consistency",
+      "status": "passed"
+    },
+    {
+      "name": "distributed CLI isolated Git installation and actual Loader routes",
+      "status": "passed"
+    },
+    {
+      "name": "live installed Host proxy page in a real browser",
+      "status": "passed",
+      "ticketExchangeHttp": 204,
+      "rootHttp": 200,
+      "applicationRootRendered": true,
+      "pageErrors": 0
+    },
+    {
+      "name": "preparation patch applies to pinned upstream files",
+      "status": "passed"
+    }
   ],
   "credentialValuesCaptured": false,
-  "notRun": ["installed Desktop click after updated Client activation", "real frp recovery", "macOS acceptance"],
-  "publication": { "status": "pending" }
+  "notRun": [
+    "installed Desktop click after updated Client activation",
+    "real frp recovery",
+    "macOS acceptance"
+  ],
+  "publication": {
+    "status": "passed",
+    "implementationCommit": "4676cd94f82044fe7b724e903ba3c3a7914e6c76",
+    "verifiedAt": "2026-10-05T14:01:23.537Z",
+    "remotes": [
+      {
+        "remote": "github",
+        "revision": "4676cd94f82044fe7b724e903ba3c3a7914e6c76",
+        "mainRef": "passed",
+        "artifacts": [
+          {
+            "file": "SHA256SUMS.txt",
+            "sha256": "7bfe1bc5f25dffe4117de51b58ee8c63b8b9d8fd26ee0aa04b6db2c6fc2147f6",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-client-0.1.0.tgz",
+            "sha256": "a8a1a4dfabff4c85d6e162658f63528b1e1913e1babc311481dddb31d66ee6b5",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-controller-0.1.0.tgz",
+            "sha256": "9ed7de990cb5037c8cbf78659800fd6d105b2992fc5fa15ec841cfcd13773e98",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-workspace-0.1.0.tgz",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "remote": "gitea",
+        "revision": "4676cd94f82044fe7b724e903ba3c3a7914e6c76",
+        "mainRef": "passed",
+        "artifacts": [
+          {
+            "file": "SHA256SUMS.txt",
+            "sha256": "7bfe1bc5f25dffe4117de51b58ee8c63b8b9d8fd26ee0aa04b6db2c6fc2147f6",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-client-0.1.0.tgz",
+            "sha256": "a8a1a4dfabff4c85d6e162658f63528b1e1913e1babc311481dddb31d66ee6b5",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-controller-0.1.0.tgz",
+            "sha256": "9ed7de990cb5037c8cbf78659800fd6d105b2992fc5fa15ec841cfcd13773e98",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-workspace-0.1.0.tgz",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3",
+            "status": "passed"
+          }
+        ]
+      }
+    ]
+  },
+  "desktopInstallation": {
+    "status": "passed",
+    "application": "restart-required",
+    "installedClientMatchesPublishedBytes": true,
+    "runningConnectionPreserved": "app-ready",
+    "installedRevision": "4676cd94f82044fe7b724e903ba3c3a7914e6c76",
+    "postRestartClickAcceptance": "notRun - awaiting application restart and user click"
+  }
 }
