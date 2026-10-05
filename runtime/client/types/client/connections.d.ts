@@ -27,7 +27,7 @@ export interface RemoteWorkspaceFace {
 type PageProps = PropsRuntime<'main'> & PropsLocale<'remoteWorkspace'> & InjectFace<RemoteWorkspaceFace>;
 type IndicatorProps = PropsLocale<'remoteWorkspace'> & InjectFace<RemoteWorkspaceFace>;
 /** Render target configuration and one-connection actions in the main pane. */
-export declare function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quickConnect, connect, disconnect, open }: PageProps): ReactNode;
+export declare function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quickConnect, connect, disconnect, open, }: PageProps): ReactNode;
 /** Keep the actual execution host and remote workspace visible over the local shell. */
 export declare function RemoteIndicator({ t, getSnapshot, subscribe }: IndicatorProps): ReactNode;
 export {};

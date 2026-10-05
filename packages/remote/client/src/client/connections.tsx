@@ -62,7 +62,7 @@ const ERRORS: Record<string, RemoteWorkspaceKey> = {
 const INPUT = { padding: 9, borderRadius: 6, border: '1px solid #888', background: 'transparent', color: 'inherit', minWidth: 0 }
 const BUTTON = { padding: '8px 14px', borderRadius: 6, border: '1px solid #888', cursor: 'pointer' }
 
-function Help({ label, text, help }: { label: string, text: string, help: string }): ReactNode {
+function Help({ label, text, help }: { label: string; text: string; help: string }): ReactNode {
   const [shown, setShown] = useState(false)
   const id = useId()
   return <span style={{ display: 'block' }}>
@@ -96,15 +96,59 @@ function toTarget(form: Form): RemoteTarget {
     remotePort: Number(form.remotePort), endpoints }
 }
 
+interface ConnectionChoice {
+  readonly value: string
+  readonly label: string
+  readonly searchText: string
+}
+
+/** Filter visible choices without changing the selected connection or initiating a connection. */
+function SearchableConnectionList({ label, searchLabel, empty, noMatches, placeholder, allowEmpty = false,
+  selectedLabel, choices, value, disabled, onSelect }: {
+  readonly label: string
+  readonly searchLabel: string
+  readonly empty: string
+  readonly noMatches: string
+  readonly placeholder: string
+  readonly allowEmpty?: boolean
+  readonly selectedLabel?: string
+  readonly choices: readonly ConnectionChoice[]
+  readonly value: string
+  readonly disabled: boolean
+  readonly onSelect: (value: string) => void
+}): ReactNode {
+  const [query, setQuery] = useState('')
+  const search = query.trim().toLowerCase()
+  const visible = choices.filter(choice => choice.searchText.toLowerCase().includes(search))
+  const chosen = choices.find(choice => choice.value === value)
+  return <div style={{ display: 'grid', gap: 8, minWidth: 0 }}>
+    <span>{label}</span>
+    <input type="search" aria-label={searchLabel} placeholder={searchLabel} value={query} disabled={disabled}
+      onChange={(event) => { setQuery(event.target.value) }}
+      onKeyDown={(event) => { if (event.key === 'Enter') event.preventDefault() }} style={{ ...INPUT, width: '100%', boxSizing: 'border-box' }} />
+    <select size={4} aria-label={label} value={visible.some(choice => choice.value === value) ? value : ''}
+      disabled={disabled} onChange={(event) => { onSelect(event.target.value) }}
+      onKeyDown={(event) => { if (event.key === 'Enter') event.preventDefault() }}
+      style={{ ...INPUT, width: '100%', boxSizing: 'border-box' }}>
+      <option value="" disabled={!allowEmpty}>{placeholder}</option>
+      {visible.map(choice => <option value={choice.value} key={choice.value}>{choice.label}</option>)}
+    </select>
+    {selectedLabel && chosen && <p role="status" style={{ margin: 0, fontSize: 13, overflowWrap: 'anywhere' }}>{selectedLabel}: {chosen.label}</p>}
+    {choices.length === 0 && <p role="status" style={{ margin: 0, fontSize: 13 }}>{empty}</p>}
+    {choices.length > 0 && visible.length === 0 && <p role="status" style={{ margin: 0, fontSize: 13 }}>{noMatches}</p>}
+  </div>
+}
+
 /** Render target configuration and one-connection actions in the main pane. */
-export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quickConnect, connect, disconnect, open }: PageProps): ReactNode {
+export function ConnectionsPage({
+  t, getSnapshot, subscribe, refresh, save, quickConnect, connect, disconnect, open,
+}: PageProps): ReactNode {
   const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
   const [selected, setSelected] = useState<string | undefined>(undefined)
   const [form, setForm] = useState<Form>(EMPTY)
   const [endpoint, setEndpoint] = useState('')
   const [alias, setAlias] = useState('')
   const [instanceKey, setInstanceKey] = useState('default')
-  const aliasList = useId()
   useEffect(() => { void refresh() }, [refresh])
   useEffect(() => {
     if (state.aliases.length === 1) setAlias(current => current || state.aliases[0] || '')
@@ -118,12 +162,17 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
   }, [state.connection.targetId, state.targets])
   useEffect(() => {
     if (selected === undefined && state.targets.length > 0) {
-      const target = state.targets[0]!
+      const target = state.targets[0]
+      if (target === undefined) return
       setSelected(target.id); setForm(fromTarget(target)); setEndpoint(target.endpoints[0]?.id ?? '')
     }
   }, [selected, state.targets])
   const chosen = state.targets.find(item => item.id === selected)
   const endpoints = chosen?.endpoints ?? toTarget(form).endpoints
+  const errorText = (message: string): string => {
+    const key = ERRORS[message]
+    return key === undefined ? message : t(key)
+  }
   const field = (key: keyof Form, label: string, help: RemoteWorkspaceKey): ReactNode => (
     <label style={{ display: 'grid', gap: 6 }} key={key}><Help label={label} text={t(help)} help={t('help')} />
       <input value={form[key]} onChange={(event) => { setForm({ ...form, [key]: event.target.value }) }}
@@ -134,12 +183,19 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
     <header><h1><Help label={t('title')} text={t('helpTitle')} help={t('help')} /></h1><p>{t('intro')}</p></header>
     <section style={{ display: 'grid', gap: 12, padding: 18, border: '1px solid #888', borderRadius: 8 }}>
       <h2 style={{ margin: 0, fontSize: 18 }}>{t('quick')}</h2>
-      <form onSubmit={(event) => { event.preventDefault(); if (!state.busy && !state.hostRestartRequired && !state.connection.connectionId && alias.trim()) void quickConnect(alias, instanceKey) }}
-        style={{ display: 'grid', gap: 12 }}>
+      <form onSubmit={(event) => {
+        event.preventDefault()
+        if (!state.busy && !state.hostRestartRequired && !state.connection.connectionId && alias.trim()) {
+          void quickConnect(alias, instanceKey)
+        }
+      }} style={{ display: 'grid', gap: 12 }}>
+        <SearchableConnectionList label={t('aliasList')} searchLabel={t('searchAliases')} empty={t('noAliases')}
+          noMatches={t('noConnectionMatches')} placeholder={t('chooseAlias')} value={alias}
+          disabled={state.busy || !!state.connection.connectionId}
+          choices={state.aliases.map(item => ({ value: item, label: item, searchText: item }))} onSelect={setAlias} />
         <label style={{ display: 'grid', gap: 6 }}><Help label={t('alias')} text={t('helpAlias')} help={t('help')} />
-          <input list={aliasList} value={alias} required placeholder={t('aliasPlaceholder')} autoComplete="off"
+          <input value={alias} required placeholder={t('aliasPlaceholder')} autoComplete="off"
             disabled={state.busy || !!state.connection.connectionId} onChange={(event) => { setAlias(event.target.value) }} style={INPUT} />
-          <datalist id={aliasList}>{state.aliases.map(item => <option value={item} key={item} />)}</datalist>
         </label>
         <details><summary style={{ cursor: 'pointer' }}>{t('advanced')}</summary>
           <label style={{ display: 'grid', gap: 6, marginTop: 12 }}><Help label={t('instanceKey')} text={t('helpInstanceKey')} help={t('help')} />
@@ -154,18 +210,19 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
           style={{ ...BUTTON, justifySelf: 'start' }}>{state.busy ? t('connecting') : t('quickConnect')}</button>
       </form>
     </section>
-    <label style={{ display: 'grid', gap: 6 }}>{t('saved')}
-      <select value={selected ?? ''} disabled={state.busy || !!state.connection.connectionId} style={INPUT} onChange={(event) => {
-        const value = event.target.value
+    <SearchableConnectionList label={t('saved')} searchLabel={t('searchTargets')} empty={t('noTargets')}
+      selectedLabel={t('currentTarget')}
+      noMatches={t('noConnectionMatches')} placeholder={t('newTarget')} allowEmpty value={selected ?? ''}
+      disabled={state.busy || !!state.connection.connectionId}
+      choices={state.targets.map(target => ({ value: target.id,
+        label: `${target.name} · ${target.endpoints.map(item => item.sshAlias).join(', ')}`,
+        searchText: [target.name, target.id, target.profile, target.workspaceHint, ...target.endpoints.map(item => item.sshAlias)].join(' '),
+      }))} onSelect={(value) => {
         setSelected(value)
         const found = state.targets.find(item => item.id === value)
         setForm(found === undefined ? EMPTY : fromTarget(found))
         setEndpoint(found?.endpoints[0]?.id ?? '')
-      }}>
-        <option value="">{t('newTarget')}</option>
-        {state.targets.map(target => <option value={target.id} key={target.id}>{target.name}</option>)}
-      </select>
-    </label>
+      }} />
     <details><summary style={{ cursor: 'pointer' }}>{t('manual')}</summary>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 12, margin: '14px 0' }}>
         {field('id', t('targetId'), 'helpTargetId')}{field('name', t('name'), 'helpName')}{field('instanceKey', t('instanceKey'), 'helpInstanceKey')}
@@ -177,10 +234,11 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
     <section aria-live="polite" style={{ padding: 16, border: '1px solid #888', borderRadius: 8 }}>
       <h2 style={{ fontSize: 18 }}>{t('status')}: {t(PHASES[state.connection.phase])}</h2>
       <p>{state.connection.hostName ?? t('inactive')} · {state.connection.profile ?? '—'} · {state.connection.workspaceHint ?? '—'}</p>
-      {state.error && <p role="alert">{t('error')}: {ERRORS[state.error] ? t(ERRORS[state.error]!) : state.error}</p>}
-      {state.connection.reason && <p>{ERRORS[state.connection.reason] ? t(ERRORS[state.connection.reason]!) : state.connection.reason}</p>}
+      {state.error && <p role="alert">{t('error')}: {errorText(state.error)}</p>}
+      {state.connection.reason && <p>{errorText(state.connection.reason)}</p>}
       <label><Help label={t('endpoint')} text={t('helpRoutes')} help={t('help')} />
-        <select value={endpoint} disabled={state.busy || !!state.connection.connectionId} style={INPUT} onChange={(event) => { setEndpoint(event.target.value) }}>
+        <select value={endpoint} disabled={state.busy || !!state.connection.connectionId} style={INPUT}
+          onChange={(event) => { setEndpoint(event.target.value) }}>
           <option value="">—</option>
           {endpoints.map(item => <option value={item.id} key={item.id}>{item.kind}: {item.sshAlias}</option>)}
         </select>

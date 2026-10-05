@@ -1,0 +1,115 @@
+{
+  "project": "DSH-WIN-SSH-Controller",
+  "verifiedAt": "2026-10-05T22:50:38.4794360+08:00",
+  "timeZone": "Asia/Shanghai",
+  "baseCommit": "7d509569131cb3e3a1ac8cf4421f4226443cd0cb",
+  "sourceBranch": "codex/searchable-ssh-connections",
+  "packageVersion": "0.1.0",
+  "controllerBusinessSourceChanged": false,
+  "gitRuntimeAndStandaloneArtifactsRegenerated": true,
+  "publicationScope": "new branch on GitHub and Gitea",
+  "features": [
+    "visible searchable SSH alias list using existing listAliases",
+    "saved-target search by name, id, SSH alias, profile and workspace",
+    "case-insensitive trimmed search",
+    "keyboard selection without initiating a connection",
+    "selection and endpoint preservation during filtering",
+    "empty and no-match status messages",
+    "manual SSH alias entry retained"
+  ],
+  "checks": [
+    {
+      "name": "Host-and-Client-TypeScript-build-and-pack",
+      "status": "passed",
+      "workspace": ".build/searchable-release",
+      "evidence": "evidence/searchable-build.txt"
+    },
+    {
+      "name": "targeted-type-aware-oxlint",
+      "status": "passed",
+      "exitCode": 0,
+      "workspace": ".build/searchable-release",
+      "files": [
+        "packages/remote/client/src/client/connections.tsx",
+        "packages/remote/client/src/client/locales.ts"
+      ]
+    },
+    {
+      "name": "SSH-aliases-discovery-quick-connect-proxy-and-Loader",
+      "status": "passed",
+      "passed": 29,
+      "skipped": 0,
+      "evidence": "evidence/searchable-integration.txt",
+      "externalTransport": "mocked SSH and discovery; real local proxy and Loader"
+    },
+    {
+      "name": "Git-package-and-artifact-regressions",
+      "status": "passed",
+      "passed": 7,
+      "skipped": 0,
+      "evidence": "evidence/searchable-project.txt"
+    },
+    {
+      "name": "final-packaged-Client-browser-interactions-and-layout",
+      "status": "passed",
+      "hostResponses": "deterministic local fixture",
+      "evidence": "evidence/searchable-client.txt",
+      "screenshots": [
+        "evidence/searchable-connections.png",
+        "evidence/searchable-connections-narrow.png"
+      ],
+      "coverage": [
+        "multi-alias search and selection",
+        "trimmed case-insensitive alias and workspace search",
+        "saved-target name and alias search",
+        "keyboard selection and Enter do not initiate quick connection",
+        "filtered-out selection and endpoint retained",
+        "new-target selection clears endpoint",
+        "no-match and no-alias states",
+        "manual alias and read-failure recovery",
+        "existing Browser opening and session-change regressions",
+        "390px viewport and long names without horizontal overflow"
+      ]
+    },
+    {
+      "name": "distributed-CLI-isolated-local-Git-installation",
+      "status": "passed",
+      "evidence": "evidence/searchable-git-install.txt",
+      "coverage": [
+        "real CLI bundle installation in temporary DSH profile",
+        "real installed Loader and authenticated state HTTP route",
+        "unauthenticated rejection and invalid alias denial",
+        "public alias enumeration without logging alias contents",
+        "Client factory and Host contract consistency"
+      ]
+    },
+    {
+      "name": "artifact-SHA256-and-Git-runtime-consistency",
+      "status": "passed"
+    },
+    {
+      "name": "final-Client-source-matches-prepared-build-snapshot",
+      "status": "passed"
+    }
+  ],
+  "notRun": [
+    "installed-Desktop-interaction-and-visual-acceptance-for-this-UI",
+    "real-SSH-controller-Linux-business-flow-for-this-UI",
+    "real-frp-recovery",
+    "macOS-runtime-acceptance"
+  ],
+  "artifacts": [
+    {
+      "file": "harness-remote-client-0.1.0.tgz",
+      "sha256": "c3d5027888264d4f206238fb25782745891ef8088ce23a03d6d55fcc01d3f025"
+    },
+    {
+      "file": "harness-remote-controller-0.1.0.tgz",
+      "sha256": "2c06bf67ac7208c8c48ca8f320d9f4338c01f834c0b2d8ab2210814848a86d90"
+    },
+    {
+      "file": "harness-remote-workspace-0.1.0.tgz",
+      "sha256": "69114ffd07db94e5d85fc1b3b7b28341958902d9fc514ec1fe0c30109d2acc0a"
+    }
+  ]
+}

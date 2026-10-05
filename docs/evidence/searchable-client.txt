@@ -1,0 +1,1 @@
+PASS packaged Client: searchable SSH and saved-target lists, keyboard selection without connection, empty and no-match states, selection preservation, manual alias fallback, circular help, duplicate suppression, selected-session opening, error recovery, narrow layout and stale Host route recovery

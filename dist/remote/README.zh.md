@@ -18,6 +18,8 @@ https://github.com/shxtmaker/DSH-WIN-SSH-Controller
 
 该方式安装 `dsh-win-ssh-controller-source`。包内包含控制端服务、远程连接页面、Typert 通信契约和组合包配置，无需另外安装三个 `.tgz` 文件，也无需运行源码构建。
 
+安装或升级完成后，完全退出 DeepSeek Harness（包括托盘进程），再重新打开。仅刷新页面不会重新加载本机服务接口。
+
 若此前出现“这个包没有声明组合包，不能作为插件管理”，重新提交上述地址安装即可。仍命中旧缓存时，在地址末尾附加修复提交 SHA：`https://github.com/shxtmaker/DSH-WIN-SSH-Controller#<commit-sha>`。
 
 使用命令行时，先完全退出 Desktop，再使用 Desktop 自带的同版本 `dsh` 执行：
@@ -50,13 +52,33 @@ dsh plugin --profile desktop list
 
 ## 一键连接
 
-进入 Desktop 的“远程工作区”页，在“SSH 别名”中选择或输入已配置的别名，然后点击“一键连接”。程序会读取本机 `~/.ssh/config` 及其 `Include` 文件中的具体 `Host` 名称；仅有一个别名时自动填入。未列出的别名仍可直接输入。用户名、地址、密钥和跳板机沿用系统 OpenSSH 配置。
+进入 Desktop 的“远程工作区”页，在“已有 SSH 连接”列表中选择别名。可使用“搜索 SSH 别名”按名称筛选，搜索不区分大小写；清空搜索后显示全部候选。选中的名称会填入“SSH 别名”，点击“一键连接”后建立连接。程序会读取本机 `~/.ssh/config` 及其 `Include` 文件中的具体 `Host` 名称；仅有一个别名时自动填入。未列出的别名仍可直接输入。用户名、地址、密钥和跳板机沿用系统 OpenSSH 配置。
 
 远端使用默认实例键 `default` 时，只需一个 SSH 别名。自定义实例键在“高级选项”中填写。程序通过固定 helper 的 `--identity` 模式自动读取实例 ID、profile、工作区和 Web 端口，生成目标 ID 并保存目标，然后建立隧道、完成远端认证和身份核对。再次使用相同别名和实例键时复用已有目标，不覆盖已保存的身份。
 
 页面标题及必要字段标题旁的圆圈问号可点击展开帮助，再次点击或按 Esc 收起。SSH 主机密钥、无交互认证、连接入口不可达及 Agent 配置问题会显示对应处理提示。
 
 被控端需安装 Agent，并配置可执行的 `/usr/local/bin/dsh-remote-info`。若 helper 安装在其他位置，修改本插件的 `helperPath`。首次 SSH 登录仍须通过可信渠道核对主机密钥；一键连接不会自动接受未知密钥，也不会保存密码、私钥或启动 token。
+
+### 自动连接提示 HTTP 404
+
+如果升级后页面显示一键连接，但 `remoteWorkspace/quickConnect` 或 `remoteWorkspace/listAliases` 返回 HTTP 404，先完全退出 DeepSeek Harness（包括托盘进程）后重新打开。运行中的 Host 可能仍保留升级前的接口；刷新页面不能完成服务更新。新版页面检测到该情况时会显示重启提示并暂停一键连接，已保存目标的手动连接仍可使用。
+
+若完整重启后仍有提示，确认 desktop profile 中仅启用了当前安装方式，再更新到最新提交并完整重启。
+
+### SSH helper 无法执行
+
+Agent 安装完成后，还需要配置 SSH 使用的 helper 入口。控制端默认执行 `/usr/local/bin/dsh-remote-info`；该文件不存在、无法执行或未设置 Agent 所需环境变量时，自动连接会停止。Shell 的 126、127 退出状态分别表示无法执行、命令不存在，页面会提示检查 helper。
+
+无法使用 sudo 时，可将 Agent 的 wrapper 安装到运行 Harness 的 Linux 账号的 `~/.local/bin/dsh-remote-info`，只允许该账号修改和执行。按 Agent 安装说明填写实际 `DSH_HOME`、允许实例键和已安装 helper 的绝对路径。随后在本机 desktop profile 的 `cordis.patch.yml` 中添加控制端覆盖配置，例如：
+
+```yaml
+- id: remote-workspace-controller
+  config:
+    helperPath: /home/harness/.local/bin/dsh-remote-info
+```
+
+将示例账号改为实际 Linux 账号。`helperPath` 使用远端绝对路径；已有控制端覆盖条目时修改该条目，避免重复 ID。重新加载插件配置后，使用公开身份读取命令验证 wrapper；不要将含 `launchUrl` 的完整描述复制到聊天或日志。
 
 ## 手动配置
 
@@ -70,7 +92,9 @@ dsh plugin --profile desktop list
 
 ## 连接与断开
 
-已保存目标自动选择第一个入口，选择目标后可直接点击“连接”。实例身份、认证和事件流均就绪后显示“已连接”。已有选中的本机会话时，一键连接和已保存目标连接会自动在 Browser 侧栏打开完整远端 Web；没有本机会话时保留连接，选择一个会话后点击“打开远程工作区”。
+“已保存目标”列表显示目标名称与 SSH 别名，可按目标名称、别名、profile 或工作区筛选。筛选不会清除已选目标或改变连接入口。选择目标后自动选择该目标的第一个入口，再点击“连接”。列表支持键盘方向键选择；搜索和选择本身不会发起连接。实例身份、认证和事件流均就绪后显示“已连接”。已有选中的本机会话时，一键连接和已保存目标连接会自动在 Browser 侧栏打开完整远端 Web；没有本机会话时保留连接，选择一个会话后点击“打开远程工作区”。
+
+点击“打开远程工作区”会返回已选中的本机会话，并展开 Browser 侧栏。连接页暂时隐藏会话侧栏不影响打开。未选择会话时会提示先选择；打开期间切换会话或连接时会取消本次打开，避免把远端页面放入其他会话。打开失败时会返回连接页，并在连接状态区域显示原因。
 
 连接中断时，本地代理暂停转发并尝试重新附着。重新认证和身份核对通过后恢复转发。断开只释放本插件的本地端口、Cookie 和 SSH 进程；远端 Harness 继续运行。
 

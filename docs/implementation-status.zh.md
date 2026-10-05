@@ -11,3 +11,5 @@
 2026-10-05 的自动连接迭代已修改业务源码并重新生成三个独立安装包和 Git 根包运行文件。默认仅输入 SSH 别名，实例身份、profile、工作区与端口自动读取；已有身份绑定继续校验。必要标题旁的圆圈问号支持点击帮助和 Esc 收起。详细结果见 [自动连接验证](automation-verification.json)，本次已安装 Desktop 与实机 SSH/frp 检查未执行。
 
 双机 Desktop/Linux 业务链路、真实 frp 恢复和实机资源清理状态为 notRun。
+
+2026-10-05 的连接选择列表迭代复用现有 SSH 别名读取接口和目标文件，新增可见列表、搜索框及当前目标提示。筛选不改变已选连接，键盘选择和搜索不会发起连接。实现与验证记录见 [连接列表验证](searchable-connections-verification.json)。本次仅向 GitHub 与 Gitea 的 `codex/searchable-ssh-connections` 分支提交，插件版本保持 0.1.0；本次安装后 Desktop 交互、真实 SSH/frp 和 macOS 验收未执行。

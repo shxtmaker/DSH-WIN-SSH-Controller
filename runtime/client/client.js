@@ -4672,6 +4672,95 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				endpoints
 			};
 		}
+		/** Filter visible choices without changing the selected connection or initiating a connection. */
+		function SearchableConnectionList({ label, searchLabel, empty, noMatches, placeholder, allowEmpty = false, selectedLabel, choices, value, disabled, onSelect }) {
+			const [query, setQuery] = (0, react.useState)("");
+			const search = query.trim().toLowerCase();
+			const visible = choices.filter((choice) => choice.searchText.toLowerCase().includes(search));
+			const chosen = choices.find((choice) => choice.value === value);
+			return (0, react_jsx_runtime.jsxs)("div", {
+				style: {
+					display: "grid",
+					gap: 8,
+					minWidth: 0
+				},
+				children: [
+					(0, react_jsx_runtime.jsx)("span", { children: label }),
+					(0, react_jsx_runtime.jsx)("input", {
+						type: "search",
+						"aria-label": searchLabel,
+						placeholder: searchLabel,
+						value: query,
+						disabled,
+						onChange: (event) => {
+							setQuery(event.target.value);
+						},
+						onKeyDown: (event) => {
+							if (event.key === "Enter") event.preventDefault();
+						},
+						style: {
+							...INPUT,
+							width: "100%",
+							boxSizing: "border-box"
+						}
+					}),
+					(0, react_jsx_runtime.jsxs)("select", {
+						size: 4,
+						"aria-label": label,
+						value: visible.some((choice) => choice.value === value) ? value : "",
+						disabled,
+						onChange: (event) => {
+							onSelect(event.target.value);
+						},
+						onKeyDown: (event) => {
+							if (event.key === "Enter") event.preventDefault();
+						},
+						style: {
+							...INPUT,
+							width: "100%",
+							boxSizing: "border-box"
+						},
+						children: [(0, react_jsx_runtime.jsx)("option", {
+							value: "",
+							disabled: !allowEmpty,
+							children: placeholder
+						}), visible.map((choice) => (0, react_jsx_runtime.jsx)("option", {
+							value: choice.value,
+							children: choice.label
+						}, choice.value))]
+					}),
+					selectedLabel && chosen && (0, react_jsx_runtime.jsxs)("p", {
+						role: "status",
+						style: {
+							margin: 0,
+							fontSize: 13,
+							overflowWrap: "anywhere"
+						},
+						children: [
+							selectedLabel,
+							": ",
+							chosen.label
+						]
+					}),
+					choices.length === 0 && (0, react_jsx_runtime.jsx)("p", {
+						role: "status",
+						style: {
+							margin: 0,
+							fontSize: 13
+						},
+						children: empty
+					}),
+					choices.length > 0 && visible.length === 0 && (0, react_jsx_runtime.jsx)("p", {
+						role: "status",
+						style: {
+							margin: 0,
+							fontSize: 13
+						},
+						children: noMatches
+					})
+				]
+			});
+		}
 		/** Render target configuration and one-connection actions in the main pane. */
 		function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quickConnect, connect, disconnect, open }) {
 			const state = (0, react.useSyncExternalStore)(subscribe, getSnapshot, getSnapshot);
@@ -4680,7 +4769,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			const [endpoint, setEndpoint] = (0, react.useState)("");
 			const [alias, setAlias] = (0, react.useState)("");
 			const [instanceKey, setInstanceKey] = (0, react.useState)("default");
-			const aliasList = (0, react.useId)();
 			(0, react.useEffect)(() => {
 				refresh();
 			}, [refresh]);
@@ -4699,12 +4787,17 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			(0, react.useEffect)(() => {
 				if (selected === void 0 && state.targets.length > 0) {
 					const target = state.targets[0];
+					if (target === void 0) return;
 					setSelected(target.id);
 					setForm(fromTarget(target));
 					setEndpoint(target.endpoints[0]?.id ?? "");
 				}
 			}, [selected, state.targets]);
 			const endpoints = state.targets.find((item) => item.id === selected)?.endpoints ?? toTarget(form).endpoints;
+			const errorText = (message) => {
+				const key = ERRORS[message];
+				return key === void 0 ? message : t(key);
+			};
 			const field = (key, label, help) => (0, react_jsx_runtime.jsxs)("label", {
 				style: {
 					display: "grid",
@@ -4767,34 +4860,41 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 								gap: 12
 							},
 							children: [
+								(0, react_jsx_runtime.jsx)(SearchableConnectionList, {
+									label: t("aliasList"),
+									searchLabel: t("searchAliases"),
+									empty: t("noAliases"),
+									noMatches: t("noConnectionMatches"),
+									placeholder: t("chooseAlias"),
+									value: alias,
+									disabled: state.busy || !!state.connection.connectionId,
+									choices: state.aliases.map((item) => ({
+										value: item,
+										label: item,
+										searchText: item
+									})),
+									onSelect: setAlias
+								}),
 								(0, react_jsx_runtime.jsxs)("label", {
 									style: {
 										display: "grid",
 										gap: 6
 									},
-									children: [
-										(0, react_jsx_runtime.jsx)(Help, {
-											label: t("alias"),
-											text: t("helpAlias"),
-											help: t("help")
-										}),
-										(0, react_jsx_runtime.jsx)("input", {
-											list: aliasList,
-											value: alias,
-											required: true,
-											placeholder: t("aliasPlaceholder"),
-											autoComplete: "off",
-											disabled: state.busy || !!state.connection.connectionId,
-											onChange: (event) => {
-												setAlias(event.target.value);
-											},
-											style: INPUT
-										}),
-										(0, react_jsx_runtime.jsx)("datalist", {
-											id: aliasList,
-											children: state.aliases.map((item) => (0, react_jsx_runtime.jsx)("option", { value: item }, item))
-										})
-									]
+									children: [(0, react_jsx_runtime.jsx)(Help, {
+										label: t("alias"),
+										text: t("helpAlias"),
+										help: t("help")
+									}), (0, react_jsx_runtime.jsx)("input", {
+										value: alias,
+										required: true,
+										placeholder: t("aliasPlaceholder"),
+										autoComplete: "off",
+										disabled: state.busy || !!state.connection.connectionId,
+										onChange: (event) => {
+											setAlias(event.target.value);
+										},
+										style: INPUT
+									})]
 								}),
 								(0, react_jsx_runtime.jsxs)("details", { children: [(0, react_jsx_runtime.jsx)("summary", {
 									style: { cursor: "pointer" },
@@ -4846,30 +4946,33 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							]
 						})]
 					}),
-					(0, react_jsx_runtime.jsxs)("label", {
-						style: {
-							display: "grid",
-							gap: 6
-						},
-						children: [t("saved"), (0, react_jsx_runtime.jsxs)("select", {
-							value: selected ?? "",
-							disabled: state.busy || !!state.connection.connectionId,
-							style: INPUT,
-							onChange: (event) => {
-								const value = event.target.value;
-								setSelected(value);
-								const found = state.targets.find((item) => item.id === value);
-								setForm(found === void 0 ? EMPTY : fromTarget(found));
-								setEndpoint(found?.endpoints[0]?.id ?? "");
-							},
-							children: [(0, react_jsx_runtime.jsx)("option", {
-								value: "",
-								children: t("newTarget")
-							}), state.targets.map((target) => (0, react_jsx_runtime.jsx)("option", {
-								value: target.id,
-								children: target.name
-							}, target.id))]
-						})]
+					(0, react_jsx_runtime.jsx)(SearchableConnectionList, {
+						label: t("saved"),
+						searchLabel: t("searchTargets"),
+						empty: t("noTargets"),
+						selectedLabel: t("currentTarget"),
+						noMatches: t("noConnectionMatches"),
+						placeholder: t("newTarget"),
+						allowEmpty: true,
+						value: selected ?? "",
+						disabled: state.busy || !!state.connection.connectionId,
+						choices: state.targets.map((target) => ({
+							value: target.id,
+							label: `${target.name} · ${target.endpoints.map((item) => item.sshAlias).join(", ")}`,
+							searchText: [
+								target.name,
+								target.id,
+								target.profile,
+								target.workspaceHint,
+								...target.endpoints.map((item) => item.sshAlias)
+							].join(" ")
+						})),
+						onSelect: (value) => {
+							setSelected(value);
+							const found = state.targets.find((item) => item.id === value);
+							setForm(found === void 0 ? EMPTY : fromTarget(found));
+							setEndpoint(found?.endpoints[0]?.id ?? "");
+						}
 					}),
 					(0, react_jsx_runtime.jsxs)("details", { children: [
 						(0, react_jsx_runtime.jsx)("summary", {
@@ -4934,10 +5037,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 								children: [
 									t("error"),
 									": ",
-									ERRORS[state.error] ? t(ERRORS[state.error]) : state.error
+									errorText(state.error)
 								]
 							}),
-							state.connection.reason && (0, react_jsx_runtime.jsx)("p", { children: ERRORS[state.connection.reason] ? t(ERRORS[state.connection.reason]) : state.connection.reason }),
+							state.connection.reason && (0, react_jsx_runtime.jsx)("p", { children: errorText(state.connection.reason) }),
 							(0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)(Help, {
 								label: t("endpoint"),
 								text: t("helpRoutes"),
@@ -5081,6 +5184,13 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			quick: "快速连接",
 			alias: "SSH 别名",
 			aliasPlaceholder: "选择或输入，如 harness-lan",
+			aliasList: "已有 SSH 连接",
+			searchAliases: "搜索 SSH 别名",
+			chooseAlias: "请选择 SSH 别名",
+			searchTargets: "搜索目标名称、SSH 别名或工作区",
+			currentTarget: "当前目标",
+			noAliases: "尚未找到已有 SSH 别名，可在下方直接输入。",
+			noConnectionMatches: "没有匹配的连接，请修改或清空搜索条件。",
 			quickConnect: "一键连接",
 			connecting: "正在连接…",
 			advanced: "高级选项",
@@ -5153,6 +5263,13 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			quick: "Quick connection",
 			alias: "SSH alias",
 			aliasPlaceholder: "Choose or enter, e.g. harness-lan",
+			aliasList: "Existing SSH connections",
+			searchAliases: "Search SSH aliases",
+			chooseAlias: "Choose an SSH alias",
+			searchTargets: "Search target name, SSH alias or workspace",
+			currentTarget: "Current target",
+			noAliases: "No SSH aliases were found. Enter an alias below.",
+			noConnectionMatches: "No matching connections. Change or clear the search.",
 			quickConnect: "Connect now",
 			connecting: "Connecting…",
 			advanced: "Advanced options",

@@ -34,6 +34,13 @@ export declare const zh: {
     readonly quick: "快速连接";
     readonly alias: "SSH 别名";
     readonly aliasPlaceholder: "选择或输入，如 harness-lan";
+    readonly aliasList: "已有 SSH 连接";
+    readonly searchAliases: "搜索 SSH 别名";
+    readonly chooseAlias: "请选择 SSH 别名";
+    readonly searchTargets: "搜索目标名称、SSH 别名或工作区";
+    readonly currentTarget: "当前目标";
+    readonly noAliases: "尚未找到已有 SSH 别名，可在下方直接输入。";
+    readonly noConnectionMatches: "没有匹配的连接，请修改或清空搜索条件。";
     readonly quickConnect: "一键连接";
     readonly connecting: "正在连接…";
     readonly advanced: "高级选项";
