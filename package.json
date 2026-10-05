@@ -17,5 +17,58 @@
     "verify:project": "node scripts/verify-project.mjs",
     "verify:artifacts": "node scripts/verify-artifacts.mjs"
   },
-  "packageManager": "pnpm@11.7.0"
+  "packageManager": "pnpm@11.7.0",
+  "main": "runtime/controller/index.js",
+  "types": "runtime/controller/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./runtime/controller/types/index.d.ts",
+      "default": "./runtime/controller/index.js"
+    },
+    "./types": {
+      "types": "./runtime/controller/types/types.d.ts"
+    },
+    "./typert": {
+      "types": "./runtime/controller/typert.host.d.ts",
+      "default": "./runtime/controller/typert.host.js"
+    },
+    "./remote": {
+      "types": "./runtime/controller/typert.remote-client.d.ts",
+      "default": "./runtime/controller/typert.remote-client.js"
+    },
+    "./client": {
+      "types": "./runtime/client/types/client/index.d.ts",
+      "default": "./runtime/client/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "runtime",
+    "cordis.patch.yml"
+  ],
+  "dependencies": {
+    "ws": "^8.21.0",
+    "zod": "^4.4.3",
+    "@deepseek-ai/schemastery": "~3.18.4"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.4",
+    "@deepseek-ai/dsh-app-boot": "0.2.0-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.0-rc.2"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-api-gateway",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-sidebar-right",
+        "@deepseek-ai/dsh-client-ui-sidebar-browser"
+      ],
+      "platform": "web"
+    }
+  }
 }

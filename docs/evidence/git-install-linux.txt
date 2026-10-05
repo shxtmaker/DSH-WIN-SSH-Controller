@@ -1,0 +1,35 @@
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/opencode/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+[WARN] 1 deprecated subdependencies found: node-domexception@1.0.0
+Packages: +533
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 533, reused 536, downloaded 0, added 533, done
+
+dependencies:
++ @deepseek-ai/dsh 0.2.0-rc.2
++ react 18.3.1
+
+Done in 2.1s using pnpm v12.4.2
+Initialized empty Git repository in /tmp/dsh-controller-git-install-n6mdD4/repository/.git/
+warning: in the working copy of 'docs/verification.json', CRLF will be replaced by LF the next time Git touches it
+Progress: resolved 0, reused 1, downloaded 0, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/opencode/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +6
+++++++
+Progress: resolved 6, reused 5, downloaded 0, added 6, done
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+dependencies:
++ dsh-win-ssh-controller-source git+file:///tmp/dsh-controller-git-install-n6mdD4/repository#main
+
+Done in 215ms using pnpm v12.4.2
+
+dsh: initialized profile git-install-check at /tmp/dsh-controller-git-install-n6mdD4/dsh-home/profiles/git-install-check
+
+PASS Git installation: dsh-win-ssh-controller-source; bundle, Controller runtime, Typert exports and Client module resolve without build scripts
+PASS installed Controller: real Loader composition and authenticated Typert HTTP state route; unauthenticated access rejected
+PASS installed Client factory: module identity and mounted method contracts match the installed Host package

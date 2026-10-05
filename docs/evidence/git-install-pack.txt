@@ -1,0 +1,47 @@
+package: @harness-remote/controller@0.1.0
+Tarball Contents
+lib/index.js
+lib/typert.host.d.ts
+lib/typert.host.js
+lib/typert.remote-client.d.ts
+lib/typert.remote-client.js
+lib/types/auth.d.ts
+lib/types/index.d.ts
+lib/types/manager.d.ts
+lib/types/proxy.d.ts
+lib/types/ssh.d.ts
+lib/types/store.d.ts
+lib/types/types.d.ts
+LICENSE
+package.json
+README.md
+README.zh.md
+Tarball Details
+D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote\harness-remote-controller-0.1.0.tgz
+package: @harness-remote/client@0.1.0
+Tarball Contents
+lib/client.js
+lib/index.js
+lib/types/client/assembly.d.ts
+lib/types/client/connections.d.ts
+lib/types/client/index.d.ts
+lib/types/client/locales.d.ts
+lib/types/index.d.ts
+LICENSE
+package.json
+README.md
+README.zh.md
+Tarball Details
+D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote\harness-remote-client-0.1.0.tgz
+package: @harness-remote/workspace@0.1.0
+Tarball Contents
+cordis.patch.yml
+lib/index.js
+lib/types/index.d.ts
+LICENSE
+package.json
+README.md
+README.zh.md
+Tarball Details
+D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote\harness-remote-workspace-0.1.0.tgz
+Packed DSH-WIN-SSH-Controller: D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\out\remote

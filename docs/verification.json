@@ -50,6 +50,29 @@
     }
   ],
   "sourceCodeUnchanged": true,
+  "gitInstallationFix": {
+    "verifiedDate": "2026-10-05",
+    "baseCommit": "798ea75384b1208adb0f560fa111c9ace83b7875",
+    "symptom": "pnpm installs the Git root as a source package, but Harness rejects it as not-bundle",
+    "cause": "Only the standalone workspace tgz declared dsh.bundle; the repository root did not expose a runtime bundle",
+    "change": "The Git package directly includes verified Controller, Client, and workspace runtime files. Host and Client package identifiers and Typert declarations are consistently adapted to the retained root package name",
+    "businessSourceAndStandaloneArtifactsChanged": false,
+    "checks": [
+      { "name": "original-GitHub-not-bundle-reproduction", "status": "reproduced-before-fix", "evidence": "evidence/git-install-before.txt" },
+      { "name": "Windows-real-Git-install-Loader-and-authenticated-Typert", "status": "passed", "node": "v24.19.0", "pnpm": "11.24.0", "evidence": "evidence/git-install-windows.txt" },
+      { "name": "Linux-distributed-CLI-Git-install-and-profile-bundle-selection", "status": "passed", "environment": "WSL Ubuntu, temporary profile, @deepseek-ai/dsh@0.2.0-rc.2 and React factory dependency", "node": "v24.19.0", "pnpm": "12.4.2", "evidence": "evidence/git-install-linux.txt" },
+      { "name": "installed-Host-and-Client-factory-contract-consistency", "status": "passed", "coverage": ["runtime export resolution", "real Harness Loader", "authenticated state route", "unauthenticated 401", "Client factory identity", "mounted Client method IDs match Host metadata"], "evidence": "evidence/git-install-windows.txt" },
+      { "name": "Git-runtime-metadata-and-artifact-regressions", "status": "passed", "passed": 7, "skipped": 0, "evidence": "evidence/git-install-project-tests.txt" },
+      { "name": "existing-authenticated-proxy-and-Loader-regressions", "status": "passed", "passed": 4, "skipped": 0, "evidence": "evidence/git-install-integration.txt" },
+      { "name": "pack-only-and-Git-runtime-sync", "status": "passed", "evidence": "evidence/git-install-pack.txt" },
+      { "name": "Git-root-publint", "status": "passed-with-existing-Client-format-warning", "toolVersion": "0.3.21", "exitCode": 0 }
+    ],
+    "repairedFailures": [
+      { "name": "relative-file-subpackage-candidate", "status": "replaced", "reason": "pnpm resolves file: dependencies relative to the consuming profile during Git installation; the final Git package carries all runtime entries directly" }
+    ],
+    "warnings": ["Client ./client uses the existing Harness closure factory; publint classifies it as CJS-in-ESM and exits 0", "Profile-local peer warnings are resolved by Harness's installation/profile runtime resolver, as verified by the installed Loader and HTTP route tests"],
+    "notRun": ["installed-Desktop-visual-and-interaction-acceptance", "real-SSH-controller-business-flow", "real-frp-recovery"]
+  },
   "repairedFailures": [
     {
       "name": "initial-build",

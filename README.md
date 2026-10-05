@@ -6,6 +6,16 @@ DeepSeek Harness SSH 远程工作区控制端。
 
 ## 安装文件
 
+在 Harness Desktop 的插件管理器中选择 Git 仓库安装，填入以下地址：
+
+```text
+https://github.com/shxtmaker/DSH-WIN-SSH-Controller
+```
+
+Git 安装包包含控制端、连接页面和组合包配置，安装时无需构建 Harness。安装与更新步骤见[安装与使用说明](docs/INSTALL.md)。
+
+也可使用三个独立安装包：
+
 - [harness-remote-controller-0.1.0.tgz](dist/remote/harness-remote-controller-0.1.0.tgz)
 - [harness-remote-client-0.1.0.tgz](dist/remote/harness-remote-client-0.1.0.tgz)
 - [harness-remote-workspace-0.1.0.tgz](dist/remote/harness-remote-workspace-0.1.0.tgz)

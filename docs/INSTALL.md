@@ -8,6 +8,29 @@
 
 ## 安装
 
+### 从 Git 仓库安装
+
+在 Harness Desktop 的插件管理器中选择 Git 仓库安装，填入：
+
+```text
+https://github.com/shxtmaker/DSH-WIN-SSH-Controller
+```
+
+该方式安装 `dsh-win-ssh-controller-source`。包内包含控制端服务、远程连接页面、Typert 通信契约和组合包配置，无需另外安装三个 `.tgz` 文件，也无需运行源码构建。
+
+若此前出现“这个包没有声明组合包，不能作为插件管理”，重新提交上述地址安装即可。仍命中旧缓存时，在地址末尾附加修复提交 SHA：`https://github.com/shxtmaker/DSH-WIN-SSH-Controller#<commit-sha>`。
+
+使用命令行时，先完全退出 Desktop，再使用 Desktop 自带的同版本 `dsh` 执行：
+
+```powershell
+dsh plugin --profile desktop add https://github.com/shxtmaker/DSH-WIN-SSH-Controller
+dsh plugin --profile desktop list
+```
+
+Git 安装与独立安装包安装选择一种方式。切换方式时，在退出 Desktop 后先卸载原安装方式，避免同一 profile 重复启用控制端服务。
+
+### 从独立安装包安装
+
 先启动 Desktop 以初始化 desktop profile，再完全退出。使用 Desktop 安装目录 resources/runtime/cli/bin/dsh.cmd，或从 Desktop 的“Manage dsh Command…”菜单注册的同版本 dsh。
 
 在仓库根目录核对安装文件：
@@ -42,6 +65,14 @@ dsh plugin --profile desktop list
 ## 卸载
 
 先断开连接并完全退出 Desktop，再执行：
+
+Git 安装：
+
+```powershell
+dsh plugin --profile desktop remove dsh-win-ssh-controller-source
+```
+
+独立安装包安装：
 
 ```powershell
 dsh plugin --profile desktop remove @harness-remote/workspace @harness-remote/client @harness-remote/controller

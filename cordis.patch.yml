@@ -1,0 +1,5 @@
+- insert:
+    - id: remote-workspace-controller
+      name: 'dsh-win-ssh-controller-source'
+      config:
+        helperPath: /usr/local/bin/dsh-remote-info
