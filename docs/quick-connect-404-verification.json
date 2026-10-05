@@ -26,13 +26,99 @@
     "Document complete exit, including the tray, after installation and upgrade."
   ],
   "checks": [
-    { "name": "new browser regression before production change", "status": "failed as expected - restart instruction absent" },
-    { "name": "Host and Client TypeScript build and package", "status": "passed" },
-    { "name": "packaged Client browser regression", "status": "passed", "hostResponses": "deterministic fixture", "screenshot": "evidence/restart-required.png" },
-    { "name": "distributed CLI isolated Git installation and real Loader HTTP routes", "status": "passed" },
-    { "name": "project and Git-package regressions", "status": "passed", "tests": 7 },
-    { "name": "archive hashes and generated runtime consistency", "status": "passed" }
+    {
+      "name": "new browser regression before production change",
+      "status": "failed as expected - restart instruction absent"
+    },
+    {
+      "name": "Host and Client TypeScript build and package",
+      "status": "passed"
+    },
+    {
+      "name": "packaged Client browser regression",
+      "status": "passed",
+      "hostResponses": "deterministic fixture",
+      "screenshot": "evidence/restart-required.png"
+    },
+    {
+      "name": "distributed CLI isolated Git installation and real Loader HTTP routes",
+      "status": "passed"
+    },
+    {
+      "name": "project and Git-package regressions",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "archive hashes and generated runtime consistency",
+      "status": "passed"
+    }
   ],
-  "notRun": ["Desktop post-restart route verification", "real SSH Linux connection", "real frp recovery", "macOS acceptance"],
-  "publication": { "status": "pending" }
+  "notRun": [
+    "Desktop post-restart route verification",
+    "real SSH Linux connection",
+    "real frp recovery",
+    "macOS acceptance"
+  ],
+  "publication": {
+    "status": "passed",
+    "implementationCommit": "2624fe45bd0a0026119b9da08d3e2d76e054fad2",
+    "verifiedAt": "2026-10-05T13:35:18.934Z",
+    "remotes": [
+      {
+        "remote": "github",
+        "revision": "2624fe45bd0a0026119b9da08d3e2d76e054fad2",
+        "mainRef": "passed",
+        "artifacts": [
+          {
+            "file": "SHA256SUMS.txt",
+            "sha256": "8abdb08cf25a012eee58ced45c34b73e9477cb4add2779ad2bce333045dab28e",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-client-0.1.0.tgz",
+            "sha256": "65a873041d738d9c657a0a1fa0c34ef8c9e9052c2eb137bd34b7b16b6bff43e6",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-controller-0.1.0.tgz",
+            "sha256": "14667ad5c9fd1f0f6ab45a6580dac6dc8d6ac45e2bf3520256e2e3459a346188",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-workspace-0.1.0.tgz",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "remote": "gitea",
+        "revision": "2624fe45bd0a0026119b9da08d3e2d76e054fad2",
+        "mainRef": "passed",
+        "artifacts": [
+          {
+            "file": "SHA256SUMS.txt",
+            "sha256": "8abdb08cf25a012eee58ced45c34b73e9477cb4add2779ad2bce333045dab28e",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-client-0.1.0.tgz",
+            "sha256": "65a873041d738d9c657a0a1fa0c34ef8c9e9052c2eb137bd34b7b16b6bff43e6",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-controller-0.1.0.tgz",
+            "sha256": "14667ad5c9fd1f0f6ab45a6580dac6dc8d6ac45e2bf3520256e2e3459a346188",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-workspace-0.1.0.tgz",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3",
+            "status": "passed"
+          }
+        ]
+      }
+    ]
+  }
 }
