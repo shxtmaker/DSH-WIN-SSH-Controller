@@ -23,6 +23,9 @@ export declare const zh: {
     readonly status: "连接状态";
     readonly noTargets: "先保存一个目标。";
     readonly noSession: "请先选择一个本机会话，以在侧栏中打开远端页面。";
+    readonly sessionChanged: "本机会话已切换，已取消打开。请在当前会话重新打开远程工作区。";
+    readonly sidebarNotReady: "本机会话侧栏尚未就绪，请稍后重新打开远程工作区。";
+    readonly connectionChanged: "远程连接已变化，请确认连接状态后重新打开。";
     readonly reconnect: "重新连接";
     readonly refresh: "刷新";
     readonly error: "操作失败";

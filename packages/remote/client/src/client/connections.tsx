@@ -56,6 +56,8 @@ const ERRORS: Record<string, RemoteWorkspaceKey> = {
   'remote-workspace: SSH_HOST_KEY': 'errorHostKey', 'remote-workspace: SSH_AUTH': 'errorAuth',
   'remote-workspace: SSH_ALIAS': 'errorAlias', 'remote-workspace: SSH_UNREACHABLE': 'errorUnreachable',
   'remote-workspace: SSH_HELPER': 'errorHelper', 'remote-workspace: NO_SESSION': 'noSession',
+  'remote-workspace: SESSION_CHANGED': 'sessionChanged', 'remote-workspace: SIDEBAR_NOT_READY': 'sidebarNotReady',
+  'remote-workspace: CONNECTION_CHANGED': 'connectionChanged',
 }
 const INPUT = { padding: 9, borderRadius: 6, border: '1px solid #888', background: 'transparent', color: 'inherit', minWidth: 0 }
 const BUTTON = { padding: '8px 14px', borderRadius: 6, border: '1px solid #888', cursor: 'pointer' }
@@ -175,6 +177,7 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
     <section aria-live="polite" style={{ padding: 16, border: '1px solid #888', borderRadius: 8 }}>
       <h2 style={{ fontSize: 18 }}>{t('status')}: {t(PHASES[state.connection.phase])}</h2>
       <p>{state.connection.hostName ?? t('inactive')} · {state.connection.profile ?? '—'} · {state.connection.workspaceHint ?? '—'}</p>
+      {state.error && <p role="alert">{t('error')}: {ERRORS[state.error] ? t(ERRORS[state.error]!) : state.error}</p>}
       {state.connection.reason && <p>{ERRORS[state.connection.reason] ? t(ERRORS[state.connection.reason]!) : state.connection.reason}</p>}
       <label><Help label={t('endpoint')} text={t('helpRoutes')} help={t('help')} />
         <select value={endpoint} disabled={state.busy || !!state.connection.connectionId} style={INPUT} onChange={(event) => { setEndpoint(event.target.value) }}>
@@ -191,7 +194,6 @@ export function ConnectionsPage({ t, getSnapshot, subscribe, refresh, save, quic
       <button type="button" style={BUTTON} disabled={state.busy} onClick={() => { void refresh() }}>{t('refresh')}</button>
       {state.connection.phase === 'app-ready' && <p>{t('readyHint')}</p>}
     </section>
-    {state.error && <p role="alert">{t('error')}: {ERRORS[state.error] ? t(ERRORS[state.error]!) : state.error}</p>}
   </section>
 }
 

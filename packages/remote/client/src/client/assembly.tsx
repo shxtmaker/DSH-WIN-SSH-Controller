@@ -9,6 +9,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar-browser/client'
+import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import type { MainPanelId } from '@deepseek-ai/dsh-client-ui-layout/client'
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
 import type { RemoteSnapshot, RemoteTarget } from '@harness-remote/controller/types'
@@ -75,7 +76,7 @@ class ViewController implements RemoteWorkspaceFace {
     if (targets.ok) this.publish({ ...this.state, targets: targets.value })
     if (!result.ok) throw result.error
     this.publish({ ...this.state, connection: result.value })
-    if (this.ctx.sidebarRight.mounted.getSnapshot() !== undefined) await this.openReady()
+    if (this.selectedSession() !== undefined) await this.openReady()
   })
 
   save = async (target: RemoteTarget): Promise<void> => this.action(async () => {
@@ -88,7 +89,7 @@ class ViewController implements RemoteWorkspaceFace {
     const result = await this.ctx.remote.remoteWorkspace.connect(targetId, endpointId, randomUUID())
     if (!result.ok) throw result.error
     this.publish({ ...this.state, connection: result.value })
-    if (this.ctx.sidebarRight.mounted.getSnapshot() !== undefined) await this.openReady()
+    if (this.selectedSession() !== undefined) await this.openReady()
   })
 
   disconnect = async (): Promise<void> => this.action(async () => {
@@ -101,14 +102,35 @@ class ViewController implements RemoteWorkspaceFace {
 
   open = async (): Promise<void> => this.action(() => this.openReady())
 
+  private selectedSession(): string | undefined { return this.ctx.uiSession.adapter.current.getSnapshot().key }
+
   private async openReady(): Promise<void> {
-    if (this.ctx.sidebarRight.mounted.getSnapshot() === undefined) throw new Error('remote-workspace: NO_SESSION')
+    const sessionId = this.selectedSession()
+    if (sessionId === undefined) throw new Error('remote-workspace: NO_SESSION')
     const id = this.state.connection.connectionId
     if (id === undefined) throw new Error('remote-workspace: no active connection')
-    const result = await this.ctx.remote.remoteWorkspace.createOpenTicket(id)
-    if (!result.ok) throw result.error
+    const previousPanel = this.ctx.layout.panelInfo.getSnapshot().activePanelId
     this.ctx.layout.selectPanel(null)
-    this.ctx.sidebarRight.openTab('browser', { params: { url: result.value } })
+    try {
+      // The global connection page hides the Sidebar. Yield to React before issuing an intent to its session store.
+      await new Promise<void>(resolve => setTimeout(resolve, 0))
+      if (this.selectedSession() !== sessionId) throw new Error('remote-workspace: SESSION_CHANGED')
+      if (this.ctx.sidebarRight.mounted.getSnapshot() !== sessionId) throw new Error('remote-workspace: SIDEBAR_NOT_READY')
+      const result = await this.ctx.remote.remoteWorkspace.createOpenTicket(id)
+      if (!result.ok) throw result.error
+      if (this.selectedSession() !== sessionId || this.ctx.sidebarRight.mounted.getSnapshot() !== sessionId) {
+        throw new Error('remote-workspace: SESSION_CHANGED')
+      }
+      if (this.state.connection.connectionId !== id || this.state.connection.phase !== 'app-ready') {
+        throw new Error('remote-workspace: CONNECTION_CHANGED')
+      }
+      this.ctx.sidebarRight.openTab('browser', { params: { url: result.value } })
+    } catch (error) {
+      if (this.selectedSession() === sessionId && this.ctx.layout.panelInfo.getSnapshot().activePanelId === null) {
+        this.ctx.layout.selectPanel(previousPanel)
+      }
+      throw error
+    }
   }
 
   observe(connection: RemoteSnapshot): void { this.publish({ ...this.state, connection }) }
@@ -121,7 +143,7 @@ export const inject = ['remote']
 export async function apply(ctx: Context): Promise<() => Promise<void>> {
   const release = await ctx.remote.$mount(remoteWorkspaceContribution)
   if (!('dshDesktop' in globalThis)) return release
-  ctx.inject(['remote.remoteWorkspace', 'slots', 'locale', 'layout', 'sidebarRight'], (scope) => {
+  ctx.inject(['remote.remoteWorkspace', 'slots', 'locale', 'layout', 'sidebarRight', 'uiSession'], (scope) => {
     scope.effect(() => scope.locale.register('remoteWorkspace', { en, zh }), 'remote-workspace: copy')
     const t = scope.locale.bind('remoteWorkspace')
     const view = new ViewController(scope)

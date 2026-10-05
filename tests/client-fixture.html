@@ -12,7 +12,8 @@ window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
 <script>
 (async () => {
   const ui = { aliases: ['harness-lan'], targets: [], state: { phase: 'idle', generation: 0 }, calls: 0,
-    opens: 0, session: false, failure: '', failAliases: false, delay: 0, missingRoutes: false };
+    opens: 0, session: false, sessionId: 'session-a', failure: '', failAliases: false, delay: 0, missingRoutes: false,
+    panel: 'remote-workspace', tickets: 0, ticketDelay: 0, browserFailure: '', openedSession: '', openedUrl: '' };
   window.fixture = ui;
   const ok = value => ({ ok: true, value });
   const slots = new Map(); let dictionary;
@@ -37,7 +38,7 @@ window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
     },
     async connect() { return ok({ ...ui.state, phase: 'app-ready', connectionId: 'connection-a' }) },
     async disconnect() { ui.state = { phase: 'idle', generation: 2 }; return ok(ui.state) },
-    async createOpenTicket() { return ok('http://127.0.0.1/example-ticket') },
+    async createOpenTicket() { ui.tickets++; if (ui.ticketDelay) await new Promise(resolve => setTimeout(resolve, ui.ticketDelay)); return ok('http://127.0.0.1/example-ticket') },
   };
   const ctx = {
     remote: { remoteWorkspace: service, async $mount() { return async () => {} },
@@ -45,8 +46,15 @@ window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
     inject(_names, callback) { callback(ctx) }, effect(callback) { callback() },
     locale: { register(_namespace, dictionaries) { dictionary = dictionaries.zh }, bind() { return key => dictionary[key] } },
     slots: { inject(_name, callback) { callback() }, register(props, Component) { slots.set(props.name, { props, Component }) } },
-    sidebarRight: { mounted: { getSnapshot() { return ui.session ? {} : undefined } }, openTab() { ui.opens++ } },
-    layout: { selectPanel() {} },
+    uiSession: { adapter: { current: { getSnapshot() { return { key: ui.session ? ui.sessionId : undefined } } } } },
+    sidebarRight: { mounted: { getSnapshot() { return ui.session && ui.panel === null ? ui.sessionId : undefined } },
+      openTab(kind, options) {
+        if (!ui.session || ui.panel !== null) throw new Error('sidebarRight: no session surface is mounted');
+        if (ui.browserFailure) throw new Error(ui.browserFailure);
+        if (kind !== 'browser' || !options?.params?.url) throw new Error('Invalid Browser intent');
+        ui.opens++; ui.openedSession = ui.sessionId; ui.openedUrl = options.params.url;
+      } },
+    layout: { panelInfo: { getSnapshot() { return { activePanelId: ui.panel } } }, selectPanel(panel) { ui.panel = panel } },
   };
   const jsx = (type, props, key) => React.createElement(type, key === undefined ? props : { ...props, key });
   const client = window.clientModule.factory(name => name === 'react' ? React : name === 'react/jsx-runtime' ? { jsx, jsxs: jsx, Fragment: React.Fragment } : (() => { throw Error(name) })());

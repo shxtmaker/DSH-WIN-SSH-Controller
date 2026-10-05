@@ -1,0 +1,35 @@
+{
+  "project": "DSH-WIN-SSH-Controller",
+  "date": "2026-10-05",
+  "baseCommit": "ac24be99d654af51086583891c213b33332dd6de",
+  "userSymptom": "点击打开远程工作区后仍停留在远程工作区页面",
+  "cause": "The global connection panel hides the conversation Sidebar. sidebarRight.mounted is undefined there even when uiSession has a selected session. The Client checked mounted before revealing the conversation and aborted opening.",
+  "reproduction": {
+    "environment": "real packaged Client factory in React browser with deterministic Host and Sidebar contract fixture",
+    "sessionSelected": true,
+    "globalPanelActive": true,
+    "sidebarMounted": false,
+    "beforeFix": "Browser opens remain zero; the selected-session opening assertion times out",
+    "afterFix": "Conversation panel is revealed and Browser receives the exact ticket URL in the selected session"
+  },
+  "changes": [
+    "Use uiSession's selected-session identity independently of Sidebar presentation.",
+    "Reveal the conversation and yield to its render before requesting a Browser tab.",
+    "Reject stale opens after session or connection changes.",
+    "Restore the prior panel on opening failure and show the error beside connection controls."
+  ],
+  "checks": [
+    { "name": "packaged Client selected-session/global-panel regression", "status": "passed" },
+    { "name": "no-session refusal before ticket creation", "status": "passed" },
+    { "name": "Browser failure restores panel and displays error", "status": "passed" },
+    { "name": "session changes during ticket request cannot open in another session", "status": "passed" },
+    { "name": "Host and Client TypeScript build and packaging", "status": "passed" },
+    { "name": "project and Git package regressions", "status": "passed", "tests": 7 },
+    { "name": "artifact hashes and runtime consistency", "status": "passed" },
+    { "name": "distributed CLI isolated Git installation and actual Loader routes", "status": "passed" },
+    { "name": "live installed Host proxy page in a real browser", "status": "passed", "ticketExchangeHttp": 204, "rootHttp": 200, "applicationRootRendered": true, "pageErrors": 0 }
+  ],
+  "credentialValuesCaptured": false,
+  "notRun": ["installed Desktop click after updated Client activation", "real frp recovery", "macOS acceptance"],
+  "publication": { "status": "pending" }
+}

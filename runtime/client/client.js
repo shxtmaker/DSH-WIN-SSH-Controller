@@ -4555,7 +4555,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"remote-workspace: SSH_ALIAS": "errorAlias",
 			"remote-workspace: SSH_UNREACHABLE": "errorUnreachable",
 			"remote-workspace: SSH_HELPER": "errorHelper",
-			"remote-workspace: NO_SESSION": "noSession"
+			"remote-workspace: NO_SESSION": "noSession",
+			"remote-workspace: SESSION_CHANGED": "sessionChanged",
+			"remote-workspace: SIDEBAR_NOT_READY": "sidebarNotReady",
+			"remote-workspace: CONNECTION_CHANGED": "connectionChanged"
 		};
 		const INPUT = {
 			padding: 9,
@@ -4926,6 +4929,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 								" · ",
 								state.connection.workspaceHint ?? "—"
 							] }),
+							state.error && (0, react_jsx_runtime.jsxs)("p", {
+								role: "alert",
+								children: [
+									t("error"),
+									": ",
+									ERRORS[state.error] ? t(ERRORS[state.error]) : state.error
+								]
+							}),
 							state.connection.reason && (0, react_jsx_runtime.jsx)("p", { children: ERRORS[state.connection.reason] ? t(ERRORS[state.connection.reason]) : state.connection.reason }),
 							(0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)(Help, {
 								label: t("endpoint"),
@@ -4991,14 +5002,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 								children: t("refresh")
 							}),
 							state.connection.phase === "app-ready" && (0, react_jsx_runtime.jsx)("p", { children: t("readyHint") })
-						]
-					}),
-					state.error && (0, react_jsx_runtime.jsxs)("p", {
-						role: "alert",
-						children: [
-							t("error"),
-							": ",
-							ERRORS[state.error] ? t(ERRORS[state.error]) : state.error
 						]
 					})
 				]
@@ -5067,6 +5070,9 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			status: "连接状态",
 			noTargets: "先保存一个目标。",
 			noSession: "请先选择一个本机会话，以在侧栏中打开远端页面。",
+			sessionChanged: "本机会话已切换，已取消打开。请在当前会话重新打开远程工作区。",
+			sidebarNotReady: "本机会话侧栏尚未就绪，请稍后重新打开远程工作区。",
+			connectionChanged: "远程连接已变化，请确认连接状态后重新打开。",
 			reconnect: "重新连接",
 			refresh: "刷新",
 			error: "操作失败",
@@ -5136,6 +5142,9 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			status: "Connection state",
 			noTargets: "Save a target first.",
 			noSession: "Select a local session first to open the remote page in the sidebar.",
+			sessionChanged: "The local session changed, so opening was cancelled. Open the remote workspace again in the current session.",
+			sidebarNotReady: "The local session sidebar is not ready. Try opening the remote workspace again shortly.",
+			connectionChanged: "The remote connection changed. Check the connection state before opening again.",
 			reconnect: "Reconnect",
 			refresh: "Refresh",
 			error: "Operation failed",
@@ -5276,7 +5285,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					...this.state,
 					connection: result.value
 				});
-				if (this.ctx.sidebarRight.mounted.getSnapshot() !== void 0) await this.openReady();
+				if (this.selectedSession() !== void 0) await this.openReady();
 			});
 			save = async (target) => this.action(async () => {
 				const result = await this.ctx.remote.remoteWorkspace.saveTarget(target);
@@ -5293,7 +5302,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					...this.state,
 					connection: result.value
 				});
-				if (this.ctx.sidebarRight.mounted.getSnapshot() !== void 0) await this.openReady();
+				if (this.selectedSession() !== void 0) await this.openReady();
 			});
 			disconnect = async () => this.action(async () => {
 				const id = this.state.connection.connectionId;
@@ -5306,14 +5315,29 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				});
 			});
 			open = async () => this.action(() => this.openReady());
+			selectedSession() {
+				return this.ctx.uiSession.adapter.current.getSnapshot().key;
+			}
 			async openReady() {
-				if (this.ctx.sidebarRight.mounted.getSnapshot() === void 0) throw new Error("remote-workspace: NO_SESSION");
+				const sessionId = this.selectedSession();
+				if (sessionId === void 0) throw new Error("remote-workspace: NO_SESSION");
 				const id = this.state.connection.connectionId;
 				if (id === void 0) throw new Error("remote-workspace: no active connection");
-				const result = await this.ctx.remote.remoteWorkspace.createOpenTicket(id);
-				if (!result.ok) throw result.error;
+				const previousPanel = this.ctx.layout.panelInfo.getSnapshot().activePanelId;
 				this.ctx.layout.selectPanel(null);
-				this.ctx.sidebarRight.openTab("browser", { params: { url: result.value } });
+				try {
+					await new Promise((resolve) => setTimeout(resolve, 0));
+					if (this.selectedSession() !== sessionId) throw new Error("remote-workspace: SESSION_CHANGED");
+					if (this.ctx.sidebarRight.mounted.getSnapshot() !== sessionId) throw new Error("remote-workspace: SIDEBAR_NOT_READY");
+					const result = await this.ctx.remote.remoteWorkspace.createOpenTicket(id);
+					if (!result.ok) throw result.error;
+					if (this.selectedSession() !== sessionId || this.ctx.sidebarRight.mounted.getSnapshot() !== sessionId) throw new Error("remote-workspace: SESSION_CHANGED");
+					if (this.state.connection.connectionId !== id || this.state.connection.phase !== "app-ready") throw new Error("remote-workspace: CONNECTION_CHANGED");
+					this.ctx.sidebarRight.openTab("browser", { params: { url: result.value } });
+				} catch (error) {
+					if (this.selectedSession() === sessionId && this.ctx.layout.panelInfo.getSnapshot().activePanelId === null) this.ctx.layout.selectPanel(previousPanel);
+					throw error;
+				}
 			}
 			observe(connection) {
 				this.publish({
@@ -5333,7 +5357,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"slots",
 				"locale",
 				"layout",
-				"sidebarRight"
+				"sidebarRight",
+				"uiSession"
 			], (scope) => {
 				scope.effect(() => scope.locale.register("remoteWorkspace", {
 					en,
