@@ -80,6 +80,64 @@
     "macOS acceptance"
   ],
   "publication": {
-    "status": "pending"
+    "status": "passed",
+    "implementationCommit": "997787059186feb928aeb7ceb318b4ad52319871",
+    "verifiedAt": "2026-10-05T13:45:39.045Z",
+    "remotes": [
+      {
+        "remote": "github",
+        "revision": "997787059186feb928aeb7ceb318b4ad52319871",
+        "mainRef": "passed",
+        "artifacts": [
+          {
+            "file": "SHA256SUMS.txt",
+            "sha256": "56e6e7a51df8f3d72544efc50621cb7fe90146654d25a65daf210aa40f10994d",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-client-0.1.0.tgz",
+            "sha256": "30b3bff8c1d369810ff4f70b1fe91c5b7ed77d4ef4070bce3d3af2d16f2e148a",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-controller-0.1.0.tgz",
+            "sha256": "3d6d1be42948ee64eb2cf00134cb51eb436fbef82ea27954f25ca6c75f6c2ff3",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-workspace-0.1.0.tgz",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "remote": "gitea",
+        "revision": "997787059186feb928aeb7ceb318b4ad52319871",
+        "mainRef": "passed",
+        "artifacts": [
+          {
+            "file": "SHA256SUMS.txt",
+            "sha256": "56e6e7a51df8f3d72544efc50621cb7fe90146654d25a65daf210aa40f10994d",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-client-0.1.0.tgz",
+            "sha256": "30b3bff8c1d369810ff4f70b1fe91c5b7ed77d4ef4070bce3d3af2d16f2e148a",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-controller-0.1.0.tgz",
+            "sha256": "3d6d1be42948ee64eb2cf00134cb51eb436fbef82ea27954f25ca6c75f6c2ff3",
+            "status": "passed"
+          },
+          {
+            "file": "harness-remote-workspace-0.1.0.tgz",
+            "sha256": "12d41fa3d6ed108767ac5d17caf9b86070ba52616b1ed776b3b6c7d629b2ccb3",
+            "status": "passed"
+          }
+        ]
+      }
+    ]
   }
 }
