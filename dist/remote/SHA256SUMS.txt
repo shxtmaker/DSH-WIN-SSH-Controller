@@ -1,3 +1,3 @@
-c3d5027888264d4f206238fb25782745891ef8088ce23a03d6d55fcc01d3f025  harness-remote-client-0.1.0.tgz
+9c5977d6d525b129b3647326388ca9b5526bd6ebdb9bd96d5fb0b938ccb7fe92  harness-remote-client-0.1.0.tgz
 2c06bf67ac7208c8c48ca8f320d9f4338c01f834c0b2d8ab2210814848a86d90  harness-remote-controller-0.1.0.tgz
 69114ffd07db94e5d85fc1b3b7b28341958902d9fc514ec1fe0c30109d2acc0a  harness-remote-workspace-0.1.0.tgz

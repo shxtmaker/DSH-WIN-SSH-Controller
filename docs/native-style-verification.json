@@ -1,0 +1,100 @@
+{
+  "project": "DSH-WIN-SSH-Controller",
+  "verifiedAt": "2026-10-08T10:35:07.0252147+00:00",
+  "timeZone": "Asia/Shanghai",
+  "baseCommit": "aaa8eed05fe7b53d9f93b4018d8ae8aa53e87612",
+  "sourceBranch": "codex/searchable-ssh-connections",
+  "packageVersion": "0.1.0",
+  "changes": [
+    "Match native plugin page title at 20px/28px and weight 500",
+    "Use Harness font family, 14px controls, 13px secondary text and theme colors",
+    "Theme-aware cards, buttons, inputs, selection and focus states",
+    "Wrap connection actions and manual form on narrow viewports",
+    "Retain searchable SSH aliases, saved targets and connection behavior"
+  ],
+  "nativeReference": {
+    "files": [
+      "packages/client/web/src/base.css",
+      "packages/client/ui-theme/src/styles/",
+      "packages/client/ui-plugin-manager/src/client/PluginManagerPage.module.css",
+      "packages/client/ui-primitives/src/Button.module.css",
+      "packages/client/ui-primitives/src/Input.module.css"
+    ],
+    "harnessCommit": "639ed015397290b3745d163aafe02ffee4aa3f84"
+  },
+  "checks": [
+    {
+      "evidence": "evidence/native-style-red.txt",
+      "status": "expected-failure",
+      "name": "regression-before-fix"
+    },
+    {
+      "evidence": "evidence/native-style-build.txt",
+      "workspace": ".build/native-style-final",
+      "status": "passed",
+      "name": "Host-and-Client-TypeScript-build-and-pack"
+    },
+    {
+      "exitCode": 0,
+      "workspace": ".build/native-style-final",
+      "status": "passed",
+      "name": "targeted-type-aware-oxlint"
+    },
+    {
+      "evidence": "evidence/native-style-client.txt",
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "status": "passed",
+      "narrowWidth": 390,
+      "name": "packaged-client-native-styles-and-interactions",
+      "hostResponses": "deterministic local fixture"
+    },
+    {
+      "evidence": "evidence/native-style-integration.txt",
+      "controllerSourceChanged": false,
+      "status": "passed",
+      "workspace": ".build/native-style",
+      "name": "controller-integration",
+      "passed": 29
+    },
+    {
+      "passed": 7,
+      "status": "passed",
+      "evidence": "evidence/native-style-project.txt",
+      "name": "Git-package-and-artifact-regressions"
+    },
+    {
+      "name": "artifact-SHA256-Git-runtime-and-build-source-consistency",
+      "status": "passed"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "sha256": "ca28c868348447fe24c21345c951ad29b8cc826363fc9e43f7d3b071cf3d4c1a",
+      "file": "packages/remote/client/src/client/connections.tsx"
+    },
+    {
+      "sha256": "806fa518a25a58a4b025f816fffb2287e23844de04c26729362205d4e1a388a5",
+      "file": "packages/remote/client/src/client/connections.module.css"
+    },
+    {
+      "sha256": "bd1b2962da55e48f684700eedb48d1286b0af71f27ffed62643c41eb75caf2ae",
+      "file": "packages/remote/client/src/client/css-modules.d.ts"
+    }
+  ],
+  "screenshots": [
+    "evidence/native-style-before.png",
+    "evidence/native-style-dark.png",
+    "evidence/native-style-light.png",
+    "evidence/native-style-narrow.png",
+    "evidence/native-style-manual-narrow.png"
+  ],
+  "notRun": [
+    "installed-Desktop-visual-acceptance-for-this-change",
+    "real-SSH-or-frp-connection-for-this-change",
+    "macOS-runtime-acceptance"
+  ],
+  "publication": "Authorized branch update to GitHub and Gitea; remote refs and artifact hashes are verified separately after push."
+}

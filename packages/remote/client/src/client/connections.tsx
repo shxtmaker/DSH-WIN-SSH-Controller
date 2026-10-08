@@ -3,6 +3,7 @@ import { useEffect, useId, useState, useSyncExternalStore, type ReactNode } from
 import type { PropsLocale, PropsRuntime, InjectFace } from '@deepseek-ai/dsh-client-ui-slots'
 import type { RemoteSnapshot, RemoteTarget } from '@harness-remote/controller/types'
 import type { RemoteWorkspaceKey } from './locales.ts'
+import styles from './connections.module.css'
 
 /** State shared by the management page and always-visible location indicator. */
 export interface ViewState {
@@ -59,22 +60,18 @@ const ERRORS: Record<string, RemoteWorkspaceKey> = {
   'remote-workspace: SESSION_CHANGED': 'sessionChanged', 'remote-workspace: SIDEBAR_NOT_READY': 'sidebarNotReady',
   'remote-workspace: CONNECTION_CHANGED': 'connectionChanged',
 }
-const INPUT = { padding: 9, borderRadius: 6, border: '1px solid #888', background: 'transparent', color: 'inherit', minWidth: 0 }
-const BUTTON = { padding: '8px 14px', borderRadius: 6, border: '1px solid #888', cursor: 'pointer' }
 
 function Help({ label, text, help }: { label: string; text: string; help: string }): ReactNode {
   const [shown, setShown] = useState(false)
   const id = useId()
   return <span style={{ display: 'block' }}>
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>{label}
+    <span className={styles.helpLabel}>{label}
       <button type="button" aria-label={`${help}: ${label}`} aria-expanded={shown} aria-controls={id}
         onClick={(event) => { event.preventDefault(); setShown(!shown) }}
         onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setShown(false) } }}
-        style={{ width: 19, height: 19, padding: 0, lineHeight: '17px', borderRadius: '50%', border: '1px solid currentColor',
-          color: 'inherit', background: 'transparent', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>?</button>
+        className={styles.helpButton}>?</button>
     </span>
-    <span id={id} role="note" hidden={!shown}
-      style={{ display: shown ? 'block' : undefined, fontSize: 13, fontWeight: 400, lineHeight: 1.6, marginTop: shown ? 8 : 0 }}>{text}</span>
+    <span id={id} role="note" hidden={!shown} className={styles.helpText}>{text}</span>
   </span>
 }
 
@@ -121,21 +118,20 @@ function SearchableConnectionList({ label, searchLabel, empty, noMatches, placeh
   const search = query.trim().toLowerCase()
   const visible = choices.filter(choice => choice.searchText.toLowerCase().includes(search))
   const chosen = choices.find(choice => choice.value === value)
-  return <div style={{ display: 'grid', gap: 8, minWidth: 0 }}>
+  return <div className={styles.choices}>
     <span>{label}</span>
     <input type="search" aria-label={searchLabel} placeholder={searchLabel} value={query} disabled={disabled}
       onChange={(event) => { setQuery(event.target.value) }}
-      onKeyDown={(event) => { if (event.key === 'Enter') event.preventDefault() }} style={{ ...INPUT, width: '100%', boxSizing: 'border-box' }} />
+      onKeyDown={(event) => { if (event.key === 'Enter') event.preventDefault() }} />
     <select size={4} aria-label={label} value={visible.some(choice => choice.value === value) ? value : ''}
       disabled={disabled} onChange={(event) => { onSelect(event.target.value) }}
-      onKeyDown={(event) => { if (event.key === 'Enter') event.preventDefault() }}
-      style={{ ...INPUT, width: '100%', boxSizing: 'border-box' }}>
+      onKeyDown={(event) => { if (event.key === 'Enter') event.preventDefault() }}>
       <option value="" disabled={!allowEmpty}>{placeholder}</option>
       {visible.map(choice => <option value={choice.value} key={choice.value}>{choice.label}</option>)}
     </select>
-    {selectedLabel && chosen && <p role="status" style={{ margin: 0, fontSize: 13, overflowWrap: 'anywhere' }}>{selectedLabel}: {chosen.label}</p>}
-    {choices.length === 0 && <p role="status" style={{ margin: 0, fontSize: 13 }}>{empty}</p>}
-    {choices.length > 0 && visible.length === 0 && <p role="status" style={{ margin: 0, fontSize: 13 }}>{noMatches}</p>}
+    {selectedLabel && chosen && <p role="status" className={styles.hint}>{selectedLabel}: {chosen.label}</p>}
+    {choices.length === 0 && <p role="status" className={styles.hint}>{empty}</p>}
+    {choices.length > 0 && visible.length === 0 && <p role="status" className={styles.hint}>{noMatches}</p>}
   </div>
 }
 
@@ -174,40 +170,40 @@ export function ConnectionsPage({
     return key === undefined ? message : t(key)
   }
   const field = (key: keyof Form, label: string, help: RemoteWorkspaceKey): ReactNode => (
-    <label style={{ display: 'grid', gap: 6 }} key={key}><Help label={label} text={t(help)} help={t('help')} />
+    <label className={styles.field} key={key}><Help label={label} text={t(help)} help={t('help')} />
       <input value={form[key]} onChange={(event) => { setForm({ ...form, [key]: event.target.value }) }}
-        disabled={state.busy || !!state.connection.connectionId} style={INPUT} />
+        disabled={state.busy || !!state.connection.connectionId} />
     </label>
   )
-  return <section style={{ padding: 24, maxWidth: 780, width: '100%', boxSizing: 'border-box', display: 'grid', alignContent: 'start', gap: 20, overflowY: 'auto' }}>
-    <header><h1><Help label={t('title')} text={t('helpTitle')} help={t('help')} /></h1><p>{t('intro')}</p></header>
-    <section style={{ display: 'grid', gap: 12, padding: 18, border: '1px solid #888', borderRadius: 8 }}>
-      <h2 style={{ margin: 0, fontSize: 18 }}>{t('quick')}</h2>
+  return <section className={styles.page}><div className={styles.content}>
+    <header><h1><Help label={t('title')} text={t('helpTitle')} help={t('help')} /></h1><p className={styles.intro}>{t('intro')}</p></header>
+    <section className={styles.card}>
+      <h2>{t('quick')}</h2>
       <form onSubmit={(event) => {
         event.preventDefault()
         if (!state.busy && !state.hostRestartRequired && !state.connection.connectionId && alias.trim()) {
           void quickConnect(alias, instanceKey)
         }
-      }} style={{ display: 'grid', gap: 12 }}>
+      }} className={styles.form}>
         <SearchableConnectionList label={t('aliasList')} searchLabel={t('searchAliases')} empty={t('noAliases')}
           noMatches={t('noConnectionMatches')} placeholder={t('chooseAlias')} value={alias}
           disabled={state.busy || !!state.connection.connectionId}
           choices={state.aliases.map(item => ({ value: item, label: item, searchText: item }))} onSelect={setAlias} />
-        <label style={{ display: 'grid', gap: 6 }}><Help label={t('alias')} text={t('helpAlias')} help={t('help')} />
+        <label className={styles.field}><Help label={t('alias')} text={t('helpAlias')} help={t('help')} />
           <input value={alias} required placeholder={t('aliasPlaceholder')} autoComplete="off"
-            disabled={state.busy || !!state.connection.connectionId} onChange={(event) => { setAlias(event.target.value) }} style={INPUT} />
+            disabled={state.busy || !!state.connection.connectionId} onChange={(event) => { setAlias(event.target.value) }} />
         </label>
-        <details><summary style={{ cursor: 'pointer' }}>{t('advanced')}</summary>
-          <label style={{ display: 'grid', gap: 6, marginTop: 12 }}><Help label={t('instanceKey')} text={t('helpInstanceKey')} help={t('help')} />
+        <details><summary>{t('advanced')}</summary>
+          <label className={styles.advancedField}><Help label={t('instanceKey')} text={t('helpInstanceKey')} help={t('help')} />
             <input value={instanceKey} required disabled={state.busy || !!state.connection.connectionId}
-              onChange={(event) => { setInstanceKey(event.target.value) }} style={INPUT} />
+              onChange={(event) => { setInstanceKey(event.target.value) }} />
           </label>
         </details>
-        <p style={{ margin: 0, fontSize: 13 }}>{t('quickHint')}</p>
-        {state.hostRestartRequired && <p role="alert">{t('restartRequired')}</p>}
-        {!state.hostRestartRequired && state.aliasWarning && <p role="status">{t('aliasWarning')}</p>}
+        <p className={styles.hint}>{t('quickHint')}</p>
+        {state.hostRestartRequired && <p role="alert" className={styles.notice}>{t('restartRequired')}</p>}
+        {!state.hostRestartRequired && state.aliasWarning && <p role="status" className={styles.hint}>{t('aliasWarning')}</p>}
         <button type="submit" disabled={state.busy || state.hostRestartRequired || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId}
-          style={{ ...BUTTON, justifySelf: 'start' }}>{state.busy ? t('connecting') : t('quickConnect')}</button>
+          className={styles.primary}>{state.busy ? t('connecting') : t('quickConnect')}</button>
       </form>
     </section>
     <SearchableConnectionList label={t('saved')} searchLabel={t('searchTargets')} empty={t('noTargets')}
@@ -223,45 +219,45 @@ export function ConnectionsPage({
         setForm(found === undefined ? EMPTY : fromTarget(found))
         setEndpoint(found?.endpoints[0]?.id ?? '')
       }} />
-    <details><summary style={{ cursor: 'pointer' }}>{t('manual')}</summary>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 12, margin: '14px 0' }}>
+    <details><summary>{t('manual')}</summary>
+      <div className={styles.fields}>
         {field('id', t('targetId'), 'helpTargetId')}{field('name', t('name'), 'helpName')}{field('instanceKey', t('instanceKey'), 'helpInstanceKey')}
         {field('instanceId', t('instanceId'), 'helpIdentity')}{field('profile', t('profile'), 'helpProfile')}{field('workspaceHint', t('workspace'), 'helpWorkspace')}
         {field('remotePort', t('port'), 'helpPort')}{field('lan', t('lan'), 'helpRoutes')}{field('tcp', t('tcp'), 'helpRoutes')}{field('stcp', t('stcp'), 'helpRoutes')}
       </div>
-      <button type="button" style={BUTTON} disabled={state.busy || !!state.connection.connectionId} onClick={() => { void save(toTarget(form)) }}>{t('save')}</button>
+      <button type="button" disabled={state.busy || !!state.connection.connectionId} onClick={() => { void save(toTarget(form)) }}>{t('save')}</button>
     </details>
-    <section aria-live="polite" style={{ padding: 16, border: '1px solid #888', borderRadius: 8 }}>
-      <h2 style={{ fontSize: 18 }}>{t('status')}: {t(PHASES[state.connection.phase])}</h2>
-      <p>{state.connection.hostName ?? t('inactive')} · {state.connection.profile ?? '—'} · {state.connection.workspaceHint ?? '—'}</p>
-      {state.error && <p role="alert">{t('error')}: {errorText(state.error)}</p>}
-      {state.connection.reason && <p>{errorText(state.connection.reason)}</p>}
-      <label><Help label={t('endpoint')} text={t('helpRoutes')} help={t('help')} />
-        <select value={endpoint} disabled={state.busy || !!state.connection.connectionId} style={INPUT}
-          onChange={(event) => { setEndpoint(event.target.value) }}>
-          <option value="">—</option>
-          {endpoints.map(item => <option value={item.id} key={item.id}>{item.kind}: {item.sshAlias}</option>)}
-        </select>
-      </label>{' '}
-      <button type="button" style={BUTTON} disabled={state.busy || !selected || !endpoint || !!state.connection.connectionId}
-        onClick={() => { if (selected) void connect(selected, endpoint) }}>{t('connect')}</button>{' '}
-      <button type="button" style={BUTTON} disabled={state.busy || !state.connection.connectionId}
-        onClick={() => { void disconnect() }}>{t('disconnect')}</button>{' '}
-      <button type="button" style={BUTTON} disabled={state.busy || state.connection.phase !== 'app-ready'}
-        onClick={() => { void open() }}>{t('open')}</button>{' '}
-      <button type="button" style={BUTTON} disabled={state.busy} onClick={() => { void refresh() }}>{t('refresh')}</button>
-      {state.connection.phase === 'app-ready' && <p>{t('readyHint')}</p>}
+    <section aria-live="polite" className={styles.card}>
+      <h2>{t('status')}: {t(PHASES[state.connection.phase])}</h2>
+      <p className={styles.hint}>{state.connection.hostName ?? t('inactive')} · {state.connection.profile ?? '—'} · {state.connection.workspaceHint ?? '—'}</p>
+      {state.error && <p role="alert" className={styles.notice}>{t('error')}: {errorText(state.error)}</p>}
+      {state.connection.reason && <p className={styles.hint}>{errorText(state.connection.reason)}</p>}
+      <div className={styles.actions}>
+        <label className={styles.field}><Help label={t('endpoint')} text={t('helpRoutes')} help={t('help')} />
+          <select value={endpoint} disabled={state.busy || !!state.connection.connectionId}
+            onChange={(event) => { setEndpoint(event.target.value) }}>
+            <option value="">—</option>
+            {endpoints.map(item => <option value={item.id} key={item.id}>{item.kind}: {item.sshAlias}</option>)}
+          </select>
+        </label>
+        <button type="button" className={styles.primary} disabled={state.busy || !selected || !endpoint || !!state.connection.connectionId}
+          onClick={() => { if (selected) void connect(selected, endpoint) }}>{t('connect')}</button>
+        <button type="button" disabled={state.busy || !state.connection.connectionId}
+          onClick={() => { void disconnect() }}>{t('disconnect')}</button>
+        <button type="button" disabled={state.busy || state.connection.phase !== 'app-ready'}
+          onClick={() => { void open() }}>{t('open')}</button>
+        <button type="button" disabled={state.busy} onClick={() => { void refresh() }}>{t('refresh')}</button>
+      </div>
+      {state.connection.phase === 'app-ready' && <p className={styles.hint}>{t('readyHint')}</p>}
     </section>
-  </section>
+  </div></section>
 }
 
 /** Keep the actual execution host and remote workspace visible over the local shell. */
 export function RemoteIndicator({ t, getSnapshot, subscribe }: IndicatorProps): ReactNode {
   const { connection } = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
   if (connection.phase === 'idle') return null
-  return <div aria-live="polite" style={{ position: 'fixed', top: 8, right: 16, zIndex: 10000,
-    padding: '5px 9px', borderRadius: 6, background: '#163447', color: 'white', pointerEvents: 'none',
-    maxWidth: '50vw', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12 }}>
+  return <div aria-live="polite" className={styles.indicator}>
     {t('location')}: {connection.hostName} / {connection.profile} / {connection.workspaceHint} ({t(PHASES[connection.phase])})
   </div>
 }

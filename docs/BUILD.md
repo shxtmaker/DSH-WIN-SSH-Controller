@@ -39,6 +39,8 @@ test 检查本端源码、构建补丁和安装包隔离，并验证破损包、
 
 `test:client` 从 `runtime/client/client.js` 加载实际 Client 工厂，使用本地固定 Host 响应与真实 React 在无头 Chromium 中检查 SSH 别名与已保存目标的搜索、键盘选择、空列表、无匹配提示、筛选保留选择、手工输入、点击帮助、Esc 收起、重复连接抑制、自动选择目标、自动打开和错误提示，并检查窄屏页面没有横向溢出。需要准备并构建本项目 Harness 工作区，以及可用的 Playwright Chromium 或本机 Edge。截图写入 `out/verification/`。此项属于安装包页面的隔离浏览器验证，不等同于已安装 Desktop 或实机 SSH 验收。
 
+页面样式检查直接加载固定 Harness 工作区的主题、Web 全局样式、插件页面和基础控件样式，分别在深色与浅色主题下比较标题、说明、按钮和输入框的计算样式。检查包括字体、字号、字重、行高、按钮高度、圆角及主题颜色，并验证 390px 窗口下展开手动配置和帮助时的布局。`native-style-*.json` 保存计算样式对照，`native-style-*.png` 保存页面截图。
+
 `test-git-install.mjs` 在临时 profile 中执行真实 Git 安装，验证组合包识别、运行入口、Typert 导出及 Client 模块，并通过 Harness 的运行时解析器与真实 Loader 加载安装后的控制端。认证 HTTP 状态查询及未认证访问拒绝均纳入检查。Client 模块工厂在隔离环境执行，检查其模块身份与挂载契约是否和 Host 一致。临时测试目录在结束时清理。
 
 测试接受 `--harness /path/to/built-harness`，或 `--installation /path/to/isolated-cli-installation`。后者的独立目录须由 pnpm 安装 `@deepseek-ai/dsh@0.2.0-rc.2`；测试额外使用 `react@18.3.1` 执行 Client 模块工厂。此模式调用发行版 `dsh plugin add`，并检查 profile 已选中组合包。`--spec` 可指定远程 Git URL 和提交，用于推送后的复验。上述检查不包含已安装 Desktop 的视觉交互或实机 SSH/frp 业务验收。

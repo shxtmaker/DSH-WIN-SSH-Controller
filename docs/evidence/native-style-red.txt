@@ -1,0 +1,38 @@
+Native style comparison: {"title":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"32px","fontWeight":"700","lineHeight":"normal"},"nativeTitle":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"20px","fontWeight":"500","lineHeight":"28px"},"intro":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"16px","fontWeight":"400","lineHeight":"normal","color":"rgb(249, 250, 251)"},"nativeIntro":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"13px","fontWeight":"400","lineHeight":"20px","color":"rgb(207, 211, 214)"},"button":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"13.3333px","fontWeight":"400","lineHeight":"normal","height":"35px","borderRadius":"6px","backgroundColor":"rgb(240, 240, 240)","color":"rgb(0, 0, 0)"},"nativeButton":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"14px","fontWeight":"400","lineHeight":"22px","height":"36px","borderRadius":"12px","backgroundColor":"rgb(249, 250, 251)","color":"rgb(15, 17, 21)"},"input":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"13.3333px","lineHeight":"normal","color":"rgb(249, 250, 251)"},"nativeInput":{"fontFamily":"-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif","fontSize":"14px","lineHeight":"22px","color":"rgb(249, 250, 251)"}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: title must match native Harness styles
++ actual - expected
+
+  {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif',
++   fontSize: '32px',
++   fontWeight: '700',
++   lineHeight: 'normal'
+-   fontSize: '20px',
+-   fontWeight: '500',
+-   lineHeight: '28px'
+  }
+
+    at file:///D:/AI/documents/codex/dsh-windows-launcher/DSH-WIN-SSH-Controller/scripts/test-client.mjs:65:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif',
+    fontSize: '32px',
+    fontWeight: '700',
+    lineHeight: 'normal'
+  },
+  expected: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif',
+    fontSize: '20px',
+    fontWeight: '500',
+    lineHeight: '28px'
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

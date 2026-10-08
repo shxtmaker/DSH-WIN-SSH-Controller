@@ -1,0 +1,225 @@
+/* Match the native plugin page and control scale using the active Harness theme. */
+.page {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow: auto;
+  padding: 28px clamp(24px, 4vw, 48px) 48px;
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-s-14);
+}
+
+.content {
+  display: grid;
+  gap: 24px;
+  max-width: 960px;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.page h1 {
+  margin: 0;
+  font: var(--dsw-font-l-20);
+}
+
+.page h2 {
+  margin: 0;
+  font: var(--dsw-font-s-strong-14);
+}
+
+.intro {
+  margin: 4px 0 0;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+}
+
+.card {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding: 20px;
+  border: 0.5px solid var(--dsw-alias-settings-card-stroke);
+  border-radius: var(--dsw-radius-lg);
+  background: var(--dsw-alias-settings-card-fill);
+}
+
+.form, .choices {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.page input, .page select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-s-14);
+}
+
+.page input::placeholder {
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.page select[size] {
+  height: 116px;
+  padding: 4px;
+}
+
+.page select[size] option {
+  padding: 4px 8px;
+  border-radius: var(--dsw-radius-sm);
+}
+
+.page select[size] option:checked {
+  background: var(--dsw-alias-interactive-bg-active);
+  color: var(--dsw-alias-label-primary);
+}
+
+.page button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 36px;
+  padding: 0 14px;
+  border: 0.5px solid var(--dsw-alias-border-l3);
+  border-radius: var(--dsw-radius-md);
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-s-14);
+  cursor: pointer;
+}
+
+.page button:hover:not(:disabled), .page summary:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.page button.primary {
+  justify-self: start;
+  border: none;
+  background: var(--dsw-alias-button-primary-fill);
+  color: var(--dsw-alias-label-primary-foreground);
+}
+
+.page button.primary:hover:not(:disabled) {
+  background: var(--dsw-alias-button-primary-hover);
+}
+
+.page :is(button, input, select):disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.page :is(button, input, select, summary):focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 2px;
+}
+
+.helpLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page button.helpButton {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  corner-shape: round;
+  color: var(--dsw-alias-label-caption);
+  font: var(--dsw-font-xxs-12);
+}
+
+.helpText, .hint {
+  margin: 0;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+  overflow-wrap: anywhere;
+}
+
+.helpText:not([hidden]) {
+  display: block;
+  margin-top: 8px;
+}
+
+.page summary {
+  width: fit-content;
+  border-radius: var(--dsw-radius-xs);
+  cursor: pointer;
+}
+
+.advancedField {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+}
+
+.actions > label {
+  flex: 1 1 180px;
+  max-width: 100%;
+}
+
+.notice {
+  margin: 0;
+  color: var(--dsw-alias-state-error-primary);
+  font: var(--dsw-font-xs-13);
+  overflow-wrap: anywhere;
+}
+
+.indicator {
+  position: fixed;
+  top: 8px;
+  right: 16px;
+  z-index: 10000;
+  max-width: 50vw;
+  padding: 5px 9px;
+  border: 0.5px solid var(--dsw-alias-border-l3);
+  border-radius: var(--dsw-radius-sm);
+  background: var(--dsw-alias-bg-layer-2);
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-xxs-12);
+  pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:global([data-platform='darwin']) .page {
+  padding-top: calc(28px + var(--dsh-frame-top-clearance, 0px));
+}
+
+@media (max-width: 540px) {
+  .page { padding: 24px 16px 32px; }
+  .card { padding: 16px; }
+}

@@ -1,0 +1,60 @@
+{
+  "title": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": "500",
+    "lineHeight": "28px"
+  },
+  "nativeTitle": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": "500",
+    "lineHeight": "28px"
+  },
+  "intro": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "400",
+    "lineHeight": "20px",
+    "color": "rgb(97, 102, 107)"
+  },
+  "nativeIntro": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "13px",
+    "fontWeight": "400",
+    "lineHeight": "20px",
+    "color": "rgb(97, 102, 107)"
+  },
+  "button": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": "400",
+    "lineHeight": "22px",
+    "height": "36px",
+    "borderRadius": "12px",
+    "backgroundColor": "rgb(15, 17, 21)",
+    "color": "rgb(255, 255, 255)"
+  },
+  "nativeButton": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": "400",
+    "lineHeight": "22px",
+    "height": "36px",
+    "borderRadius": "12px",
+    "backgroundColor": "rgb(15, 17, 21)",
+    "color": "rgb(255, 255, 255)"
+  },
+  "input": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "14px",
+    "lineHeight": "22px",
+    "color": "rgb(15, 17, 21)"
+  },
+  "nativeInput": {
+    "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "14px",
+    "lineHeight": "22px",
+    "color": "rgb(15, 17, 21)"
+  }
+}

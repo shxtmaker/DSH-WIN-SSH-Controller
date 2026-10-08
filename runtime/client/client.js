@@ -4522,6 +4522,36 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 		}
 		//#endregion
+		//#region \0dsh-css:D:\AI\documents\codex\dsh-windows-launcher\DSH-WIN-SSH-Controller\.build\native-style-final\packages\remote\client\src\client\connections.module.css.mjs
+		const css = ".XxbGjq_page{box-sizing:border-box;width:100%;min-width:0;height:100%;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);padding:28px clamp(24px,4vw,48px) 48px;overflow:auto}.XxbGjq_content{gap:24px;min-width:0;max-width:960px;margin:0 auto;display:grid}.XxbGjq_page h1{font:var(--dsw-font-l-20);margin:0}.XxbGjq_page h2{font:var(--dsw-font-s-strong-14);margin:0}.XxbGjq_intro{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);margin:4px 0 0}.XxbGjq_card{border:.5px solid var(--dsw-alias-settings-card-stroke);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-settings-card-fill);gap:16px;min-width:0;padding:20px;display:grid}.XxbGjq_form,.XxbGjq_choices{gap:12px;min-width:0;display:grid}.XxbGjq_field{gap:6px;min-width:0;display:grid}.XxbGjq_page input,.XxbGjq_page select{box-sizing:border-box;border:.5px solid var(--dsw-alias-border-l4);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-layer-1);width:100%;min-width:0;height:34px;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);padding:0 10px}.XxbGjq_page input::placeholder{color:var(--dsw-alias-label-dimmed)}.XxbGjq_page select[size]{height:116px;padding:4px}.XxbGjq_page select[size] option{border-radius:var(--dsw-radius-sm);padding:4px 8px}.XxbGjq_page select[size] option:checked{background:var(--dsw-alias-interactive-bg-active);color:var(--dsw-alias-label-primary)}.XxbGjq_page button{box-sizing:border-box;border:.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-md);height:36px;color:var(--dsw-alias-label-primary);font:var(--dsw-font-s-14);cursor:pointer;background:0 0;justify-content:center;align-items:center;gap:4px;padding:0 14px;display:inline-flex}.XxbGjq_page button:hover:not(:disabled),.XxbGjq_page summary:hover{background:var(--dsw-alias-interactive-bg-hover)}.XxbGjq_page button.XxbGjq_primary{background:var(--dsw-alias-button-primary-fill);color:var(--dsw-alias-label-primary-foreground);border:none;justify-self:start}.XxbGjq_page button.XxbGjq_primary:hover:not(:disabled){background:var(--dsw-alias-button-primary-hover)}.XxbGjq_page :is(button,input,select):disabled{cursor:not-allowed;opacity:.4}.XxbGjq_page :is(button,input,select,summary):focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:2px}.XxbGjq_helpLabel{align-items:center;gap:6px;display:inline-flex}.XxbGjq_page button.XxbGjq_helpButton{corner-shape:round;width:16px;height:16px;color:var(--dsw-alias-label-caption);font:var(--dsw-font-xxs-12);border:1px solid;border-radius:50%;flex:none;padding:0}.XxbGjq_helpText,.XxbGjq_hint{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xs-13);overflow-wrap:anywhere;margin:0}.XxbGjq_helpText:not([hidden]){margin-top:8px;display:block}.XxbGjq_page summary{border-radius:var(--dsw-radius-xs);cursor:pointer;width:fit-content}.XxbGjq_advancedField{gap:6px;margin-top:12px;display:grid}.XxbGjq_fields{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px;margin:16px 0;display:grid}.XxbGjq_actions{flex-wrap:wrap;align-items:end;gap:8px;display:flex}.XxbGjq_actions>label{flex:180px;max-width:100%}.XxbGjq_notice{color:var(--dsw-alias-state-error-primary);font:var(--dsw-font-xs-13);overflow-wrap:anywhere;margin:0}.XxbGjq_indicator{z-index:10000;border:.5px solid var(--dsw-alias-border-l3);border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-bg-layer-2);max-width:50vw;color:var(--dsw-alias-label-primary);font:var(--dsw-font-xxs-12);pointer-events:none;text-overflow:ellipsis;white-space:nowrap;padding:5px 9px;position:fixed;top:8px;right:16px;overflow:hidden}[data-platform=darwin] .XxbGjq_page{padding-top:calc(28px + var(--dsh-frame-top-clearance,0px))}@media (width<=540px){.XxbGjq_page{padding:24px 16px 32px}.XxbGjq_card{padding:16px}}";
+		const tagId = "dsh-win-ssh-controller-source/connections.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "dsh-win-ssh-controller-source";
+			tag.dataset.pluginCss = tagId;
+			tag.textContent = css;
+			document.head.appendChild(tag);
+		}
+		var connections_module_css_default = {
+			"actions": "XxbGjq_actions",
+			"advancedField": "XxbGjq_advancedField",
+			"card": "XxbGjq_card",
+			"choices": "XxbGjq_choices",
+			"content": "XxbGjq_content",
+			"field": "XxbGjq_field",
+			"fields": "XxbGjq_fields",
+			"form": "XxbGjq_form",
+			"helpButton": "XxbGjq_helpButton",
+			"helpLabel": "XxbGjq_helpLabel",
+			"helpText": "XxbGjq_helpText",
+			"hint": "XxbGjq_hint",
+			"indicator": "XxbGjq_indicator",
+			"intro": "XxbGjq_intro",
+			"notice": "XxbGjq_notice",
+			"page": "XxbGjq_page",
+			"primary": "XxbGjq_primary"
+		};
+		//#endregion
 		//#region lib/types/client/connections.js
 		/** Desktop connection management page and persistent remote-location indicator. */
 		const EMPTY = {
@@ -4560,31 +4590,13 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"remote-workspace: SIDEBAR_NOT_READY": "sidebarNotReady",
 			"remote-workspace: CONNECTION_CHANGED": "connectionChanged"
 		};
-		const INPUT = {
-			padding: 9,
-			borderRadius: 6,
-			border: "1px solid #888",
-			background: "transparent",
-			color: "inherit",
-			minWidth: 0
-		};
-		const BUTTON = {
-			padding: "8px 14px",
-			borderRadius: 6,
-			border: "1px solid #888",
-			cursor: "pointer"
-		};
 		function Help({ label, text, help }) {
 			const [shown, setShown] = (0, react.useState)(false);
 			const id = (0, react.useId)();
 			return (0, react_jsx_runtime.jsxs)("span", {
 				style: { display: "block" },
 				children: [(0, react_jsx_runtime.jsxs)("span", {
-					style: {
-						display: "inline-flex",
-						alignItems: "center",
-						gap: 7
-					},
+					className: connections_module_css_default.helpLabel,
 					children: [label, (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
 						"aria-label": `${help}: ${label}`,
@@ -4600,32 +4612,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 								setShown(false);
 							}
 						},
-						style: {
-							width: 19,
-							height: 19,
-							padding: 0,
-							lineHeight: "17px",
-							borderRadius: "50%",
-							border: "1px solid currentColor",
-							color: "inherit",
-							background: "transparent",
-							cursor: "pointer",
-							fontSize: 12,
-							fontWeight: 600
-						},
+						className: connections_module_css_default.helpButton,
 						children: "?"
 					})]
 				}), (0, react_jsx_runtime.jsx)("span", {
 					id,
 					role: "note",
 					hidden: !shown,
-					style: {
-						display: shown ? "block" : void 0,
-						fontSize: 13,
-						fontWeight: 400,
-						lineHeight: 1.6,
-						marginTop: shown ? 8 : 0
-					},
+					className: connections_module_css_default.helpText,
 					children: text
 				})]
 			});
@@ -4679,11 +4673,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			const visible = choices.filter((choice) => choice.searchText.toLowerCase().includes(search));
 			const chosen = choices.find((choice) => choice.value === value);
 			return (0, react_jsx_runtime.jsxs)("div", {
-				style: {
-					display: "grid",
-					gap: 8,
-					minWidth: 0
-				},
+				className: connections_module_css_default.choices,
 				children: [
 					(0, react_jsx_runtime.jsx)("span", { children: label }),
 					(0, react_jsx_runtime.jsx)("input", {
@@ -4697,11 +4687,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						},
 						onKeyDown: (event) => {
 							if (event.key === "Enter") event.preventDefault();
-						},
-						style: {
-							...INPUT,
-							width: "100%",
-							boxSizing: "border-box"
 						}
 					}),
 					(0, react_jsx_runtime.jsxs)("select", {
@@ -4715,11 +4700,6 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						onKeyDown: (event) => {
 							if (event.key === "Enter") event.preventDefault();
 						},
-						style: {
-							...INPUT,
-							width: "100%",
-							boxSizing: "border-box"
-						},
 						children: [(0, react_jsx_runtime.jsx)("option", {
 							value: "",
 							disabled: !allowEmpty,
@@ -4731,11 +4711,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					}),
 					selectedLabel && chosen && (0, react_jsx_runtime.jsxs)("p", {
 						role: "status",
-						style: {
-							margin: 0,
-							fontSize: 13,
-							overflowWrap: "anywhere"
-						},
+						className: connections_module_css_default.hint,
 						children: [
 							selectedLabel,
 							": ",
@@ -4744,18 +4720,12 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					}),
 					choices.length === 0 && (0, react_jsx_runtime.jsx)("p", {
 						role: "status",
-						style: {
-							margin: 0,
-							fontSize: 13
-						},
+						className: connections_module_css_default.hint,
 						children: empty
 					}),
 					choices.length > 0 && visible.length === 0 && (0, react_jsx_runtime.jsx)("p", {
 						role: "status",
-						style: {
-							margin: 0,
-							fontSize: 13
-						},
+						className: connections_module_css_default.hint,
 						children: noMatches
 					})
 				]
@@ -4799,10 +4769,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				return key === void 0 ? message : t(key);
 			};
 			const field = (key, label, help) => (0, react_jsx_runtime.jsxs)("label", {
-				style: {
-					display: "grid",
-					gap: 6
-				},
+				className: connections_module_css_default.field,
 				children: [(0, react_jsx_runtime.jsx)(Help, {
 					label,
 					text: t(help),
@@ -4815,299 +4782,258 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							[key]: event.target.value
 						});
 					},
-					disabled: state.busy || !!state.connection.connectionId,
-					style: INPUT
+					disabled: state.busy || !!state.connection.connectionId
 				})]
 			}, key);
-			return (0, react_jsx_runtime.jsxs)("section", {
-				style: {
-					padding: 24,
-					maxWidth: 780,
-					width: "100%",
-					boxSizing: "border-box",
-					display: "grid",
-					alignContent: "start",
-					gap: 20,
-					overflowY: "auto"
-				},
-				children: [
-					(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsx)("h1", { children: (0, react_jsx_runtime.jsx)(Help, {
-						label: t("title"),
-						text: t("helpTitle"),
-						help: t("help")
-					}) }), (0, react_jsx_runtime.jsx)("p", { children: t("intro") })] }),
-					(0, react_jsx_runtime.jsxs)("section", {
-						style: {
-							display: "grid",
-							gap: 12,
-							padding: 18,
-							border: "1px solid #888",
-							borderRadius: 8
-						},
-						children: [(0, react_jsx_runtime.jsx)("h2", {
-							style: {
-								margin: 0,
-								fontSize: 18
-							},
-							children: t("quick")
-						}), (0, react_jsx_runtime.jsxs)("form", {
-							onSubmit: (event) => {
-								event.preventDefault();
-								if (!state.busy && !state.hostRestartRequired && !state.connection.connectionId && alias.trim()) quickConnect(alias, instanceKey);
-							},
-							style: {
-								display: "grid",
-								gap: 12
-							},
-							children: [
-								(0, react_jsx_runtime.jsx)(SearchableConnectionList, {
-									label: t("aliasList"),
-									searchLabel: t("searchAliases"),
-									empty: t("noAliases"),
-									noMatches: t("noConnectionMatches"),
-									placeholder: t("chooseAlias"),
-									value: alias,
-									disabled: state.busy || !!state.connection.connectionId,
-									choices: state.aliases.map((item) => ({
-										value: item,
-										label: item,
-										searchText: item
-									})),
-									onSelect: setAlias
-								}),
-								(0, react_jsx_runtime.jsxs)("label", {
-									style: {
-										display: "grid",
-										gap: 6
-									},
-									children: [(0, react_jsx_runtime.jsx)(Help, {
-										label: t("alias"),
-										text: t("helpAlias"),
-										help: t("help")
-									}), (0, react_jsx_runtime.jsx)("input", {
-										value: alias,
-										required: true,
-										placeholder: t("aliasPlaceholder"),
-										autoComplete: "off",
-										disabled: state.busy || !!state.connection.connectionId,
-										onChange: (event) => {
-											setAlias(event.target.value);
-										},
-										style: INPUT
-									})]
-								}),
-								(0, react_jsx_runtime.jsxs)("details", { children: [(0, react_jsx_runtime.jsx)("summary", {
-									style: { cursor: "pointer" },
-									children: t("advanced")
-								}), (0, react_jsx_runtime.jsxs)("label", {
-									style: {
-										display: "grid",
-										gap: 6,
-										marginTop: 12
-									},
-									children: [(0, react_jsx_runtime.jsx)(Help, {
-										label: t("instanceKey"),
-										text: t("helpInstanceKey"),
-										help: t("help")
-									}), (0, react_jsx_runtime.jsx)("input", {
-										value: instanceKey,
-										required: true,
-										disabled: state.busy || !!state.connection.connectionId,
-										onChange: (event) => {
-											setInstanceKey(event.target.value);
-										},
-										style: INPUT
-									})]
-								})] }),
-								(0, react_jsx_runtime.jsx)("p", {
-									style: {
-										margin: 0,
-										fontSize: 13
-									},
-									children: t("quickHint")
-								}),
-								state.hostRestartRequired && (0, react_jsx_runtime.jsx)("p", {
-									role: "alert",
-									children: t("restartRequired")
-								}),
-								!state.hostRestartRequired && state.aliasWarning && (0, react_jsx_runtime.jsx)("p", {
-									role: "status",
-									children: t("aliasWarning")
-								}),
-								(0, react_jsx_runtime.jsx)("button", {
-									type: "submit",
-									disabled: state.busy || state.hostRestartRequired || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId,
-									style: {
-										...BUTTON,
-										justifySelf: "start"
-									},
-									children: state.busy ? t("connecting") : t("quickConnect")
-								})
-							]
-						})]
-					}),
-					(0, react_jsx_runtime.jsx)(SearchableConnectionList, {
-						label: t("saved"),
-						searchLabel: t("searchTargets"),
-						empty: t("noTargets"),
-						selectedLabel: t("currentTarget"),
-						noMatches: t("noConnectionMatches"),
-						placeholder: t("newTarget"),
-						allowEmpty: true,
-						value: selected ?? "",
-						disabled: state.busy || !!state.connection.connectionId,
-						choices: state.targets.map((target) => ({
-							value: target.id,
-							label: `${target.name} · ${target.endpoints.map((item) => item.sshAlias).join(", ")}`,
-							searchText: [
-								target.name,
-								target.id,
-								target.profile,
-								target.workspaceHint,
-								...target.endpoints.map((item) => item.sshAlias)
-							].join(" ")
-						})),
-						onSelect: (value) => {
-							setSelected(value);
-							const found = state.targets.find((item) => item.id === value);
-							setForm(found === void 0 ? EMPTY : fromTarget(found));
-							setEndpoint(found?.endpoints[0]?.id ?? "");
-						}
-					}),
-					(0, react_jsx_runtime.jsxs)("details", { children: [
-						(0, react_jsx_runtime.jsx)("summary", {
-							style: { cursor: "pointer" },
-							children: t("manual")
-						}),
-						(0, react_jsx_runtime.jsxs)("div", {
-							style: {
-								display: "grid",
-								gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-								gap: 12,
-								margin: "14px 0"
-							},
-							children: [
-								field("id", t("targetId"), "helpTargetId"),
-								field("name", t("name"), "helpName"),
-								field("instanceKey", t("instanceKey"), "helpInstanceKey"),
-								field("instanceId", t("instanceId"), "helpIdentity"),
-								field("profile", t("profile"), "helpProfile"),
-								field("workspaceHint", t("workspace"), "helpWorkspace"),
-								field("remotePort", t("port"), "helpPort"),
-								field("lan", t("lan"), "helpRoutes"),
-								field("tcp", t("tcp"), "helpRoutes"),
-								field("stcp", t("stcp"), "helpRoutes")
-							]
-						}),
-						(0, react_jsx_runtime.jsx)("button", {
-							type: "button",
-							style: BUTTON,
-							disabled: state.busy || !!state.connection.connectionId,
-							onClick: () => {
-								save(toTarget(form));
-							},
-							children: t("save")
-						})
-					] }),
-					(0, react_jsx_runtime.jsxs)("section", {
-						"aria-live": "polite",
-						style: {
-							padding: 16,
-							border: "1px solid #888",
-							borderRadius: 8
-						},
-						children: [
-							(0, react_jsx_runtime.jsxs)("h2", {
-								style: { fontSize: 18 },
+			return (0, react_jsx_runtime.jsx)("section", {
+				className: connections_module_css_default.page,
+				children: (0, react_jsx_runtime.jsxs)("div", {
+					className: connections_module_css_default.content,
+					children: [
+						(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsx)("h1", { children: (0, react_jsx_runtime.jsx)(Help, {
+							label: t("title"),
+							text: t("helpTitle"),
+							help: t("help")
+						}) }), (0, react_jsx_runtime.jsx)("p", {
+							className: connections_module_css_default.intro,
+							children: t("intro")
+						})] }),
+						(0, react_jsx_runtime.jsxs)("section", {
+							className: connections_module_css_default.card,
+							children: [(0, react_jsx_runtime.jsx)("h2", { children: t("quick") }), (0, react_jsx_runtime.jsxs)("form", {
+								onSubmit: (event) => {
+									event.preventDefault();
+									if (!state.busy && !state.hostRestartRequired && !state.connection.connectionId && alias.trim()) quickConnect(alias, instanceKey);
+								},
+								className: connections_module_css_default.form,
 								children: [
+									(0, react_jsx_runtime.jsx)(SearchableConnectionList, {
+										label: t("aliasList"),
+										searchLabel: t("searchAliases"),
+										empty: t("noAliases"),
+										noMatches: t("noConnectionMatches"),
+										placeholder: t("chooseAlias"),
+										value: alias,
+										disabled: state.busy || !!state.connection.connectionId,
+										choices: state.aliases.map((item) => ({
+											value: item,
+											label: item,
+											searchText: item
+										})),
+										onSelect: setAlias
+									}),
+									(0, react_jsx_runtime.jsxs)("label", {
+										className: connections_module_css_default.field,
+										children: [(0, react_jsx_runtime.jsx)(Help, {
+											label: t("alias"),
+											text: t("helpAlias"),
+											help: t("help")
+										}), (0, react_jsx_runtime.jsx)("input", {
+											value: alias,
+											required: true,
+											placeholder: t("aliasPlaceholder"),
+											autoComplete: "off",
+											disabled: state.busy || !!state.connection.connectionId,
+											onChange: (event) => {
+												setAlias(event.target.value);
+											}
+										})]
+									}),
+									(0, react_jsx_runtime.jsxs)("details", { children: [(0, react_jsx_runtime.jsx)("summary", { children: t("advanced") }), (0, react_jsx_runtime.jsxs)("label", {
+										className: connections_module_css_default.advancedField,
+										children: [(0, react_jsx_runtime.jsx)(Help, {
+											label: t("instanceKey"),
+											text: t("helpInstanceKey"),
+											help: t("help")
+										}), (0, react_jsx_runtime.jsx)("input", {
+											value: instanceKey,
+											required: true,
+											disabled: state.busy || !!state.connection.connectionId,
+											onChange: (event) => {
+												setInstanceKey(event.target.value);
+											}
+										})]
+									})] }),
+									(0, react_jsx_runtime.jsx)("p", {
+										className: connections_module_css_default.hint,
+										children: t("quickHint")
+									}),
+									state.hostRestartRequired && (0, react_jsx_runtime.jsx)("p", {
+										role: "alert",
+										className: connections_module_css_default.notice,
+										children: t("restartRequired")
+									}),
+									!state.hostRestartRequired && state.aliasWarning && (0, react_jsx_runtime.jsx)("p", {
+										role: "status",
+										className: connections_module_css_default.hint,
+										children: t("aliasWarning")
+									}),
+									(0, react_jsx_runtime.jsx)("button", {
+										type: "submit",
+										disabled: state.busy || state.hostRestartRequired || !alias.trim() || !instanceKey.trim() || !!state.connection.connectionId,
+										className: connections_module_css_default.primary,
+										children: state.busy ? t("connecting") : t("quickConnect")
+									})
+								]
+							})]
+						}),
+						(0, react_jsx_runtime.jsx)(SearchableConnectionList, {
+							label: t("saved"),
+							searchLabel: t("searchTargets"),
+							empty: t("noTargets"),
+							selectedLabel: t("currentTarget"),
+							noMatches: t("noConnectionMatches"),
+							placeholder: t("newTarget"),
+							allowEmpty: true,
+							value: selected ?? "",
+							disabled: state.busy || !!state.connection.connectionId,
+							choices: state.targets.map((target) => ({
+								value: target.id,
+								label: `${target.name} · ${target.endpoints.map((item) => item.sshAlias).join(", ")}`,
+								searchText: [
+									target.name,
+									target.id,
+									target.profile,
+									target.workspaceHint,
+									...target.endpoints.map((item) => item.sshAlias)
+								].join(" ")
+							})),
+							onSelect: (value) => {
+								setSelected(value);
+								const found = state.targets.find((item) => item.id === value);
+								setForm(found === void 0 ? EMPTY : fromTarget(found));
+								setEndpoint(found?.endpoints[0]?.id ?? "");
+							}
+						}),
+						(0, react_jsx_runtime.jsxs)("details", { children: [
+							(0, react_jsx_runtime.jsx)("summary", { children: t("manual") }),
+							(0, react_jsx_runtime.jsxs)("div", {
+								className: connections_module_css_default.fields,
+								children: [
+									field("id", t("targetId"), "helpTargetId"),
+									field("name", t("name"), "helpName"),
+									field("instanceKey", t("instanceKey"), "helpInstanceKey"),
+									field("instanceId", t("instanceId"), "helpIdentity"),
+									field("profile", t("profile"), "helpProfile"),
+									field("workspaceHint", t("workspace"), "helpWorkspace"),
+									field("remotePort", t("port"), "helpPort"),
+									field("lan", t("lan"), "helpRoutes"),
+									field("tcp", t("tcp"), "helpRoutes"),
+									field("stcp", t("stcp"), "helpRoutes")
+								]
+							}),
+							(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								disabled: state.busy || !!state.connection.connectionId,
+								onClick: () => {
+									save(toTarget(form));
+								},
+								children: t("save")
+							})
+						] }),
+						(0, react_jsx_runtime.jsxs)("section", {
+							"aria-live": "polite",
+							className: connections_module_css_default.card,
+							children: [
+								(0, react_jsx_runtime.jsxs)("h2", { children: [
 									t("status"),
 									": ",
 									t(PHASES[state.connection.phase])
-								]
-							}),
-							(0, react_jsx_runtime.jsxs)("p", { children: [
-								state.connection.hostName ?? t("inactive"),
-								" · ",
-								state.connection.profile ?? "—",
-								" · ",
-								state.connection.workspaceHint ?? "—"
-							] }),
-							state.error && (0, react_jsx_runtime.jsxs)("p", {
-								role: "alert",
-								children: [
-									t("error"),
-									": ",
-									errorText(state.error)
-								]
-							}),
-							state.connection.reason && (0, react_jsx_runtime.jsx)("p", { children: errorText(state.connection.reason) }),
-							(0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)(Help, {
-								label: t("endpoint"),
-								text: t("helpRoutes"),
-								help: t("help")
-							}), (0, react_jsx_runtime.jsxs)("select", {
-								value: endpoint,
-								disabled: state.busy || !!state.connection.connectionId,
-								style: INPUT,
-								onChange: (event) => {
-									setEndpoint(event.target.value);
-								},
-								children: [(0, react_jsx_runtime.jsx)("option", {
-									value: "",
-									children: "—"
-								}), endpoints.map((item) => (0, react_jsx_runtime.jsxs)("option", {
-									value: item.id,
+								] }),
+								(0, react_jsx_runtime.jsxs)("p", {
+									className: connections_module_css_default.hint,
 									children: [
-										item.kind,
-										": ",
-										item.sshAlias
+										state.connection.hostName ?? t("inactive"),
+										" · ",
+										state.connection.profile ?? "—",
+										" · ",
+										state.connection.workspaceHint ?? "—"
 									]
-								}, item.id))]
-							})] }),
-							" ",
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								style: BUTTON,
-								disabled: state.busy || !selected || !endpoint || !!state.connection.connectionId,
-								onClick: () => {
-									if (selected) connect(selected, endpoint);
-								},
-								children: t("connect")
-							}),
-							" ",
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								style: BUTTON,
-								disabled: state.busy || !state.connection.connectionId,
-								onClick: () => {
-									disconnect();
-								},
-								children: t("disconnect")
-							}),
-							" ",
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								style: BUTTON,
-								disabled: state.busy || state.connection.phase !== "app-ready",
-								onClick: () => {
-									open();
-								},
-								children: t("open")
-							}),
-							" ",
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								style: BUTTON,
-								disabled: state.busy,
-								onClick: () => {
-									refresh();
-								},
-								children: t("refresh")
-							}),
-							state.connection.phase === "app-ready" && (0, react_jsx_runtime.jsx)("p", { children: t("readyHint") })
-						]
-					})
-				]
+								}),
+								state.error && (0, react_jsx_runtime.jsxs)("p", {
+									role: "alert",
+									className: connections_module_css_default.notice,
+									children: [
+										t("error"),
+										": ",
+										errorText(state.error)
+									]
+								}),
+								state.connection.reason && (0, react_jsx_runtime.jsx)("p", {
+									className: connections_module_css_default.hint,
+									children: errorText(state.connection.reason)
+								}),
+								(0, react_jsx_runtime.jsxs)("div", {
+									className: connections_module_css_default.actions,
+									children: [
+										(0, react_jsx_runtime.jsxs)("label", {
+											className: connections_module_css_default.field,
+											children: [(0, react_jsx_runtime.jsx)(Help, {
+												label: t("endpoint"),
+												text: t("helpRoutes"),
+												help: t("help")
+											}), (0, react_jsx_runtime.jsxs)("select", {
+												value: endpoint,
+												disabled: state.busy || !!state.connection.connectionId,
+												onChange: (event) => {
+													setEndpoint(event.target.value);
+												},
+												children: [(0, react_jsx_runtime.jsx)("option", {
+													value: "",
+													children: "—"
+												}), endpoints.map((item) => (0, react_jsx_runtime.jsxs)("option", {
+													value: item.id,
+													children: [
+														item.kind,
+														": ",
+														item.sshAlias
+													]
+												}, item.id))]
+											})]
+										}),
+										(0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											className: connections_module_css_default.primary,
+											disabled: state.busy || !selected || !endpoint || !!state.connection.connectionId,
+											onClick: () => {
+												if (selected) connect(selected, endpoint);
+											},
+											children: t("connect")
+										}),
+										(0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											disabled: state.busy || !state.connection.connectionId,
+											onClick: () => {
+												disconnect();
+											},
+											children: t("disconnect")
+										}),
+										(0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											disabled: state.busy || state.connection.phase !== "app-ready",
+											onClick: () => {
+												open();
+											},
+											children: t("open")
+										}),
+										(0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											disabled: state.busy,
+											onClick: () => {
+												refresh();
+											},
+											children: t("refresh")
+										})
+									]
+								}),
+								state.connection.phase === "app-ready" && (0, react_jsx_runtime.jsx)("p", {
+									className: connections_module_css_default.hint,
+									children: t("readyHint")
+								})
+							]
+						})
+					]
+				})
 			});
 		}
 		/** Keep the actual execution host and remote workspace visible over the local shell. */
@@ -5116,22 +5042,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			if (connection.phase === "idle") return null;
 			return (0, react_jsx_runtime.jsxs)("div", {
 				"aria-live": "polite",
-				style: {
-					position: "fixed",
-					top: 8,
-					right: 16,
-					zIndex: 1e4,
-					padding: "5px 9px",
-					borderRadius: 6,
-					background: "#163447",
-					color: "white",
-					pointerEvents: "none",
-					maxWidth: "50vw",
-					overflow: "hidden",
-					textOverflow: "ellipsis",
-					whiteSpace: "nowrap",
-					fontSize: 12
-				},
+				className: connections_module_css_default.indicator,
 				children: [
 					t("location"),
 					": ",

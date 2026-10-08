@@ -1,7 +1,7 @@
 /** Verify the packaged Client factory in a browser with deterministic local Host responses. */
 import assert from 'node:assert/strict'
 import { createServer } from 'node:http'
-import { readFile, mkdir } from 'node:fs/promises'
+import { readFile, mkdir, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { parseArgs } from 'node:util'
@@ -16,10 +16,18 @@ const files = new Map([
   ['/react.js', join(dirname(reactRequire.resolve('react/package.json')), 'umd/react.development.js')],
   ['/react-dom.js', join(dirname(webRequire.resolve('react-dom/package.json')), 'umd/react-dom.development.js')],
 ])
+const native = join(target, 'packages/client')
+files.set('/shell.css', join(native, 'web/src/base.css'))
+files.set('/native-page.css', join(native, 'ui-plugin-manager/src/client/PluginManagerPage.module.css'))
+files.set('/native-button.css', join(native, 'ui-primitives/src/Button.module.css'))
+files.set('/native-input.css', join(native, 'ui-primitives/src/Input.module.css'))
+const theme = (await Promise.all(['base.css', 'design-platform.css', 'gradient-shadow-text.css', 'corner-shape.css', 'focus.css'].map(name =>
+  readFile(join(native, 'ui-theme/src/styles', name), 'utf8')))).join('\n')
 const server = createServer(async (req, res) => {
+  if (req.url === '/theme.css') { res.setHeader('content-type', 'text/css'); res.end(theme); return }
   const file = files.get(req.url)
   if (!file) { res.writeHead(404); res.end(); return }
-  try { res.setHeader('content-type', req.url === '/' ? 'text/html; charset=utf-8' : 'text/javascript'); res.end(await readFile(file)) }
+  try { res.setHeader('content-type', req.url === '/' ? 'text/html; charset=utf-8' : req.url.endsWith('.css') ? 'text/css' : 'text/javascript'); res.end(await readFile(file)) }
   catch { res.writeHead(500); res.end() }
 })
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
@@ -34,6 +42,35 @@ try {
   await page.goto(origin)
   const alias = page.getByPlaceholder('选择或输入，如 harness-lan')
   await alias.waitFor()
+  await mkdir(join(root, 'out/verification'), { recursive: true })
+  await page.evaluate(() => { document.body.setAttribute('data-ds-dark-theme', ''); document.documentElement.style.colorScheme = 'dark' })
+  await page.screenshot({ path: join(root, 'out/verification/native-style-current.png'), fullPage: true })
+  for (const mode of ['light', 'dark']) {
+    await page.evaluate(mode => {
+      document.body.toggleAttribute('data-ds-dark-theme', mode === 'dark')
+      document.documentElement.style.colorScheme = mode
+    }, mode)
+    const styleParity = await page.evaluate(() => {
+      const pick = (selector, properties) => {
+        const style = getComputedStyle(document.querySelector(selector))
+        return Object.fromEntries(properties.map(key => [key, style[key]]))
+      }
+      const typography = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight']
+      return {
+        title: pick('#app h1', typography), nativeTitle: pick('#native-reference h1', typography),
+        intro: pick('#app header p', [...typography, 'color']), nativeIntro: pick('#native-reference p', [...typography, 'color']),
+        button: pick('#app button[type="submit"]', [...typography, 'height', 'borderRadius', 'backgroundColor', 'color']),
+        nativeButton: pick('#native-reference button', [...typography, 'height', 'borderRadius', 'backgroundColor', 'color']),
+        input: pick('#app input[required]', ['fontFamily', 'fontSize', 'lineHeight', 'color']),
+        nativeInput: pick('#native-reference input', ['fontFamily', 'fontSize', 'lineHeight', 'color']),
+      }
+    })
+    await writeFile(join(root, `out/verification/native-style-${mode}.json`), JSON.stringify(styleParity, null, 2) + '\n')
+    for (const key of ['title', 'intro', 'button', 'input']) {
+      assert.deepEqual(styleParity[key], styleParity[`native${key[0].toUpperCase()}${key.slice(1)}`], `${key} must match native Harness styles`)
+    }
+    console.log(`PASS native ${mode} theme: title, intro, button and input computed styles match Harness`)
+  }
   await page.waitForFunction(() => document.querySelector('input[placeholder="选择或输入，如 harness-lan"]')?.value === 'harness-lan')
   assert.equal(await page.locator('input:visible').count(), 3)
   const aliases = page.getByRole('listbox', { name: '已有 SSH 连接', exact: true })
@@ -206,6 +243,32 @@ try {
   await page.getByRole('alert').filter({ hasText: 'unrelated resource: HTTP 404' }).waitFor()
   assert.equal(await page.getByRole('button', { name: '一键连接', exact: true }).isEnabled(), true)
   assert.deepEqual(errors, [])
+  await page.evaluate(() => { window.fixture.failure = '' })
+  await page.getByRole('button', { name: '刷新', exact: true }).click()
+  await alias.fill('harness-lan')
+  for (const mode of ['dark', 'light']) {
+    await page.evaluate(mode => {
+      document.body.toggleAttribute('data-ds-dark-theme', mode === 'dark')
+      document.documentElement.style.colorScheme = mode
+    }, mode)
+    await page.setViewportSize({ width: 1080, height: 1240 })
+    await page.locator('#app > section').evaluate(element => { element.scrollTop = 0 })
+    await page.screenshot({ path: join(root, `out/verification/native-style-${mode}.png`), fullPage: true })
+  }
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.getByText('手动配置目标', { exact: true }).click()
+  const portHelp = page.getByRole('button', { name: '查看帮助: 远端 Web 端口', exact: true })
+  if (await portHelp.getAttribute('aria-expanded') !== 'true') await portHelp.click()
+  await page.getByRole('note').filter({ hasText: '此处不是 SSH 端口或 frp 端口' }).waitFor()
+  assert.equal(await page.evaluate(() => [...document.querySelectorAll('#app section, #app input, #app select')].every(element =>
+    element.scrollWidth <= element.clientWidth + 1)), true, 'expanded manual form must not overflow at 390px')
+  await page.getByRole('button', { name: '保存目标', exact: true }).scrollIntoViewIfNeeded()
+  await page.screenshot({ path: join(root, 'out/verification/native-style-manual-narrow.png'), fullPage: true })
+  await page.getByText('手动配置目标', { exact: true }).click()
+  await page.locator('#app > section').evaluate(element => { element.scrollTop = 0 })
+  await page.screenshot({ path: join(root, 'out/verification/native-style-narrow.png'), fullPage: true })
+  assert.deepEqual(errors, [])
+  console.log('PASS native theme screenshots and expanded manual form at 390px')
   console.log('PASS packaged Client: searchable SSH and saved-target lists, keyboard selection without connection, empty and no-match states, selection preservation, manual alias fallback, circular help, duplicate suppression, selected-session opening, error recovery, narrow layout and stale Host route recovery')
 } finally {
   await browser?.close()
