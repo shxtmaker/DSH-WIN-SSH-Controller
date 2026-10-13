@@ -53,7 +53,11 @@ it('serves the controller state through authenticated Typert HTTP after Loader c
   await ctx.loader.create({ name: 'cordis:include', config: { path: pathToFileURL(configPath).href } })
   await ctx.loader.await()
 
-  expect(ctx.remoteWorkspace.getState()).toEqual({ phase: 'idle', generation: 0 })
+  // Every named check starts as `unknown`; `unknown` is never reported as healthy.
+  expect(ctx.remoteWorkspace.getState()).toMatchObject({ phase: 'idle', generation: 0 })
+  expect(ctx.remoteWorkspace.getState().diagnostics.every(check => check.state === 'unknown')).toBe(true)
+  expect(ctx.remoteWorkspace.getState().diagnostics.map(check => check.name)).toEqual(
+    ['ssh', 'helper', 'service', 'descriptor', 'listener', 'identity', 'authentication', 'events', 'application'])
   const origin = `http://127.0.0.1:${String(ctx.webServer.port)}`
   const launch = new URL(ctx.connection.authenticatedUrl(origin))
   let cookieHeader: string | undefined
@@ -69,10 +73,14 @@ it('serves the controller state through authenticated Typert HTTP after Loader c
       method: 'remoteWorkspace/getState', payload: { args: {} } }),
   })
   expect(response.status).toBe(200)
-  await expect(response.json()).resolves.toEqual({
-    type: 'server-response', rpcId: 'remote-state-test',
-    result: { ok: true, value: { phase: 'idle', generation: 0 } },
-  })
+  const state = await response.json() as { result: { value: { phase: string; generation: number
+    diagnostics: { name: string; state: string }[] } } }
+  expect(state).toMatchObject({ type: 'server-response', rpcId: 'remote-state-test',
+    result: { ok: true, value: { phase: 'idle', generation: 0 } } })
+  // The published snapshot always carries every named check, and `unknown` is not health.
+  expect(state.result.value.diagnostics.map(check => check.name)).toEqual(
+    ['ssh', 'helper', 'service', 'descriptor', 'listener', 'identity', 'authentication', 'events', 'application'])
+  expect(state.result.value.diagnostics.every(check => check.state === 'unknown')).toBe(true)
   const quickBody = JSON.stringify({ type: 'client-request', rpcId: 'quick-test', method: 'remoteWorkspace/quickConnect',
     payload: { args: { sshAlias: '-invalid', instanceKey: 'default', operationId: 'quick-test' } } })
   const denied = await fetch(`${origin}/api/remoteWorkspace/quickConnect`, {

@@ -361,6 +361,7 @@ export class ConnectionManager {
       unit: status.service?.unit ?? '',
       state: status.service?.state ?? 'unknown',
       registered: status.registered && status.instanceKey === instanceKey,
+      ...(status.registrationRevision === undefined ? {} : { registrationRevision: status.registrationRevision }),
     }
   }
 

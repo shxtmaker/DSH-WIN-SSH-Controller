@@ -8,7 +8,16 @@ import { TargetStore } from '../src/store.ts'
 import type { DiscoveredTarget } from '../src/types.ts'
 import * as ssh from '../src/ssh.ts'
 
-vi.mock('../src/ssh.ts', () => ({ discoverTarget: vi.fn(), discover: vi.fn(), forward: vi.fn() }))
+vi.mock('../src/ssh.ts', () => ({
+  discoverTarget: vi.fn(), discover: vi.fn(), forward: vi.fn(),
+  // The management client shares these guards with the discovery path, so the mock must
+  // expose them too or importing the module under test fails.
+  validAlias: (alias: string): boolean => /^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/u.test(alias),
+  validHelperPath: (path: string): boolean => /^\/(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+$/u.test(path),
+  // These specs exercise the discovery path; an old helper answers --control with a structured
+  // BAD_INPUT, which is the documented connect-only degradation.
+  runHelper: vi.fn(async () => ({ code: 1, stdout: '', stderr: 'BAD_INPUT\n', timedOut: false, oversized: false })),
+}))
 vi.mock('../src/auth.ts', () => ({ authenticate: vi.fn(async () => 'private-cookie'),
   readIdentity: vi.fn(async () => ({ protocolVersion: 1, instanceId: 'instance-a', bootId: 'boot-a', instanceKey: 'default', profile: 'web', workspaceHint: '/srv/project' })),
   probeEventStream: vi.fn(async () => {}) }))

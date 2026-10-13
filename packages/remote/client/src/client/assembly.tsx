@@ -189,12 +189,15 @@ class ViewController implements RemoteWorkspaceFace {
   /**
    * Registration revision the caller observed.
    *
-   * The Host publishes the authoritative revision with the service registration; when it is not
-   * carried by the snapshot the page sends a bounded placeholder instead of inventing one, and the
-   * remote rejects the action with `REGISTRATION_STALE` rather than executing anything.
+   * The Host publishes the authoritative revision on the service state it read from the remote
+   * helper's `status`; a write action must echo that exact value or the helper answers
+   * `REGISTRATION_STALE`. When the helper never reported one, the page sends a bounded
+   * placeholder instead of inventing a value, and the remote rejects the action rather than
+   * executing anything.
    */
   private registrationRevision(connection: RemoteSnapshot): string {
-    const published = (connection as { registrationRevision?: unknown }).registrationRevision
+    const published = connection.service?.registrationRevision
+      ?? (connection as { registrationRevision?: unknown }).registrationRevision
     return typeof published === 'string' && /^[A-Za-z0-9_-]{1,64}$/u.test(published) ? published : 'unobserved'
   }
 

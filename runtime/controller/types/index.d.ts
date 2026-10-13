@@ -1,8 +1,8 @@
 import { Context } from '@deepseek-ai/cordis';
 import z from '@deepseek-ai/schemastery';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
-import type { RemoteSnapshot, RemoteTarget } from './types.ts';
-export type { RemoteEndpoint, RemoteIdentity, RemotePhase, RemoteSnapshot, RemoteTarget } from './types.ts';
+import type { EndpointRef, RemoteInspection, RemoteSnapshot, RemoteTarget, ServiceOperationState } from './types.ts';
+export type { EndpointRef, RemoteCheck, RemoteEndpoint, RemoteIdentity, RemoteInspection, RemotePhase, RemoteServiceState, RemoteSnapshot, RemoteTarget, ServiceOperationState } from './types.ts';
 declare module '@deepseek-ai/cordis' {
     interface Context {
         /** Desktop-owned remote workspace attachment. */
@@ -66,6 +66,39 @@ export default class RemoteWorkspaceController extends TypertRemoteService {
      * @returns one-use, short-lived local Browser URL.
      */
     createOpenTicket(connectionId: string): string;
+    /**
+     * Read-only preflight for a saved target or a first-time SSH alias.
+     * Never saves a target and never starts a remote service.
+     * @param ref - mutually exclusive endpoint reference.
+     * @param operationId - idempotency key for this inspection.
+     * @returns capability, service and layered diagnostic summary.
+     */
+    inspectEndpoint(ref: EndpointRef, operationId: string): Promise<RemoteInspection>;
+    /**
+     * Submit exactly one restricted service action against the active attachment.
+     * @param ref - endpoint the action applies to.
+     * @param action - start, stop or restart.
+     * @param operationId - idempotency key, reused when asking for the result.
+     * @param issuedAt - ISO timestamp of the intent.
+     * @param registrationRevision - revision the caller observed.
+     * @param expectedInstanceId - pinned instance id, when known.
+     * @returns the operation state, including a possible outcome-unknown.
+     */
+    serviceAction(ref: EndpointRef, action: 'start' | 'stop' | 'restart', operationId: string, issuedAt: string, registrationRevision: string, expectedInstanceId?: string): Promise<ServiceOperationState>;
+    /**
+     * Read a previously submitted action's result. Never submits a new action.
+     * @param ref - endpoint the receipt belongs to.
+     * @param operationId - the id used when the action was submitted.
+     * @returns the recorded operation state.
+     */
+    getServiceOperation(ref: EndpointRef, operationId: string): Promise<ServiceOperationState>;
+    /**
+     * Re-authenticate the active attachment without touching the remote service.
+     * @param connectionId - active attachment.
+     * @param operationId - idempotency key for this refresh.
+     * @returns the new snapshot.
+     */
+    refreshAuthentication(connectionId: string, operationId: string): Promise<RemoteSnapshot>;
     /**
      * Observe attachment state until the caller cancels its stream.
      * @param signal - Remote stream lifetime.

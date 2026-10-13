@@ -46,6 +46,12 @@ export interface RemoteServiceState {
   readonly unit: string
   readonly state: 'unknown' | 'inactive' | 'activating' | 'active' | 'deactivating' | 'failed'
   readonly registered: boolean
+  /**
+   * Registration revision observed from the remote helper's `status`. A write action must echo
+   * the revision the helper reported, otherwise the helper answers REGISTRATION_STALE. Absent
+   * when the helper never reported one, so the caller can tell "unknown" from a real value.
+   */
+  readonly registrationRevision?: string | undefined
 }
 
 /** Lifecycle of one submitted service action. */

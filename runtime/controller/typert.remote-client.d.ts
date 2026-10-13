@@ -4,29 +4,37 @@ import type {
   RemoteStreamHandle,
   TypertRemoteContribution,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { RemoteSnapshot, RemoteTarget } from 'dsh-win-ssh-controller-source/types'
+import type { EndpointRef, RemoteInspection, RemoteSnapshot, RemoteTarget, ServiceOperationState } from 'dsh-win-ssh-controller-source/types'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$72656d6f7465576f726b7370616365 {
     connect: (targetId: string, endpointId: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
     createOpenTicket: (connectionId: string) => Promise<RemoteResult<string>>
     disconnect: (connectionId: string) => Promise<RemoteResult<RemoteSnapshot>>
+    getServiceOperation: (ref: EndpointRef, operationId: string) => Promise<RemoteResult<ServiceOperationState>>
     getState: () => Promise<RemoteResult<RemoteSnapshot>>
+    inspectEndpoint: (ref: EndpointRef, operationId: string) => Promise<RemoteResult<RemoteInspection>>
     listAliases: () => Promise<RemoteResult<string[]>>
     listTargets: () => Promise<RemoteResult<RemoteTarget[]>>
     quickConnect: (sshAlias: string, instanceKey: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
+    refreshAuthentication: (connectionId: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
     saveTarget: (target: RemoteTarget) => Promise<RemoteResult<RemoteTarget[]>>
+    serviceAction: (ref: EndpointRef, action: 'start' | 'stop' | 'restart', operationId: string, issuedAt: string, registrationRevision: string, expectedInstanceId?: string) => Promise<RemoteResult<ServiceOperationState>>
     watch: (signal?: AbortSignal) => RemoteStreamHandle<RemoteSnapshot, never>
   }
   interface TypertRemoteMap {
     'remoteWorkspace/connect': (targetId: string, endpointId: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
     'remoteWorkspace/createOpenTicket': (connectionId: string) => Promise<RemoteResult<string>>
     'remoteWorkspace/disconnect': (connectionId: string) => Promise<RemoteResult<RemoteSnapshot>>
+    'remoteWorkspace/getServiceOperation': (ref: EndpointRef, operationId: string) => Promise<RemoteResult<ServiceOperationState>>
     'remoteWorkspace/getState': () => Promise<RemoteResult<RemoteSnapshot>>
+    'remoteWorkspace/inspectEndpoint': (ref: EndpointRef, operationId: string) => Promise<RemoteResult<RemoteInspection>>
     'remoteWorkspace/listAliases': () => Promise<RemoteResult<string[]>>
     'remoteWorkspace/listTargets': () => Promise<RemoteResult<RemoteTarget[]>>
     'remoteWorkspace/quickConnect': (sshAlias: string, instanceKey: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
+    'remoteWorkspace/refreshAuthentication': (connectionId: string, operationId: string) => Promise<RemoteResult<RemoteSnapshot>>
     'remoteWorkspace/saveTarget': (target: RemoteTarget) => Promise<RemoteResult<RemoteTarget[]>>
+    'remoteWorkspace/serviceAction': (ref: EndpointRef, action: 'start' | 'stop' | 'restart', operationId: string, issuedAt: string, registrationRevision: string, expectedInstanceId?: string) => Promise<RemoteResult<ServiceOperationState>>
     'remoteWorkspace/watch': (signal?: AbortSignal) => RemoteStreamHandle<RemoteSnapshot, never>
   }
   interface TypertRemoteNamespaceMap {

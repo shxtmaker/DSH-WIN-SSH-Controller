@@ -9,7 +9,7 @@ let _harness_remote_controller_remoteWorkspace_connect_parameter_2$schema$value
 const _harness_remote_controller_remoteWorkspace_connect_parameter_2$schema = () => (_harness_remote_controller_remoteWorkspace_connect_parameter_2$schema$value ??= z.string())
 let _harness_remote_controller_remoteWorkspace_connect_result$schema$value
 const _harness_remote_controller_remoteWorkspace_connect_result$schema = () => (_harness_remote_controller_remoteWorkspace_connect_result$schema$value ??= z.object({
-  'phase': z.union([z.literal("error"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("checking"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("verifying"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required"), z.literal("service-stopped")]).readonly(),
   'connectionId': z.union([z.undefined(), z.string()]).readonly().optional(),
   'targetId': z.string().readonly().optional(),
   'endpointId': z.string().readonly().optional(),
@@ -20,6 +20,33 @@ const _harness_remote_controller_remoteWorkspace_connect_result$schema = () => (
   'workspaceHint': z.string().readonly().optional(),
   'generation': z.number().readonly(),
   'reason': z.string().readonly().optional(),
+  'diagnostics': z.array(z.object({
+  'name': z.union([z.literal("ssh"), z.literal("helper"), z.literal("service"), z.literal("descriptor"), z.literal("listener"), z.literal("identity"), z.literal("authentication"), z.literal("events"), z.literal("application")]).readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("checking"), z.literal("ok"), z.literal("unsupported")]).readonly(),
+  'code': z.union([z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'checkedAt': z.string().readonly(),
+})).readonly(),
+  'capabilities': z.union([z.undefined(), z.object({
+  'controlVersion': z.number().readonly(),
+  'helperVersion': z.string().readonly(),
+  'mode': z.union([z.literal("unsupported"), z.literal("systemd-user"), z.literal("unregistered")]).readonly(),
+  'actions': z.array(z.string()).readonly(),
+})]).readonly().optional(),
+  'service': z.union([z.undefined(), z.object({
+  'unit': z.string().readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("active"), z.literal("inactive"), z.literal("activating"), z.literal("deactivating")]).readonly(),
+  'registered': z.boolean().readonly(),
+  'registrationRevision': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'serviceOperation': z.union([z.undefined(), z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'accessWarning': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
 }))
 let _harness_remote_controller_remoteWorkspace_createOpenTicket_parameter_0$schema$value
 const _harness_remote_controller_remoteWorkspace_createOpenTicket_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_createOpenTicket_parameter_0$schema$value ??= z.string())
@@ -29,7 +56,7 @@ let _harness_remote_controller_remoteWorkspace_disconnect_parameter_0$schema$val
 const _harness_remote_controller_remoteWorkspace_disconnect_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_disconnect_parameter_0$schema$value ??= z.string())
 let _harness_remote_controller_remoteWorkspace_disconnect_result$schema$value
 const _harness_remote_controller_remoteWorkspace_disconnect_result$schema = () => (_harness_remote_controller_remoteWorkspace_disconnect_result$schema$value ??= z.object({
-  'phase': z.union([z.literal("error"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("checking"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("verifying"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required"), z.literal("service-stopped")]).readonly(),
   'connectionId': z.union([z.undefined(), z.string()]).readonly().optional(),
   'targetId': z.string().readonly().optional(),
   'endpointId': z.string().readonly().optional(),
@@ -40,10 +67,56 @@ const _harness_remote_controller_remoteWorkspace_disconnect_result$schema = () =
   'workspaceHint': z.string().readonly().optional(),
   'generation': z.number().readonly(),
   'reason': z.string().readonly().optional(),
+  'diagnostics': z.array(z.object({
+  'name': z.union([z.literal("ssh"), z.literal("helper"), z.literal("service"), z.literal("descriptor"), z.literal("listener"), z.literal("identity"), z.literal("authentication"), z.literal("events"), z.literal("application")]).readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("checking"), z.literal("ok"), z.literal("unsupported")]).readonly(),
+  'code': z.union([z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'checkedAt': z.string().readonly(),
+})).readonly(),
+  'capabilities': z.union([z.undefined(), z.object({
+  'controlVersion': z.number().readonly(),
+  'helperVersion': z.string().readonly(),
+  'mode': z.union([z.literal("unsupported"), z.literal("systemd-user"), z.literal("unregistered")]).readonly(),
+  'actions': z.array(z.string()).readonly(),
+})]).readonly().optional(),
+  'service': z.union([z.undefined(), z.object({
+  'unit': z.string().readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("active"), z.literal("inactive"), z.literal("activating"), z.literal("deactivating")]).readonly(),
+  'registered': z.boolean().readonly(),
+  'registrationRevision': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'serviceOperation': z.union([z.undefined(), z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'accessWarning': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+}))
+let _harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_0$schema$value
+const _harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_0$schema$value ??= z.union([z.object({
+  'targetId': z.string().readonly(),
+  'endpointId': z.string().readonly(),
+}), z.object({
+  'sshAlias': z.string().readonly(),
+  'instanceKey': z.string().readonly(),
+})]))
+let _harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_1$schema$value
+const _harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_1$schema = () => (_harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_1$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_getServiceOperation_result$schema$value
+const _harness_remote_controller_remoteWorkspace_getServiceOperation_result$schema = () => (_harness_remote_controller_remoteWorkspace_getServiceOperation_result$schema$value ??= z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
 }))
 let _harness_remote_controller_remoteWorkspace_getState_result$schema$value
 const _harness_remote_controller_remoteWorkspace_getState_result$schema = () => (_harness_remote_controller_remoteWorkspace_getState_result$schema$value ??= z.object({
-  'phase': z.union([z.literal("error"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("checking"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("verifying"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required"), z.literal("service-stopped")]).readonly(),
   'connectionId': z.union([z.undefined(), z.string()]).readonly().optional(),
   'targetId': z.string().readonly().optional(),
   'endpointId': z.string().readonly().optional(),
@@ -54,6 +127,68 @@ const _harness_remote_controller_remoteWorkspace_getState_result$schema = () => 
   'workspaceHint': z.string().readonly().optional(),
   'generation': z.number().readonly(),
   'reason': z.string().readonly().optional(),
+  'diagnostics': z.array(z.object({
+  'name': z.union([z.literal("ssh"), z.literal("helper"), z.literal("service"), z.literal("descriptor"), z.literal("listener"), z.literal("identity"), z.literal("authentication"), z.literal("events"), z.literal("application")]).readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("checking"), z.literal("ok"), z.literal("unsupported")]).readonly(),
+  'code': z.union([z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'checkedAt': z.string().readonly(),
+})).readonly(),
+  'capabilities': z.union([z.undefined(), z.object({
+  'controlVersion': z.number().readonly(),
+  'helperVersion': z.string().readonly(),
+  'mode': z.union([z.literal("unsupported"), z.literal("systemd-user"), z.literal("unregistered")]).readonly(),
+  'actions': z.array(z.string()).readonly(),
+})]).readonly().optional(),
+  'service': z.union([z.undefined(), z.object({
+  'unit': z.string().readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("active"), z.literal("inactive"), z.literal("activating"), z.literal("deactivating")]).readonly(),
+  'registered': z.boolean().readonly(),
+  'registrationRevision': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'serviceOperation': z.union([z.undefined(), z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'accessWarning': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+}))
+let _harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_0$schema$value
+const _harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_0$schema$value ??= z.union([z.object({
+  'targetId': z.string().readonly(),
+  'endpointId': z.string().readonly(),
+}), z.object({
+  'sshAlias': z.string().readonly(),
+  'instanceKey': z.string().readonly(),
+})]))
+let _harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_1$schema$value
+const _harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_1$schema = () => (_harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_1$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_inspectEndpoint_result$schema$value
+const _harness_remote_controller_remoteWorkspace_inspectEndpoint_result$schema = () => (_harness_remote_controller_remoteWorkspace_inspectEndpoint_result$schema$value ??= z.object({
+  'sshAlias': z.string().readonly(),
+  'instanceKey': z.string().readonly(),
+  'known': z.boolean().readonly(),
+  'capabilities': z.union([z.undefined(), z.object({
+  'controlVersion': z.number().readonly(),
+  'helperVersion': z.string().readonly(),
+  'mode': z.union([z.literal("unsupported"), z.literal("systemd-user"), z.literal("unregistered")]).readonly(),
+  'actions': z.array(z.string()).readonly(),
+})]).readonly().optional(),
+  'service': z.union([z.undefined(), z.object({
+  'unit': z.string().readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("active"), z.literal("inactive"), z.literal("activating"), z.literal("deactivating")]).readonly(),
+  'registered': z.boolean().readonly(),
+  'registrationRevision': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'diagnostics': z.array(z.object({
+  'name': z.union([z.literal("ssh"), z.literal("helper"), z.literal("service"), z.literal("descriptor"), z.literal("listener"), z.literal("identity"), z.literal("authentication"), z.literal("events"), z.literal("application")]).readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("checking"), z.literal("ok"), z.literal("unsupported")]).readonly(),
+  'code': z.union([z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'checkedAt': z.string().readonly(),
+})).readonly(),
+  'checkedAt': z.string().readonly(),
 }))
 let _harness_remote_controller_remoteWorkspace_listAliases_result$schema$value
 const _harness_remote_controller_remoteWorkspace_listAliases_result$schema = () => (_harness_remote_controller_remoteWorkspace_listAliases_result$schema$value ??= z.array(z.string()))
@@ -80,7 +215,7 @@ let _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema$v
 const _harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema = () => (_harness_remote_controller_remoteWorkspace_quickConnect_parameter_2$schema$value ??= z.string())
 let _harness_remote_controller_remoteWorkspace_quickConnect_result$schema$value
 const _harness_remote_controller_remoteWorkspace_quickConnect_result$schema = () => (_harness_remote_controller_remoteWorkspace_quickConnect_result$schema$value ??= z.object({
-  'phase': z.union([z.literal("error"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("checking"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("verifying"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required"), z.literal("service-stopped")]).readonly(),
   'connectionId': z.union([z.undefined(), z.string()]).readonly().optional(),
   'targetId': z.string().readonly().optional(),
   'endpointId': z.string().readonly().optional(),
@@ -91,6 +226,78 @@ const _harness_remote_controller_remoteWorkspace_quickConnect_result$schema = ()
   'workspaceHint': z.string().readonly().optional(),
   'generation': z.number().readonly(),
   'reason': z.string().readonly().optional(),
+  'diagnostics': z.array(z.object({
+  'name': z.union([z.literal("ssh"), z.literal("helper"), z.literal("service"), z.literal("descriptor"), z.literal("listener"), z.literal("identity"), z.literal("authentication"), z.literal("events"), z.literal("application")]).readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("checking"), z.literal("ok"), z.literal("unsupported")]).readonly(),
+  'code': z.union([z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'checkedAt': z.string().readonly(),
+})).readonly(),
+  'capabilities': z.union([z.undefined(), z.object({
+  'controlVersion': z.number().readonly(),
+  'helperVersion': z.string().readonly(),
+  'mode': z.union([z.literal("unsupported"), z.literal("systemd-user"), z.literal("unregistered")]).readonly(),
+  'actions': z.array(z.string()).readonly(),
+})]).readonly().optional(),
+  'service': z.union([z.undefined(), z.object({
+  'unit': z.string().readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("active"), z.literal("inactive"), z.literal("activating"), z.literal("deactivating")]).readonly(),
+  'registered': z.boolean().readonly(),
+  'registrationRevision': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'serviceOperation': z.union([z.undefined(), z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'accessWarning': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+}))
+let _harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_0$schema$value
+const _harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_0$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_1$schema$value
+const _harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_1$schema = () => (_harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_1$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_refreshAuthentication_result$schema$value
+const _harness_remote_controller_remoteWorkspace_refreshAuthentication_result$schema = () => (_harness_remote_controller_remoteWorkspace_refreshAuthentication_result$schema$value ??= z.object({
+  'phase': z.union([z.literal("error"), z.literal("checking"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("verifying"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required"), z.literal("service-stopped")]).readonly(),
+  'connectionId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'targetId': z.string().readonly().optional(),
+  'endpointId': z.string().readonly().optional(),
+  'hostName': z.string().readonly().optional(),
+  'instanceId': z.string().readonly().optional(),
+  'bootId': z.string().readonly().optional(),
+  'profile': z.string().readonly().optional(),
+  'workspaceHint': z.string().readonly().optional(),
+  'generation': z.number().readonly(),
+  'reason': z.string().readonly().optional(),
+  'diagnostics': z.array(z.object({
+  'name': z.union([z.literal("ssh"), z.literal("helper"), z.literal("service"), z.literal("descriptor"), z.literal("listener"), z.literal("identity"), z.literal("authentication"), z.literal("events"), z.literal("application")]).readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("checking"), z.literal("ok"), z.literal("unsupported")]).readonly(),
+  'code': z.union([z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'checkedAt': z.string().readonly(),
+})).readonly(),
+  'capabilities': z.union([z.undefined(), z.object({
+  'controlVersion': z.number().readonly(),
+  'helperVersion': z.string().readonly(),
+  'mode': z.union([z.literal("unsupported"), z.literal("systemd-user"), z.literal("unregistered")]).readonly(),
+  'actions': z.array(z.string()).readonly(),
+})]).readonly().optional(),
+  'service': z.union([z.undefined(), z.object({
+  'unit': z.string().readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("active"), z.literal("inactive"), z.literal("activating"), z.literal("deactivating")]).readonly(),
+  'registered': z.boolean().readonly(),
+  'registrationRevision': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'serviceOperation': z.union([z.undefined(), z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'accessWarning': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
 }))
 let _harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema$value
 const _harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_saveTarget_parameter_0$schema$value ??= z.object({
@@ -122,9 +329,36 @@ const _harness_remote_controller_remoteWorkspace_saveTarget_result$schema = () =
   'sshAlias': z.string().readonly(),
 })).readonly(),
 })))
+let _harness_remote_controller_remoteWorkspace_serviceAction_parameter_0$schema$value
+const _harness_remote_controller_remoteWorkspace_serviceAction_parameter_0$schema = () => (_harness_remote_controller_remoteWorkspace_serviceAction_parameter_0$schema$value ??= z.union([z.object({
+  'targetId': z.string().readonly(),
+  'endpointId': z.string().readonly(),
+}), z.object({
+  'sshAlias': z.string().readonly(),
+  'instanceKey': z.string().readonly(),
+})]))
+let _harness_remote_controller_remoteWorkspace_serviceAction_parameter_1$schema$value
+const _harness_remote_controller_remoteWorkspace_serviceAction_parameter_1$schema = () => (_harness_remote_controller_remoteWorkspace_serviceAction_parameter_1$schema$value ??= z.union([z.literal("start"), z.literal("stop"), z.literal("restart")]))
+let _harness_remote_controller_remoteWorkspace_serviceAction_parameter_2$schema$value
+const _harness_remote_controller_remoteWorkspace_serviceAction_parameter_2$schema = () => (_harness_remote_controller_remoteWorkspace_serviceAction_parameter_2$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_serviceAction_parameter_3$schema$value
+const _harness_remote_controller_remoteWorkspace_serviceAction_parameter_3$schema = () => (_harness_remote_controller_remoteWorkspace_serviceAction_parameter_3$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_serviceAction_parameter_4$schema$value
+const _harness_remote_controller_remoteWorkspace_serviceAction_parameter_4$schema = () => (_harness_remote_controller_remoteWorkspace_serviceAction_parameter_4$schema$value ??= z.string())
+let _harness_remote_controller_remoteWorkspace_serviceAction_parameter_5$schema$value
+const _harness_remote_controller_remoteWorkspace_serviceAction_parameter_5$schema = () => (_harness_remote_controller_remoteWorkspace_serviceAction_parameter_5$schema$value ??= z.union([z.undefined(), z.string()]))
+let _harness_remote_controller_remoteWorkspace_serviceAction_result$schema$value
+const _harness_remote_controller_remoteWorkspace_serviceAction_result$schema = () => (_harness_remote_controller_remoteWorkspace_serviceAction_result$schema$value ??= z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+}))
 let _harness_remote_controller_remoteWorkspace_watch_result$schema$value
 const _harness_remote_controller_remoteWorkspace_watch_result$schema = () => (_harness_remote_controller_remoteWorkspace_watch_result$schema$value ??= z.object({
-  'phase': z.union([z.literal("error"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("checking"), z.literal("idle"), z.literal("ssh-auth"), z.literal("discovering"), z.literal("forwarding"), z.literal("authenticating"), z.literal("verifying"), z.literal("app-ready"), z.literal("disconnected"), z.literal("reconnecting"), z.literal("identity-mismatch"), z.literal("auth-required"), z.literal("service-stopped")]).readonly(),
   'connectionId': z.union([z.undefined(), z.string()]).readonly().optional(),
   'targetId': z.string().readonly().optional(),
   'endpointId': z.string().readonly().optional(),
@@ -135,6 +369,33 @@ const _harness_remote_controller_remoteWorkspace_watch_result$schema = () => (_h
   'workspaceHint': z.string().readonly().optional(),
   'generation': z.number().readonly(),
   'reason': z.string().readonly().optional(),
+  'diagnostics': z.array(z.object({
+  'name': z.union([z.literal("ssh"), z.literal("helper"), z.literal("service"), z.literal("descriptor"), z.literal("listener"), z.literal("identity"), z.literal("authentication"), z.literal("events"), z.literal("application")]).readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("checking"), z.literal("ok"), z.literal("unsupported")]).readonly(),
+  'code': z.union([z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'checkedAt': z.string().readonly(),
+})).readonly(),
+  'capabilities': z.union([z.undefined(), z.object({
+  'controlVersion': z.number().readonly(),
+  'helperVersion': z.string().readonly(),
+  'mode': z.union([z.literal("unsupported"), z.literal("systemd-user"), z.literal("unregistered")]).readonly(),
+  'actions': z.array(z.string()).readonly(),
+})]).readonly().optional(),
+  'service': z.union([z.undefined(), z.object({
+  'unit': z.string().readonly(),
+  'state': z.union([z.literal("failed"), z.literal("unknown"), z.literal("active"), z.literal("inactive"), z.literal("activating"), z.literal("deactivating")]).readonly(),
+  'registered': z.boolean().readonly(),
+  'registrationRevision': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'serviceOperation': z.union([z.undefined(), z.object({
+  'phase': z.union([z.literal("failed"), z.literal("completed"), z.literal("waiting"), z.literal("idle"), z.literal("submitting"), z.literal("outcome-unknown")]).readonly(),
+  'action': z.union([z.undefined(), z.literal("start"), z.literal("stop"), z.literal("restart")]).readonly().optional(),
+  'operationId': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'code': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
+  'startedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+  'finishedAt': z.union([z.undefined(), z.string()]).readonly().optional(),
+})]).readonly().optional(),
+  'accessWarning': z.union([z.undefined(), z.literal("SSH_UNAVAILABLE"), z.literal("SSH_AUTH_FAILED"), z.literal("HOST_KEY_REJECTED"), z.literal("SSH_TIMEOUT"), z.literal("HELPER_NOT_FOUND"), z.literal("HELPER_UNSAFE"), z.literal("HELPER_BAD_CONFIG"), z.literal("CONTROL_UNSUPPORTED"), z.literal("SERVICE_UNREGISTERED"), z.literal("SERVICE_STOPPED"), z.literal("SERVICE_FAILED"), z.literal("USER_MANAGER_UNAVAILABLE"), z.literal("DESCRIPTOR_MISSING"), z.literal("DESCRIPTOR_INVALID"), z.literal("DESCRIPTOR_STALE"), z.literal("UNSUPPORTED_WEB_TRANSPORT"), z.literal("LOCAL_AUTH_REQUIRED"), z.literal("UPSTREAM_AUTH_REQUIRED"), z.literal("IDENTITY_MISMATCH"), z.literal("APPLICATION_NOT_READY"), z.literal("UPSTREAM_UNREACHABLE"), z.literal("REGISTRATION_STALE"), z.literal("OPERATION_CONFLICT"), z.literal("OPERATION_EXPIRED"), z.literal("OUTCOME_UNKNOWN"), z.literal("BAD_INPUT"), z.literal("CONFIG_REQUIRED"), z.literal("UNSAFE_PATH"), z.literal("UNSAFE_FILE"), z.literal("LINUX_REQUIRED"), z.literal("CONTROL_FAILED"), z.literal("FORBIDDEN"), z.literal("NOT_FOUND"), z.literal("PROXY_PAUSED")]).readonly().optional(),
 }))
 
 export const TYPERT = {
@@ -186,7 +447,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_connect_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":81,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":82,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/createOpenTicket',
@@ -211,7 +472,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/createOpenTicket:result',
         create: _harness_remote_controller_remoteWorkspace_createOpenTicket_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":106,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":107,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/disconnect',
@@ -236,7 +497,42 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_disconnect_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":98,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":99,"column":3},
+    },
+    {
+      id: 'dsh-win-ssh-controller-source#remoteWorkspace/getServiceOperation',
+      service: 'remoteWorkspace',
+      namespace: 'remoteWorkspace',
+      method: 'getServiceOperation',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'ref',
+          wire: 'ref',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source/types#EndpointRef',
+            create: _harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_0$schema,
+          },
+        },
+        {
+          name: 'operationId',
+          wire: 'operationId',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/getServiceOperation:operationId',
+            create: _harness_remote_controller_remoteWorkspace_getServiceOperation_parameter_1$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: 'dsh-win-ssh-controller-source/types#ServiceOperationState',
+        create: _harness_remote_controller_remoteWorkspace_getServiceOperation_result$schema,
+      },
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":144,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/getState',
@@ -251,7 +547,42 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_getState_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":90,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":91,"column":3},
+    },
+    {
+      id: 'dsh-win-ssh-controller-source#remoteWorkspace/inspectEndpoint',
+      service: 'remoteWorkspace',
+      namespace: 'remoteWorkspace',
+      method: 'inspectEndpoint',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'ref',
+          wire: 'ref',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source/types#EndpointRef',
+            create: _harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_0$schema,
+          },
+        },
+        {
+          name: 'operationId',
+          wire: 'operationId',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/inspectEndpoint:operationId',
+            create: _harness_remote_controller_remoteWorkspace_inspectEndpoint_parameter_1$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteInspection',
+        create: _harness_remote_controller_remoteWorkspace_inspectEndpoint_result$schema,
+      },
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":117,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/listAliases',
@@ -266,7 +597,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/listAliases:result',
         create: _harness_remote_controller_remoteWorkspace_listAliases_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":53,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":54,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/listTargets',
@@ -281,7 +612,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/listTargets:result',
         create: _harness_remote_controller_remoteWorkspace_listTargets_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":47,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":48,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/quickConnect',
@@ -326,7 +657,42 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_quickConnect_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":61,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":62,"column":3},
+    },
+    {
+      id: 'dsh-win-ssh-controller-source#remoteWorkspace/refreshAuthentication',
+      service: 'remoteWorkspace',
+      namespace: 'remoteWorkspace',
+      method: 'refreshAuthentication',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'connectionId',
+          wire: 'connectionId',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/refreshAuthentication:connectionId',
+            create: _harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_0$schema,
+          },
+        },
+        {
+          name: 'operationId',
+          wire: 'operationId',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/refreshAuthentication:operationId',
+            create: _harness_remote_controller_remoteWorkspace_refreshAuthentication_parameter_1$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
+        create: _harness_remote_controller_remoteWorkspace_refreshAuthentication_result$schema,
+      },
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":155,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/saveTarget',
@@ -351,7 +717,83 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/saveTarget:result',
         create: _harness_remote_controller_remoteWorkspace_saveTarget_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":71,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":72,"column":3},
+    },
+    {
+      id: 'dsh-win-ssh-controller-source#remoteWorkspace/serviceAction',
+      service: 'remoteWorkspace',
+      namespace: 'remoteWorkspace',
+      method: 'serviceAction',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'ref',
+          wire: 'ref',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source/types#EndpointRef',
+            create: _harness_remote_controller_remoteWorkspace_serviceAction_parameter_0$schema,
+          },
+        },
+        {
+          name: 'action',
+          wire: 'action',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/serviceAction:action',
+            create: _harness_remote_controller_remoteWorkspace_serviceAction_parameter_1$schema,
+          },
+        },
+        {
+          name: 'operationId',
+          wire: 'operationId',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/serviceAction:operationId',
+            create: _harness_remote_controller_remoteWorkspace_serviceAction_parameter_2$schema,
+          },
+        },
+        {
+          name: 'issuedAt',
+          wire: 'issuedAt',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/serviceAction:issuedAt',
+            create: _harness_remote_controller_remoteWorkspace_serviceAction_parameter_3$schema,
+          },
+        },
+        {
+          name: 'registrationRevision',
+          wire: 'registrationRevision',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/serviceAction:registrationRevision',
+            create: _harness_remote_controller_remoteWorkspace_serviceAction_parameter_4$schema,
+          },
+        },
+        {
+          name: 'expectedInstanceId',
+          wire: 'expectedInstanceId',
+          source: 'json',
+          acceptsUndefined: true,
+          codec: {
+            mode: 'strict',
+            typeSymbol: 'dsh-win-ssh-controller-source#remoteWorkspace/serviceAction:expectedInstanceId',
+            create: _harness_remote_controller_remoteWorkspace_serviceAction_parameter_5$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: 'dsh-win-ssh-controller-source/types#ServiceOperationState',
+        create: _harness_remote_controller_remoteWorkspace_serviceAction_result$schema,
+      },
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":132,"column":3},
     },
     {
       id: 'dsh-win-ssh-controller-source#remoteWorkspace/watch',
@@ -368,7 +810,7 @@ export const TYPERT = {
         typeSymbol: 'dsh-win-ssh-controller-source/types#RemoteSnapshot',
         create: _harness_remote_controller_remoteWorkspace_watch_result$schema,
       },
-      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":114,"column":3},
+      sourceLocation: {"file":"packages/remote/controller/src/index.ts","line":165,"column":3},
     },
   ],
   model: {
@@ -439,6 +881,34 @@ export const TYPERT = {
           },
           {
             "kind": "method",
+            "name": "inspectEndpoint",
+            "signature": "@Remote inspectEndpoint(ref: EndpointRef, operationId: string): Promise<RemoteInspection>",
+            "summary": "Read-only preflight for a saved target or a first-time SSH alias.",
+            "jsDoc": "/**\n * Read-only preflight for a saved target or a first-time SSH alias.\n * Never saves a target and never starts a remote service.\n * @param ref - mutually exclusive endpoint reference.\n * @param operationId - idempotency key for this inspection.\n * @returns capability, service and layered diagnostic summary.\n */"
+          },
+          {
+            "kind": "method",
+            "name": "serviceAction",
+            "signature": "@Remote serviceAction(ref: EndpointRef, action: 'start' | 'stop' | 'restart', operationId: string, issuedAt: string, registrationRevision: string, expectedInstanceId?: string): Promise<ServiceOperationState>",
+            "summary": "Submit exactly one restricted service action against the active attachment.",
+            "jsDoc": "/**\n * Submit exactly one restricted service action against the active attachment.\n * @param ref - endpoint the action applies to.\n * @param action - start, stop or restart.\n * @param operationId - idempotency key, reused when asking for the result.\n * @param issuedAt - ISO timestamp of the intent.\n * @param registrationRevision - revision the caller observed.\n * @param expectedInstanceId - pinned instance id, when known.\n * @returns the operation state, including a possible outcome-unknown.\n */"
+          },
+          {
+            "kind": "method",
+            "name": "getServiceOperation",
+            "signature": "@Remote getServiceOperation(ref: EndpointRef, operationId: string): Promise<ServiceOperationState>",
+            "summary": "Read a previously submitted action's result.",
+            "jsDoc": "/**\n * Read a previously submitted action's result. Never submits a new action.\n * @param ref - endpoint the receipt belongs to.\n * @param operationId - the id used when the action was submitted.\n * @returns the recorded operation state.\n */"
+          },
+          {
+            "kind": "method",
+            "name": "refreshAuthentication",
+            "signature": "@Remote refreshAuthentication(connectionId: string, operationId: string): Promise<RemoteSnapshot>",
+            "summary": "Re-authenticate the active attachment without touching the remote service.",
+            "jsDoc": "/**\n * Re-authenticate the active attachment without touching the remote service.\n * @param connectionId - active attachment.\n * @param operationId - idempotency key for this refresh.\n * @returns the new snapshot.\n */"
+          },
+          {
+            "kind": "method",
             "name": "watch",
             "signature": "@Remote({ mode: 'stream' }) watch(signal: AbortSignal): AsyncIterable<RemoteSnapshot>",
             "summary": "Observe attachment state until the caller cancels its stream.",
@@ -447,20 +917,60 @@ export const TYPERT = {
         ],
         "types": [
           {
+            "name": "CheckName",
+            "declaration": "export type CheckName = 'ssh' | 'helper' | 'service' | 'descriptor' | 'listener' | 'identity' | 'authentication' | 'events' | 'application';"
+          },
+          {
+            "name": "CheckState",
+            "declaration": "export type CheckState = 'unknown' | 'checking' | 'ok' | 'failed' | 'unsupported';"
+          },
+          {
+            "name": "EndpointRef",
+            "declaration": "export type EndpointRef = { readonly targetId: string; readonly endpointId: string; } | { readonly sshAlias: string; readonly instanceKey: string; };"
+          },
+          {
+            "name": "RemoteCapabilities",
+            "declaration": "export interface RemoteCapabilities {\n    readonly controlVersion: number;\n    readonly helperVersion: string;\n    readonly mode: 'systemd-user' | 'unsupported' | 'unregistered';\n    readonly actions: readonly string[];\n}"
+          },
+          {
+            "name": "RemoteCheck",
+            "declaration": "export interface RemoteCheck {\n    readonly name: CheckName;\n    readonly state: CheckState;\n    readonly code?: RemoteErrorCode;\n    readonly checkedAt: string;\n}"
+          },
+          {
             "name": "RemoteEndpoint",
             "declaration": "export interface RemoteEndpoint {\n    readonly id: string;\n    readonly kind: 'lan' | 'frp-tcp' | 'stcp';\n    readonly sshAlias: string;\n}"
           },
           {
+            "name": "RemoteErrorCode",
+            "declaration": "export type RemoteErrorCode = 'SSH_UNAVAILABLE' | 'SSH_AUTH_FAILED' | 'HOST_KEY_REJECTED' | 'SSH_TIMEOUT' | 'HELPER_NOT_FOUND' | 'HELPER_UNSAFE' | 'HELPER_BAD_CONFIG' | 'CONTROL_UNSUPPORTED' | 'SERVICE_UNREGISTERED' | 'SERVICE_STOPPED' | 'SERVICE_FAILED' | 'USER_MANAGER_UNAVAILABLE' | 'DESCRIPTOR_MISSING' | 'DESCRIPTOR_INVALID' | 'DESCRIPTOR_STALE' | 'UNSUPPORTED_WEB_TRANSPORT' | 'LOCAL_AUTH_REQUIRED' | 'UPSTREAM_AUTH_REQUIRED' | 'IDENTITY_MISMATCH' | 'APPLICATION_NOT_READY' | 'UPSTREAM_UNREACHABLE' | 'REGISTRATION_STALE' | 'OPERATION_CONFLICT' | 'OPERATION_EXPIRED' | 'OUTCOME_UNKNOWN' | 'BAD_INPUT' | 'CONFIG_REQUIRED' | 'UNSAFE_PATH' | 'UNSAFE_FILE' | 'LINUX_REQUIRED' | 'CONTROL_FAILED' | 'FORBIDDEN' | 'NOT_FOUND' | 'PROXY_PAUSED';"
+          },
+          {
+            "name": "RemoteInspection",
+            "declaration": "export interface RemoteInspection {\n    readonly sshAlias: string;\n    readonly instanceKey: string;\n    readonly known: boolean;\n    readonly capabilities?: RemoteCapabilities | undefined;\n    readonly service?: RemoteServiceState | undefined;\n    readonly diagnostics: readonly RemoteCheck[];\n    readonly checkedAt: string;\n}"
+          },
+          {
             "name": "RemotePhase",
-            "declaration": "export type RemotePhase = 'idle' | 'ssh-auth' | 'discovering' | 'forwarding' | 'authenticating' | 'app-ready' | 'disconnected' | 'reconnecting' | 'identity-mismatch' | 'auth-required' | 'error';"
+            "declaration": "export type RemotePhase = 'idle' | 'ssh-auth' | 'checking' | 'discovering' | 'forwarding' | 'authenticating' | 'verifying' | 'app-ready' | 'disconnected' | 'reconnecting' | 'identity-mismatch' | 'auth-required' | 'service-stopped' | 'error';"
+          },
+          {
+            "name": "RemoteServiceState",
+            "declaration": "export interface RemoteServiceState {\n    readonly unit: string;\n    readonly state: 'unknown' | 'inactive' | 'activating' | 'active' | 'deactivating' | 'failed';\n    readonly registered: boolean;\n    readonly registrationRevision?: string | undefined;\n}"
           },
           {
             "name": "RemoteSnapshot",
-            "declaration": "export interface RemoteSnapshot {\n    readonly phase: RemotePhase;\n    readonly connectionId?: string | undefined;\n    readonly targetId?: string;\n    readonly endpointId?: string;\n    readonly hostName?: string;\n    readonly instanceId?: string;\n    readonly bootId?: string;\n    readonly profile?: string;\n    readonly workspaceHint?: string;\n    readonly generation: number;\n    readonly reason?: string;\n}"
+            "declaration": "export interface RemoteSnapshot {\n    readonly phase: RemotePhase;\n    readonly connectionId?: string | undefined;\n    readonly targetId?: string;\n    readonly endpointId?: string;\n    readonly hostName?: string;\n    readonly instanceId?: string;\n    readonly bootId?: string;\n    readonly profile?: string;\n    readonly workspaceHint?: string;\n    readonly generation: number;\n    readonly reason?: string;\n    readonly diagnostics: readonly RemoteCheck[];\n    readonly capabilities?: RemoteCapabilities | undefined;\n    readonly service?: RemoteServiceState | undefined;\n    readonly serviceOperation?: ServiceOperationState | undefined;\n    readonly accessWarning?: RemoteErrorCode | undefined;\n}"
           },
           {
             "name": "RemoteTarget",
             "declaration": "export interface RemoteTarget {\n    readonly id: string;\n    readonly name: string;\n    readonly instanceKey: string;\n    readonly instanceId: string;\n    readonly profile: string;\n    readonly workspaceHint: string;\n    readonly remotePort: number;\n    readonly endpoints: readonly RemoteEndpoint[];\n}"
+          },
+          {
+            "name": "ServiceOperationPhase",
+            "declaration": "export type ServiceOperationPhase = 'idle' | 'submitting' | 'waiting' | 'completed' | 'failed' | 'outcome-unknown';"
+          },
+          {
+            "name": "ServiceOperationState",
+            "declaration": "export interface ServiceOperationState {\n    readonly phase: ServiceOperationPhase;\n    readonly action?: 'start' | 'stop' | 'restart' | undefined;\n    readonly operationId?: string | undefined;\n    readonly code?: RemoteErrorCode | undefined;\n    readonly startedAt?: string | undefined;\n    readonly finishedAt?: string | undefined;\n}"
           }
         ]
       }

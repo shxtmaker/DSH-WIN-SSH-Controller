@@ -58,5 +58,19 @@ export declare function classifySshFailure(stderr: string, code: number | null, 
  * @param controlRequest - whether this invocation used `--control`.
  */
 export declare function classifyHelperFailure(stderr: string, code: number | null, controlRequest: boolean): RemoteErrorCode;
+/** Local authorization is missing or does not match the live proxy instance. */
+export declare const LOCAL_AUTH_REQUIRED = "LOCAL_AUTH_REQUIRED";
+/** Raised when the remote instance is not the one this target pinned. */
+export declare class IdentityMismatch extends Error {
+}
+/** Raised when the remote Harness itself rejected our remote session Cookie (a real 401). */
+export declare class UpstreamAuthRequired extends Error {
+}
+/** Raised when the remote service is not listening yet; this is not an authentication failure. */
+export declare class ServiceStopped extends Error {
+}
+/** Raised when the upstream is reachable but not answering usefully. */
+export declare class UpstreamUnreachable extends Error {
+}
 export {};
 //# sourceMappingURL=errors.d.ts.map
