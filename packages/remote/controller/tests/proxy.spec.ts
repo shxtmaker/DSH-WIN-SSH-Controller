@@ -28,6 +28,8 @@ async function upstream(): Promise<{ port: number; requests: CapturedRequest[] }
       return
     }
     res.setHeader('set-cookie', 'remote-secret=must-not-escape; HttpOnly')
+    // A proxy-owned diagnostic name coming from the upstream must never be trusted.
+    res.setHeader('x-dsh-remote-error', 'UPSTREAM_FORGED')
     res.setHeader('content-type', 'application/octet-stream')
     res.end(Buffer.from([0, 1, 2, 255]))
   })
@@ -80,6 +82,57 @@ async function status(url: string, cookie: string): Promise<number> {
 }
 
 describe('remote workspace auth proxy', () => {
+  it('issues a session Cookie whose validity is the proxy instance, not a fixed hour', async () => {
+    const remote = await upstream()
+    const proxy = new AuthProxy(remote.port, 3080, 'remote-session=host-only')
+    proxies.push(proxy)
+    await proxy.start()
+    const url = new URL(proxy.openTicket())
+    const response = await fetch(`${proxy.origin}/__remote/exchange`, { method: 'POST',
+      headers: { origin: proxy.origin, 'x-remote-ticket': url.hash.slice(1) } })
+    expect(response.status).toBe(204)
+    const setCookie = response.headers.get('set-cookie') ?? ''
+    // The local authorization must not expire on a client-side clock while the operator keeps
+    // the connection open; it ends when the proxy instance is paused, stopped, or replaced.
+    expect(setCookie).not.toMatch(/max-age/iu)
+    expect(setCookie).not.toMatch(/expires/iu)
+    expect(setCookie).toMatch(/HttpOnly/u)
+    expect(setCookie).toMatch(/SameSite=Strict/u)
+    expect(setCookie).toMatch(/Path=\//u)
+    expect(setCookie).toMatch(/^rw_[0-9a-f]+=/u)
+  })
+
+  it('renders a credential-free recovery page for navigation but keeps API errors plain', async () => {
+    const remote = await upstream()
+    const proxy = new AuthProxy(remote.port, 3080, 'remote-session=host-only')
+    proxies.push(proxy)
+    await proxy.start()
+    const navigation = await fetch(proxy.origin, { headers: { accept: 'text/html' } })
+    expect(navigation.status).toBe(401)
+    expect(navigation.headers.get('content-type')).toMatch(/text\/html/u)
+    expect(navigation.headers.get('x-dsh-remote-error')).toBe('LOCAL_AUTH_REQUIRED')
+    const page = await navigation.text()
+    expect(page).toContain('重新打开')
+    expect(page).not.toMatch(/127\.0\.0\.1|:\d{4,5}\b/u)
+    const api = await fetch(`${proxy.origin}/api/usage`, { headers: { accept: 'application/json' } })
+    expect(api.status).toBe(401)
+    expect(api.headers.get('content-type')).toMatch(/text\/plain/u)
+    expect(api.headers.get('x-dsh-remote-error')).toBe('LOCAL_AUTH_REQUIRED')
+    expect(await api.text()).not.toContain('<')
+    expect(remote.requests).toHaveLength(0)
+  })
+
+  it('never forwards a proxy-owned diagnostic header from the upstream', async () => {
+    const remote = await upstream()
+    const proxy = new AuthProxy(remote.port, 3080, 'remote-session=host-only')
+    proxies.push(proxy)
+    await proxy.start()
+    const { cookie } = await session(proxy)
+    const reply = await fetch(proxy.origin, { headers: { cookie } })
+    expect(reply.status).toBe(200)
+    expect(reply.headers.get('x-dsh-remote-error')).toBeNull()
+  })
+
   it('requires one ticket, then isolates the two Cookies and forwards binary and WebSocket', async () => {
     const remote = await upstream()
     const proxy = new AuthProxy(remote.port, 3080, 'remote-session=host-only')

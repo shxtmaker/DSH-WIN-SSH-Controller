@@ -1,0 +1,123 @@
+{
+  "task": "B00",
+  "recordedAt": "2026-10-13T12:20:00+08:00",
+  "planVersion": "1.1",
+  "packageVersion": "1.0",
+  "runId": "dsh-plan-b-20261013",
+  "note": "Recorded inside the isolated task checkout. Paths are relative to the Controller repository root. No production path, SSH alias, IP or port from any earlier session is used as a test target.",
+  "repositories": {
+    "controller": {
+      "role": "controller",
+      "url": "https://github.com/shxtmaker/DSH-WIN-SSH-Controller.git",
+      "localPath": "src/controller",
+      "branch": "codex/searchable-ssh-connections",
+      "head": "8cdb43de9d94614658a024204a091f26da15a78a",
+      "main": "7d509569131cb3e3a1ac8cf4421f4226443cd0cb",
+      "ancestryCheck": {
+        "command": "git merge-base --is-ancestor 7d509569131cb3e3a1ac8cf4421f4226443cd0cb HEAD",
+        "exitCode": 0,
+        "result": "PASS",
+        "mergeBase": "7d509569131cb3e3a1ac8cf4421f4226443cd0cb",
+        "commitsInMainNotInHead": 0,
+        "commitsInHeadNotInMain": [
+          "8cdb43d fix: align remote workspace page with native Harness styles",
+          "aaa8eed feat: add searchable SSH connection and saved-target lists"
+        ],
+        "conclusion": "The pinned improvement branch is a strict linear descendant of main; main's fixes are fully covered. No reset or cherry-pick was required."
+      },
+      "uncommittedFiles": [],
+      "remotes": [
+        "origin\thttps://github.com/shxtmaker/DSH-WIN-SSH-Controller.git (fetch)",
+        "origin\thttps://github.com/shxtmaker/DSH-WIN-SSH-Controller.git (push)"
+      ]
+    },
+    "agent": {
+      "role": "agent",
+      "url": "https://github.com/shxtmaker/DSH-WIN-SSH-Agent.git",
+      "localPath": "src/agent",
+      "branch": "main",
+      "head": "1b3434d36f7c6a1404e5304a5b93f6b4a67c0662",
+      "uncommittedFiles": [],
+      "remotes": [
+        "origin\thttps://github.com/shxtmaker/DSH-WIN-SSH-Agent.git (fetch)",
+        "origin\thttps://github.com/shxtmaker/DSH-WIN-SSH-Agent.git (push)"
+      ]
+    },
+    "upstream": {
+      "role": "upstream",
+      "url": "https://github.com/deepseek-ai/deepseek-harness.git",
+      "tag": "dsh-v0.2.1-alpha.2",
+      "commit": "d743267388641bc76f17c45ce8b4c231aed1d32c",
+      "checkout": "not materialized as a full working tree in this task; referenced by pinned commit only"
+    }
+  },
+  "toolchain": {
+    "node": {
+      "observed": "v26.10.0",
+      "planTarget": "24",
+      "deviation": "The execution host provides Node 26 only; no Node 24 runtime is installed under the task's control. Both repositories declare engines.node >= 24, so Node 26 satisfies the declared range. The plan's pnpm@11.28.5 is not installed either."
+    },
+    "pnpm": {
+      "observed": "11.28.4",
+      "planTarget": "11.28.5",
+      "deviation": "Patch-level difference only. alpha.2 pins pnpm@11.28.5 in its root package.json; the task will record the exact packageManager field it writes rather than silently reusing 11.7.0."
+    },
+    "esbuildForTests": {
+      "version": "0.25.10",
+      "location": "work/tools (task-local, isolated)",
+      "reason": "Node 26 removed --experimental-transform-types, so the real TypeScript source cannot be loaded with pure type stripping. A minimal local transpile of the real source file is used for the browser regression; the product build continues to use the repository's own toolchain."
+    },
+    "browser": {
+      "engine": "Chromium (real, headless via CDP)",
+      "executable": "~/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome",
+      "evidenceLevel": "local-browser"
+    }
+  },
+  "preservedImprovements": {
+    "searchableConnectionList": {
+      "present": true,
+      "files": [
+        "packages/remote/client/src/client/connections.tsx",
+        "packages/remote/client/src/client/locales.ts",
+        "tests/client-fixture.html",
+        "scripts/test-client.mjs"
+      ]
+    },
+    "nativeStyles": {
+      "present": true,
+      "files": [
+        "packages/remote/client/src/client/connections.module.css",
+        "packages/remote/client/src/client/css-modules.d.ts"
+      ],
+      "evidence": "docs/native-style-verification.json"
+    },
+    "priorVerificationRecords": [
+      "docs/searchable-connections-verification.json",
+      "docs/implementation-status.md",
+      "docs/implementation-status.zh.md"
+    ]
+  },
+  "oldArtifacts": {
+    "pluginVersion": "0.1.0",
+    "harnessVersion": "0.2.0-rc.2",
+    "controller": [
+      { "file": "dist/remote/harness-remote-controller-0.1.0.tgz", "sha256": "2c06bf67ac7208c8c48ca8f320d9f4338c01f834c0b2d8ab2210814848a86d90" },
+      { "file": "dist/remote/harness-remote-client-0.1.0.tgz", "sha256": "9c5977d6d525b129b3647326388ca9b5526bd6ebdb9bd96d5fb0b938ccb7fe92" },
+      { "file": "dist/remote/harness-remote-workspace-0.1.0.tgz", "sha256": "69114ffd07db94e5d85fc1b3b7b28341958902d9fc514ec1fe0c30109d2acc0a" }
+    ],
+    "agent": [
+      { "file": "dist/remote/harness-remote-companion-0.1.0.tgz", "sha256": "438763b17059dc2929375c0ab32f7f8d49d923c1f8495e8b7485a8b71e21763c" }
+    ],
+    "role": "Rollback baseline for the old rc.2 combination. Retained unmodified; the new candidate must not reuse the 0.1.0 version string."
+  },
+  "buildDirectories": {
+    "ignored": [".build/", "out/", "node_modules/", "lib/"],
+    "rule": "Each source iteration prepares a new never-before-used .build/<task> directory; an old snapshot is never treated as current source."
+  },
+  "boundaries": {
+    "remotePush": "NOT_RUN - out of scope",
+    "publication": "NOT_RUN - out of scope",
+    "productionEnvironmentSwitch": "NOT_RUN - out of scope",
+    "productionServiceMutation": "NOT_RUN - out of scope"
+  }
+}
