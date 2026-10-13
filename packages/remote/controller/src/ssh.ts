@@ -10,12 +10,66 @@ const SSH_OPTIONS = [
   '-o', 'ServerAliveInterval=10', '-o', 'ServerAliveCountMax=3',
 ] as const
 
-function validAlias(alias: string): boolean {
+export function validAlias(alias: string): boolean {
   return /^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$/u.test(alias)
 }
 
-function validHelperPath(path: string): boolean {
+export function validHelperPath(path: string): boolean {
   return /^\/(?:[A-Za-z0-9._-]+\/)*[A-Za-z0-9._-]+$/u.test(path)
+}
+
+/** Outcome of one fixed-helper invocation, with bounded output and no parsed meaning. */
+export interface HelperRun {
+  readonly code: number | null
+  readonly stdout: string
+  readonly stderr: string
+  readonly timedOut: boolean
+  readonly oversized: boolean
+}
+
+/**
+ * Run the fixed absolute helper over its own non-interactive SSH process.
+ *
+ * The caller supplies the already-validated alias, helper path and extra arguments; this
+ * function performs no allowlist decisions of its own beyond the argument count.
+ *
+ * @param alias - configured OpenSSH alias.
+ * @param helperPath - fixed executable, never derived from a request.
+ * @param args - literal helper arguments, only `--identity` or `--control`.
+ * @param request - one line of JSON written to the helper's stdin.
+ * @param signal - operation lifetime.
+ * @param timeoutMs - hard deadline for the whole invocation.
+ */
+export async function runHelper(alias: string, helperPath: string, args: readonly string[],
+  request: string, signal: AbortSignal, timeoutMs = 20_000): Promise<HelperRun> {
+  signal.throwIfAborted()
+  if (!validAlias(alias) || !validHelperPath(helperPath)) {
+    throw new Error('remote-workspace: invalid SSH discovery configuration')
+  }
+  const child = spawn('ssh', [...SSH_OPTIONS, alias, helperPath, ...args], { shell: false, windowsHide: true, stdio: 'pipe' })
+  const stop = (): void => { child.kill() }
+  signal.addEventListener('abort', stop, { once: true })
+  let timedOut = false
+  const timeout = setTimeout(() => { timedOut = true; stop() }, timeoutMs)
+  let stdout = ''
+  let oversized = false
+  let stderr = ''
+  child.stdout.setEncoding('utf8')
+  child.stdout.on('data', (chunk: string) => {
+    stdout += chunk
+    if (Buffer.byteLength(stdout, 'utf8') > 65_536) { oversized = true; child.kill() }
+  })
+  child.stderr.setEncoding('utf8')
+  child.stderr.on('data', (chunk: string) => { stderr = (stderr + chunk).slice(-8192) })
+  child.stdin.on('error', () => { /* SSH exit is reported by childExit. */ })
+  child.stdin.end(request)
+  try {
+    const code = await childExit(child)
+    return { code, stdout, stderr, timedOut, oversized }
+  } finally {
+    clearTimeout(timeout)
+    signal.removeEventListener('abort', stop)
+  }
 }
 
 function childExit(child: ChildProcessWithoutNullStreams): Promise<number | null> {

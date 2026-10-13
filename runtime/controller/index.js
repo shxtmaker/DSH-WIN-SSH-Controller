@@ -150,6 +150,13 @@ const BOOTSTRAP_JS = `(() => {
     .catch(() => { document.body.textContent = '打开票据已失效，请回到连接管理页重新打开。' })
 })()
 `;
+/**
+* Static page for an HTML navigation that arrives without a local session Cookie.
+* It carries no credential, no ticket, and no fixed control port: it only tells the
+* operator to reopen the workspace from the Controller, which mints a fresh ticket.
+* The response keeps its 401 status.
+*/
+const RECOVERY = "<!doctype html><html lang=\"zh\"><head><meta charset=\"utf-8\"><meta name=\"referrer\" content=\"no-referrer\"><title>远程工作区需要重新打开</title></head><body><h1>此页面已不再持有本地授权</h1><p>远程工作区通过一次性票据换取仅在当前代理实例内有效的本地会话。当前请求没有可用的本地会话 Cookie，因此被拒绝。</p><p>请回到 Controller 的连接管理页，对同一目标选择“重新打开”。重新打开不会中断 SSH 连接，也不会重放此前的业务请求。</p><p>如果重新打开后仍然出现本页，请检查远端 Harness 服务与 SSH 转发是否正常。</p></body></html>";
 const HOP_HEADERS = new Set([
 	"connection",
 	"keep-alive",
@@ -170,9 +177,18 @@ const REQUEST_DROP = new Set([
 	"x-forwarded-for",
 	"x-forwarded-host",
 	"x-forwarded-proto",
-	"sec-fetch-site"
+	"sec-fetch-site",
+	"x-dsh-remote-error"
 ]);
-const RESPONSE_DROP = new Set(["set-cookie", "set-cookie2"]);
+const RESPONSE_DROP = new Set([
+	"set-cookie",
+	"set-cookie2",
+	"x-dsh-remote-error"
+]);
+/** Fixed diagnostic header the proxy adds only to errors it generated itself. */
+const ERROR_HEADER = "x-dsh-remote-error";
+/** Local authorization is missing or does not match the live proxy instance. */
+const LOCAL_AUTH_REQUIRED = "LOCAL_AUTH_REQUIRED";
 function token() {
 	return randomBytes(32).toString("base64url");
 }
@@ -282,20 +298,42 @@ var AuthProxy = class {
 		const entry = matched[0];
 		return matched.length === 1 && entry !== void 0 && sameSecret(entry.slice(this.cookieName.length + 1), this.cookieValue);
 	}
-	reject(res, code) {
-		res.writeHead(code, {
+	reject(res, code, error) {
+		const headers = {
 			"cache-control": "no-store",
 			"content-type": "text/plain; charset=utf-8"
-		});
+		};
+		if (error !== void 0) headers[ERROR_HEADER] = error;
+		res.writeHead(code, headers);
 		res.end("remote workspace access denied");
+	}
+	/**
+	* Refuse a request that carries no usable local authorization.
+	*
+	* An HTML navigation gets the static recovery page, still under 401. Anything else keeps a
+	* plain error: an API or write call must never be answered with a 200 or with login HTML.
+	*/
+	unauthorized(req, res) {
+		if (!((req.method === "GET" || req.method === "HEAD") && (req.headers.accept ?? "").includes("text/html"))) {
+			this.reject(res, 401, LOCAL_AUTH_REQUIRED);
+			return;
+		}
+		res.writeHead(401, {
+			"cache-control": "no-store",
+			[ERROR_HEADER]: LOCAL_AUTH_REQUIRED,
+			"content-security-policy": "default-src 'none'; style-src 'unsafe-inline'",
+			"content-type": "text/html; charset=utf-8",
+			"referrer-policy": "no-referrer"
+		});
+		res.end(RECOVERY);
 	}
 	handle(req, res) {
 		if (!this.trusted(req) || req.url === void 0 || !req.url.startsWith("/") || req.url.startsWith("//") || req.method === "CONNECT") {
-			this.reject(res, 403);
+			this.reject(res, 403, "FORBIDDEN");
 			return;
 		}
 		if (this.paused) {
-			this.reject(res, 503);
+			this.reject(res, 503, "PROXY_PAUSED");
 			return;
 		}
 		if (req.method === "GET" && req.url === "/__remote/open") {
@@ -318,33 +356,33 @@ var AuthProxy = class {
 		}
 		if (req.method === "POST" && req.url === "/__remote/exchange") {
 			if (!this.trusted(req, true) || req.headers["sec-fetch-site"] === "cross-site" || req.headers["content-length"] !== void 0 && req.headers["content-length"] !== "0") {
-				this.reject(res, 403);
+				this.reject(res, 403, "FORBIDDEN");
 				return;
 			}
 			const value = req.headers["x-remote-ticket"];
 			if (typeof value !== "string") {
-				this.reject(res, 401);
+				this.reject(res, 401, LOCAL_AUTH_REQUIRED);
 				return;
 			}
 			const expiry = this.ticketValues.get(value);
 			this.ticketValues.delete(value);
 			if (expiry === void 0 || expiry < Date.now()) {
-				this.reject(res, 401);
+				this.reject(res, 401, LOCAL_AUTH_REQUIRED);
 				return;
 			}
 			res.writeHead(204, {
 				"cache-control": "no-store",
-				"set-cookie": `${this.cookieName}=${this.cookieValue}; Max-Age=3600; Path=/; HttpOnly; SameSite=Strict`
+				"set-cookie": `${this.cookieName}=${this.cookieValue}; Path=/; HttpOnly; SameSite=Strict`
 			});
 			res.end();
 			return;
 		}
 		if (req.url.startsWith("/__remote/")) {
-			this.reject(res, 404);
+			this.reject(res, 404, "NOT_FOUND");
 			return;
 		}
 		if (!this.authenticated(req)) {
-			this.reject(res, 401);
+			this.unauthorized(req, res);
 			return;
 		}
 		this.proxyHttp(req, res);
@@ -381,7 +419,7 @@ var AuthProxy = class {
 		});
 		upstream.once("timeout", () => upstream.destroy(/* @__PURE__ */ new Error("remote-workspace: upstream timeout")));
 		upstream.once("error", () => {
-			if (!res.headersSent) this.reject(res, 502);
+			if (!res.headersSent) this.reject(res, 502, "UPSTREAM_UNREACHABLE");
 			else res.destroy();
 		});
 		req.once("aborted", () => upstream.destroy());
@@ -390,8 +428,10 @@ var AuthProxy = class {
 	}
 	upgrade(req, socket, head) {
 		const path = req.url;
-		if (this.paused || !this.trusted(req, true) || !this.authenticated(req) || path !== "/api/remote.mux" || req.headers.upgrade?.toLowerCase() !== "websocket" || typeof req.headers["sec-websocket-key"] !== "string") {
-			socket.end("HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n");
+		const missingAuth = !this.authenticated(req);
+		if (this.paused || !this.trusted(req, true) || missingAuth || path !== "/api/remote.mux" || req.headers.upgrade?.toLowerCase() !== "websocket" || typeof req.headers["sec-websocket-key"] !== "string") {
+			const code = missingAuth ? LOCAL_AUTH_REQUIRED : this.paused ? "PROXY_PAUSED" : "FORBIDDEN";
+			socket.end(`HTTP/1.1 403 Forbidden\r\nConnection: close\r\n${ERROR_HEADER}: ${code}\r\n\r\n`);
 			return;
 		}
 		const upstream = connect({

@@ -1,17 +1,24 @@
 diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
-index 6c7ce04..4456f1c 100644
+index dfaa1653..0151990a 100644
 --- a/pnpm-lock.yaml
 +++ b/pnpm-lock.yaml
-@@ -9693,7 +9693,7 @@ importers:
-         version: link:../../../vendor/schemastery
-       '@earendil-works/pi-ai':
-         specifier: ^0.87.1
--        version: 0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)
-+        version: 0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(supports-color@9.4.0)(ws@8.21.0)(zod@4.4.3)
-     devDependencies:
-       '@deepseek-ai/cordis':
-         specifier: workspace:~
-@@ -10296,6 +10296,100 @@ importers:
+@@ -115,12 +115,12 @@ importers:
+       '@types/node':
+         specifier: ^22.20.1
+         version: 22.20.1
+-      '@types/semver':
+-        specifier: ^7.8.0
+-        version: 7.8.0
+       '@types/papaparse':
+         specifier: ^5.5.2
+         version: 5.5.2
++      '@types/semver':
++        specifier: ^7.8.0
++        version: 7.8.0
+       '@types/spdx-expression-parse':
+         specifier: ^4.0.0
+         version: 4.0.0
+@@ -11375,6 +11375,100 @@ importers:
          specifier: workspace:*
          version: link:../../util/timeout
  
@@ -38,6 +45,9 @@ index 6c7ce04..4456f1c 100644
 +      '@deepseek-ai/dsh-client-ui-renderer':
 +        specifier: workspace:*
 +        version: link:../../client/ui-renderer
++      '@deepseek-ai/dsh-client-ui-session':
++        specifier: workspace:*
++        version: link:../../client/ui-session
 +      '@deepseek-ai/dsh-client-ui-sidebar':
 +        specifier: workspace:*
 +        version: link:../../client/ui-sidebar
@@ -47,9 +57,6 @@ index 6c7ce04..4456f1c 100644
 +      '@deepseek-ai/dsh-client-ui-sidebar-right':
 +        specifier: workspace:*
 +        version: link:../../client/ui-sidebar-right
-+      '@deepseek-ai/dsh-client-ui-session':
-+        specifier: workspace:*
-+        version: link:../../client/ui-session
 +      '@deepseek-ai/dsh-client-ui-slots':
 +        specifier: workspace:*
 +        version: link:../../client/ui-slots
@@ -73,7 +80,7 @@ index 6c7ce04..4456f1c 100644
 +        version: link:../../../vendor/schemastery
 +      ws:
 +        specifier: ^8.21.0
-+        version: 8.21.0
++        version: 8.21.3
 +      zod:
 +        specifier: ^4.4.3
 +        version: 4.4.3
@@ -109,51 +116,67 @@ index 6c7ce04..4456f1c 100644
 +        specifier: ^8.18.1
 +        version: 8.18.1
 +
-   packages/runtime-diagnostics/invariants:
+   packages/sandbox/sandbox:
      dependencies:
-       '@deepseek-ai/schemastery':
-@@ -22668,15 +22759,15 @@ snapshots:
-     transitivePeerDependencies:
-       - '@algolia/client-search'
+       '@deepseek-ai/dsh-util-values':
+@@ -15641,10 +15735,6 @@ importers:
  
--  '@earendil-works/pi-ai@0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(ws@8.21.0)(zod@4.4.3)':
-+  '@earendil-works/pi-ai@0.87.1(patch_hash=b9bcce474fb2ac44633dff0fa722816a5bff5451b4575d5874035ea14ba70a4f)(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))(supports-color@9.4.0)(ws@8.21.0)(zod@4.4.3)':
-     dependencies:
-       '@anthropic-ai/sdk': 0.124.0(zod@4.4.3)
-       '@aws-sdk/client-bedrock-runtime': 3.1127.0
-       '@earendil-works/pi-telemetry': 0.87.1
-       '@google/genai': 2.21.0(@modelcontextprotocol/sdk@1.29.0(zod@4.4.3))
-       '@smithy/node-http-handler': 4.12.1
--      http-proxy-agent: 9.1.0
--      https-proxy-agent: 9.1.0
-+      http-proxy-agent: 9.1.0(supports-color@9.4.0)
-+      https-proxy-agent: 9.1.0(supports-color@9.4.0)
-       openai: 6.40.0(ws@8.21.0)(zod@4.4.3)
-       partial-json: 0.1.7
-       typebox: 1.3.27
-@@ -26859,7 +26950,7 @@ snapshots:
-     transitivePeerDependencies:
-       - supports-color
+ packages:
  
--  http-proxy-agent@9.1.0:
-+  http-proxy-agent@9.1.0(supports-color@9.4.0):
-     dependencies:
-       agent-base: 9.0.0
-       debug: 4.4.3(supports-color@9.4.0)
-@@ -26918,7 +27009,7 @@ snapshots:
-     transitivePeerDependencies:
-       - supports-color
+-  papaparse@5.5.3:
+-    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
+-
+-
+   '@agentclientprotocol/sdk@1.4.0':
+     resolution: {integrity: sha512-/eufudw+aFY1LKLolT6yFE6UMmYRl7fMJ/DEONSIyR6wI3slHWITBsANRGqXEY8FRzqUxwh7QEaGiZHcJPVThg==}
+     peerDependencies:
+@@ -17323,10 +17413,12 @@ packages:
  
--  https-proxy-agent@9.1.0:
-+  https-proxy-agent@9.1.0(supports-color@9.4.0):
+   '@modelcontextprotocol/server-everything@2026.8.31':
+     resolution: {integrity: sha512-5U3OZh8Xq0Li4nA26l6uNvV9/1suMDuWSn+NjLZIhzinhMY6N3A4DCrxVecBGPf2PsNFKTEv5krxGPRwzxc7jQ==}
++    deprecated: 'Date-based versions are no longer published. This package has resumed semantic versioning at 1.0.0: install the latest version.'
+     hasBin: true
+ 
+   '@modelcontextprotocol/server-filesystem@2026.8.31':
+     resolution: {integrity: sha512-kKaFkyAh6oipvc9+EAbJ552JafnMnOq5nzmzWkp1jJdBhTAAGpmIpWihUG1+rfNhmEFM98gUZDdCHCDD4v6a7Q==}
++    deprecated: 'Date-based versions are no longer published. This package has resumed semantic versioning at 1.0.0: install the latest version.'
+     hasBin: true
+ 
+   '@modelcontextprotocol/server@2.2.0':
+@@ -21701,6 +21793,9 @@ packages:
+   pako@1.0.11:
+     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
+ 
++  papaparse@5.5.3:
++    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
++
+   papaparse@5.7.0:
+     resolution: {integrity: sha512-qBGxg/7Q3Kl9Wfhrz2Z74UnvnHTXLNG6jmKJFeBvP2+y4lV7So+7SR62+Zd47JvdrCkX+nDcnr0ObPzek/+6RA==}
+ 
+@@ -23227,9 +23322,6 @@ packages:
+ 
+ snapshots:
+ 
+-  papaparse@5.5.3: {}
+-
+-
+   '@agentclientprotocol/sdk@1.4.0(zod@4.4.3)':
      dependencies:
-       agent-base: 9.0.0
-       debug: 4.4.3(supports-color@9.4.0)
+       zod: 4.4.3
+@@ -29443,6 +29535,8 @@ snapshots:
+ 
+   pako@1.0.11: {}
+ 
++  papaparse@5.5.3: {}
++
+   papaparse@5.7.0: {}
+ 
+   parse-ms@4.0.0: {}
 diff --git a/tsconfig.client.json b/tsconfig.client.json
-index 738ed0c..d7a16c0 100644
+index a8f0a9ed..72e7de83 100644
 --- a/tsconfig.client.json
 +++ b/tsconfig.client.json
-@@ -142,6 +142,7 @@
+@@ -146,6 +146,7 @@
      { "path": "./packages/api/workspace-files/tsconfig.client.json" },
      { "path": "./packages/client/web" },
      { "path": "./packages/context/file-reference" },
@@ -163,10 +186,10 @@ index 738ed0c..d7a16c0 100644
    ]
  }
 diff --git a/tsconfig.host.json b/tsconfig.host.json
-index 5c5c81b..ac2cac5 100644
+index af38cdb3..e37e5e9d 100644
 --- a/tsconfig.host.json
 +++ b/tsconfig.host.json
-@@ -476,6 +476,9 @@
+@@ -508,6 +508,9 @@
      { "path": "./packages/lsp/tool-lsp" },
      { "path": "./apps/cli" },
      { "path": "./apps/desktop-host" },

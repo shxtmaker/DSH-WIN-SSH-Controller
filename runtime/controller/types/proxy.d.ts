@@ -1,3 +1,5 @@
+/** Local authorization is missing or does not match the live proxy instance. */
+export declare const LOCAL_AUTH_REQUIRED = "LOCAL_AUTH_REQUIRED";
 /** Live proxy-owned HTTP server, session Cookie, tickets, and sockets. */
 export declare class AuthProxy {
     private upstreamPort;
@@ -32,6 +34,13 @@ export declare class AuthProxy {
     private trusted;
     private authenticated;
     private reject;
+    /**
+     * Refuse a request that carries no usable local authorization.
+     *
+     * An HTML navigation gets the static recovery page, still under 401. Anything else keeps a
+     * plain error: an API or write call must never be answered with a 200 or with login HTML.
+     */
+    private unauthorized;
     private handle;
     private requestHeaders;
     private proxyHttp;
