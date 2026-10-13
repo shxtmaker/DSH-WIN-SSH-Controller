@@ -13,7 +13,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import type { MainPanelId } from '@deepseek-ai/dsh-client-ui-layout/client'
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto'
 import type { RemoteSnapshot, RemoteTarget } from '@harness-remote/controller/types'
-import { ConnectionsPage, RemoteIndicator, type RemoteWorkspaceFace, type ViewState } from './connections.tsx'
+import { ConnectionsPage, RemoteIndicator, type RemoteWorkspaceFace, type ServiceAction, type ViewState } from './connections.tsx'
 import { en, zh, type RemoteWorkspaceKey } from './locales.ts'
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
@@ -21,7 +21,7 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
 }
 
 const PANEL = 'remote-workspace' as MainPanelId
-const INITIAL: RemoteSnapshot = { phase: 'idle', generation: 0 }
+const INITIAL: RemoteSnapshot = { phase: 'idle', generation: 0, diagnostics: [] }
 
 /** Identify only missing automation methods on the local Host, without classifying remote HTTP failures. */
 function missingAutomationRoute(error: unknown): boolean {
@@ -30,7 +30,7 @@ function missingAutomationRoute(error: unknown): boolean {
 }
 
 class ViewController implements RemoteWorkspaceFace {
-  private state: ViewState = { targets: [], aliases: [], connection: INITIAL, busy: false }
+  private state: ViewState = { targets: [], aliases: [], connection: INITIAL, busy: false, localSession: false }
   private readonly listeners = new Set<() => void>()
 
   constructor(private readonly ctx: Context) {}
@@ -42,7 +42,8 @@ class ViewController implements RemoteWorkspaceFace {
   }
 
   private publish(state: ViewState): void {
-    this.state = state
+    // The local Session decides which open entry point is primary, so it is read on every change.
+    this.state = { ...state, localSession: this.selectedSession() !== undefined }
     for (const listener of this.listeners) listener()
   }
 
@@ -62,7 +63,10 @@ class ViewController implements RemoteWorkspaceFace {
     if (!targets.ok) throw targets.error
     const connection = await this.ctx.remote.remoteWorkspace.getState()
     if (!connection.ok) throw connection.error
-    this.publish({ ...this.state, targets: targets.value, connection: connection.value })
+    this.publish({ ...this.state, targets: targets.value, connection: connection.value,
+      serviceOperation: connection.value.serviceOperation ?? this.state.serviceOperation })
+    // A reload only ever reads an operation that is still running; it never submits the action again.
+    await this.readServiceOperation()
     const aliases = await this.ctx.remote.remoteWorkspace.listAliases()
     if (!aliases.ok && missingAutomationRoute(aliases.error)) throw aliases.error
     this.publish({ ...this.state, aliases: aliases.ok ? aliases.value : [], aliasWarning: aliases.ok ? undefined : true,
@@ -102,6 +106,98 @@ class ViewController implements RemoteWorkspaceFace {
 
   open = async (): Promise<void> => this.action(() => this.openReady())
 
+  /**
+   * Open the authenticated workspace in the system browser.
+   *
+   * This never needs a local Session, because it does not touch the Sidebar, so it stays available
+   * when no session is selected. It reuses the one-use ticket and the existing
+   * `window.open(url, '_blank', 'noopener,noreferrer')` path that alpha.2 already routes to Desktop
+   * `shell.openExternal`; no renderer capability and no shell command is added. The connection id
+   * and generation are re-checked before and after the asynchronous ticket request, and a success
+   * only ever means the open was requested.
+   */
+  openInSystemBrowser = async (): Promise<void> => this.action(async () => {
+    const connection = this.state.connection
+    const id = connection.connectionId
+    if (id === undefined) throw new Error('remote-workspace: no active connection')
+    const generation = connection.generation
+    const result = await this.ctx.remote.remoteWorkspace.createOpenTicket(id)
+    if (!result.ok) throw result.error
+    if (this.state.connection.connectionId !== id || this.state.connection.generation !== generation) {
+      throw new Error('remote-workspace: CONNECTION_CHANGED')
+    }
+    if (typeof result.value !== 'string' || !/^https?:\/\//u.test(result.value)) {
+      throw new Error('remote-workspace: the local Host returned no usable open ticket')
+    }
+    // `noopener` makes the browser return null even on success, so the page always offers the
+    // explicit link and never claims the remote page loaded.
+    window.open(result.value, '_blank', 'noopener,noreferrer')
+    this.publish({ ...this.state, openRequest: { status: 'requested', url: result.value, issuedAt: Date.now() } })
+  })
+
+  /** Replace an expired ticket with a fresh one through the same controlled path. */
+  regenerateTicket = async (): Promise<void> => {
+    this.publish({ ...this.state, openRequest: undefined })
+    await this.openInSystemBrowser()
+  }
+
+  /** Explicit re-authentication; it never restarts the remote service and never replays a request. */
+  renewAuthentication = async (): Promise<void> => this.action(async () => {
+    const id = this.state.connection.connectionId
+    if (id === undefined) throw new Error('remote-workspace: no active connection')
+    const result = await this.ctx.remote.remoteWorkspace.refreshAuthentication(id, randomUUID())
+    if (!result.ok) throw result.error
+    this.publish({ ...this.state, connection: result.value })
+  })
+
+  /** Submit exactly one restricted service action; a page reload never re-submits it. */
+  serviceAction = async (action: ServiceAction): Promise<void> => this.action(async () => {
+    const connection = this.state.connection
+    const id = connection.connectionId
+    if (id === undefined) throw new Error('remote-workspace: no active connection')
+    const generation = connection.generation
+    const operationId = randomUUID()
+    const result = await this.ctx.remote.remoteWorkspace.serviceAction(this.endpointRef(connection), action,
+      operationId, new Date().toISOString(), this.registrationRevision(connection), connection.instanceId)
+    if (this.state.connection.connectionId !== id || this.state.connection.generation !== generation) {
+      throw new Error('remote-workspace: CONNECTION_CHANGED')
+    }
+    if (!result.ok) throw result.error
+    this.publish({ ...this.state, serviceOperation: result.value })
+  })
+
+  /** Read a submitted operation's result. This never submits a new action. */
+  readServiceOperation = async (): Promise<void> => {
+    const connection = this.state.connection
+    const operation = this.state.serviceOperation ?? connection.serviceOperation
+    if (operation?.operationId === undefined) return
+    if (operation.phase !== 'submitting' && operation.phase !== 'waiting') return
+    const result = await this.ctx.remote.remoteWorkspace
+      .getServiceOperation(this.endpointRef(connection), operation.operationId)
+    if (!result.ok) return
+    this.publish({ ...this.state, serviceOperation: result.value })
+  }
+
+  /** Endpoint reference of the active attachment; a saved target keeps its reviewed route. */
+  private endpointRef(connection: RemoteSnapshot): { targetId: string; endpointId: string } | { sshAlias: string; instanceKey: string } {
+    if (connection.targetId !== undefined && connection.endpointId !== undefined) {
+      return { targetId: connection.targetId, endpointId: connection.endpointId }
+    }
+    return { sshAlias: connection.hostName ?? '', instanceKey: 'default' }
+  }
+
+  /**
+   * Registration revision the caller observed.
+   *
+   * The Host publishes the authoritative revision with the service registration; when it is not
+   * carried by the snapshot the page sends a bounded placeholder instead of inventing one, and the
+   * remote rejects the action with `REGISTRATION_STALE` rather than executing anything.
+   */
+  private registrationRevision(connection: RemoteSnapshot): string {
+    const published = (connection as { registrationRevision?: unknown }).registrationRevision
+    return typeof published === 'string' && /^[A-Za-z0-9_-]{1,64}$/u.test(published) ? published : 'unobserved'
+  }
+
   private selectedSession(): string | undefined { return this.ctx.uiSession.adapter.current.getSnapshot().key }
 
   private async openReady(): Promise<void> {
@@ -109,6 +205,7 @@ class ViewController implements RemoteWorkspaceFace {
     if (sessionId === undefined) throw new Error('remote-workspace: NO_SESSION')
     const id = this.state.connection.connectionId
     if (id === undefined) throw new Error('remote-workspace: no active connection')
+    const generation = this.state.connection.generation
     const previousPanel = this.ctx.layout.panelInfo.getSnapshot().activePanelId
     this.ctx.layout.selectPanel(null)
     try {
@@ -121,7 +218,9 @@ class ViewController implements RemoteWorkspaceFace {
       if (this.selectedSession() !== sessionId || this.ctx.sidebarRight.mounted.getSnapshot() !== sessionId) {
         throw new Error('remote-workspace: SESSION_CHANGED')
       }
-      if (this.state.connection.connectionId !== id || this.state.connection.phase !== 'app-ready') {
+      // The ticket belongs to one connection generation; a replaced connection must not open it.
+      if (this.state.connection.connectionId !== id || this.state.connection.generation !== generation
+        || this.state.connection.phase !== 'app-ready') {
         throw new Error('remote-workspace: CONNECTION_CHANGED')
       }
       this.ctx.sidebarRight.openTab('browser', { params: { url: result.value } })
@@ -133,7 +232,14 @@ class ViewController implements RemoteWorkspaceFace {
     }
   }
 
-  observe(connection: RemoteSnapshot): void { this.publish({ ...this.state, connection }) }
+  observe(connection: RemoteSnapshot): void {
+    // A ticket belongs to one connection generation; a replaced connection invalidates the link.
+    const same = this.state.connection.connectionId === connection.connectionId
+      && this.state.connection.generation === connection.generation
+    this.publish({ ...this.state, connection,
+      serviceOperation: connection.serviceOperation ?? this.state.serviceOperation,
+      ...(same ? {} : { openRequest: undefined }) })
+  }
 }
 
 /** Only the Remote base service is injected here; the namespace is mounted before UI activation. */

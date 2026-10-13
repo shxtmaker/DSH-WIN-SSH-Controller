@@ -19,8 +19,17 @@ window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
 (async () => {
   const ui = { aliases: ['harness-lan'], targets: [], state: { phase: 'idle', generation: 0 }, calls: 0,
     opens: 0, session: false, sessionId: 'session-a', failure: '', failAliases: false, delay: 0, missingRoutes: false,
-    panel: 'remote-workspace', tickets: 0, ticketDelay: 0, browserFailure: '', openedSession: '', openedUrl: '' };
+    panel: 'remote-workspace', tickets: 0, ticketDelay: 0, browserFailure: '', openedSession: '', openedUrl: '',
+    ticketUrl: 'http://127.0.0.1/example-ticket', ticketFailure: '', windowOpens: [], popupBlocked: false,
+    serviceSubmits: 0, serviceReads: 0, authRefreshes: 0, serviceArgs: undefined, readOperationId: '',
+    serviceFailure: '', serviceResultPhase: 'completed', serviceResultCode: '', operationResult: undefined };
   window.fixture = ui;
+  // The system-browser entry point reuses the alpha.2 `window.open` path; the fixture records it
+  // instead of opening a real tab so the call site stays assertable.
+  window.open = (url, target, features) => {
+    ui.windowOpens.push({ url, target, features });
+    return ui.popupBlocked ? null : { closed: false };
+  };
   const ok = value => ({ ok: true, value });
   const slots = new Map(); let dictionary;
   const service = {
@@ -44,7 +53,37 @@ window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
     },
     async connect() { return ok({ ...ui.state, phase: 'app-ready', connectionId: 'connection-a' }) },
     async disconnect() { ui.state = { phase: 'idle', generation: 2 }; return ok(ui.state) },
-    async createOpenTicket() { ui.tickets++; if (ui.ticketDelay) await new Promise(resolve => setTimeout(resolve, ui.ticketDelay)); return ok('http://127.0.0.1/example-ticket') },
+    async createOpenTicket() {
+      ui.tickets++;
+      if (ui.ticketFailure) return { ok: false, error: new Error(ui.ticketFailure) };
+      if (ui.ticketDelay) await new Promise(resolve => setTimeout(resolve, ui.ticketDelay));
+      return ok(ui.ticketUrl);
+    },
+    async serviceAction(ref, action, operationId, issuedAt, registrationRevision, expectedInstanceId) {
+      ui.serviceSubmits++;
+      ui.serviceArgs = { ref, action, operationId, issuedAt, registrationRevision, expectedInstanceId };
+      if (ui.serviceFailure) return { ok: false, error: new Error(ui.serviceFailure) };
+      const operation = { phase: ui.serviceResultPhase, action, operationId,
+        ...(ui.serviceResultCode ? { code: ui.serviceResultCode } : {}), finishedAt: '2026-10-13T00:00:00.000Z' };
+      ui.state = { ...ui.state, serviceOperation: operation };
+      return ok(operation);
+    },
+    async getServiceOperation(ref, operationId) {
+      ui.serviceReads++;
+      ui.readOperationId = operationId;
+      const operation = ui.operationResult ?? { phase: 'completed', operationId, finishedAt: '2026-10-13T00:00:01.000Z' };
+      // The Host records the receipt it just read, so a later reload sees a terminal operation.
+      ui.state = { ...ui.state, serviceOperation: operation };
+      return ok(operation);
+    },
+    async refreshAuthentication(connectionId, operationId) {
+      ui.authRefreshes++;
+      ui.authOperationId = operationId;
+      ui.state = { ...ui.state, accessWarning: undefined,
+        diagnostics: (ui.state.diagnostics ?? []).map(check => check.name === 'authentication'
+          ? { name: check.name, state: 'ok', checkedAt: check.checkedAt } : check) };
+      return ok(ui.state);
+    },
   };
   const ctx = {
     remote: { remoteWorkspace: service, async $mount() { return async () => {} },

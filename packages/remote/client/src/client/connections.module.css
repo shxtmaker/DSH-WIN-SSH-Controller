@@ -223,3 +223,148 @@
   .page { padding: 24px 16px 32px; }
   .card { padding: 16px; }
 }
+
+/* Layered diagnostics: one row per named check, wrapping instead of overflowing. */
+.details {
+  min-width: 0;
+}
+
+.checks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.check {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  padding-top: 6px;
+  border-top: 0.5px solid var(--dsw-alias-border-l4);
+  font: var(--dsw-font-xs-13);
+}
+
+.checkName {
+  flex: 0 1 auto;
+  min-width: 0;
+  color: var(--dsw-alias-label-secondary);
+  overflow-wrap: anywhere;
+}
+
+.checkState {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+/* Every state is visually distinct; `unknown` is neutral and never shares the healthy colour. */
+.stateOk { color: var(--dsw-alias-state-success-primary); }
+.stateFailed { color: var(--dsw-alias-state-error-primary); }
+.stateUnknown { color: var(--dsw-alias-label-tertiary); font-style: italic; }
+.stateChecking { color: var(--dsw-alias-state-business-primary); }
+.stateUnsupported { color: var(--dsw-alias-state-warn-primary); }
+
+.checkCode {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 0 6px;
+  border-radius: var(--dsw-radius-xs);
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.checkText {
+  flex: 1 1 100%;
+  min-width: 0;
+  color: var(--dsw-alias-label-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* Capability, service and restricted action results. */
+.service, .block, .ticket, .confirm, .operation {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.service {
+  gap: 16px;
+}
+
+.blockTitle {
+  margin: 0;
+  font: var(--dsw-font-s-strong-14);
+}
+
+.facts {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+}
+
+.fact dt {
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xs-13);
+}
+
+.fact dd {
+  min-width: 0;
+  margin: 0;
+  font: var(--dsw-font-xs-13);
+  overflow-wrap: anywhere;
+}
+
+.manual, .ticket, .confirm {
+  padding: 12px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-1);
+}
+
+.confirm {
+  border-color: var(--dsw-alias-state-warn-primary);
+}
+
+.operation {
+  padding: 12px;
+  border: 0.5px solid currentcolor;
+  border-radius: var(--dsw-radius-md);
+}
+
+/* Only a completed operation reads as success; failed and outcome-unknown never do. */
+.opProgress { color: var(--dsw-alias-state-business-primary); }
+.opCompleted { color: var(--dsw-alias-state-success-primary); }
+.opFailed { color: var(--dsw-alias-state-error-primary); }
+.opUnknown { color: var(--dsw-alias-state-warn-primary); }
+
+.operation .hint {
+  color: inherit;
+}
+
+.ticketLink {
+  margin-left: 6px;
+  color: var(--dsw-alias-state-business-primary);
+  overflow-wrap: anywhere;
+}
+
+/* 390px: every new row wraps and the card padding shrinks instead of overflowing. */
+@media (max-width: 420px) {
+  .card { padding: 12px; }
+  .manual, .ticket, .confirm, .operation { padding: 10px; }
+  .fact { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
