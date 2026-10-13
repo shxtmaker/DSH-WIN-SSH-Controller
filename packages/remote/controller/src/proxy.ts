@@ -4,6 +4,7 @@ import { createServer, request, type IncomingMessage, type ServerResponse, type 
 import { connect, type Socket } from 'node:net'
 import type { AddressInfo } from 'node:net'
 import type { Duplex } from 'node:stream'
+import { LOCAL_AUTH_REQUIRED, type RemoteErrorCode } from './errors.ts'
 
 const BOOTSTRAP = '<!doctype html><html><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"></head><body><p>正在打开远程工作区…</p><script src="/__remote/open.js"></script></body></html>'
 const BOOTSTRAP_JS = `(() => {
@@ -39,9 +40,6 @@ const RESPONSE_DROP = new Set(['set-cookie', 'set-cookie2', 'x-dsh-remote-error'
 /** Fixed diagnostic header the proxy adds only to errors it generated itself. */
 const ERROR_HEADER = 'x-dsh-remote-error'
 
-/** Local authorization is missing or does not match the live proxy instance. */
-export const LOCAL_AUTH_REQUIRED = 'LOCAL_AUTH_REQUIRED'
-
 function token(): string { return randomBytes(32).toString('base64url') }
 
 function sameSecret(first: string, second: string): boolean {
@@ -60,13 +58,19 @@ export class AuthProxy {
   private closed = false
   private paused = false
 
+  /** Codes already reported for this instance, so one scan cannot produce endless notices. */
+  private readonly reported = new Set<RemoteErrorCode>()
+
   /**
    * @param upstreamPort - this plugin's SSH local-forward port.
    * @param remotePort - approved Harness authority port.
    * @param upstreamCookie - Host-only remote session Cookie.
+   * @param onError - bounded notification for errors this proxy generated itself. Each fixed
+   *   code is reported at most once per instance, so an unauthenticated loopback scan cannot
+   *   produce an unbounded stream of events and cannot affect other authenticated pages.
    */
   constructor(private upstreamPort: number, private readonly remotePort: number,
-    private upstreamCookie: string) {
+    private upstreamCookie: string, private readonly onError?: (code: RemoteErrorCode) => void) {
     this.server = createServer((req, res) => { this.handle(req, res) })
     this.server.on('upgrade', (req, socket, head) => { this.upgrade(req, socket, head) })
     this.server.on('connection', (socket) => {
@@ -150,9 +154,16 @@ export class AuthProxy {
       && sameSecret(entry.slice(this.cookieName.length + 1), this.cookieValue)
   }
 
-  private reject(res: ServerResponse, code: number, error?: string): void {
+  /** @param code - fixed code to report once per proxy instance. */
+  private report(code: RemoteErrorCode): void {
+    if (this.reported.has(code)) return
+    this.reported.add(code)
+    try { this.onError?.(code) } catch { /* a listener must never break the proxy */ }
+  }
+
+  private reject(res: ServerResponse, code: number, error?: RemoteErrorCode): void {
     const headers: Record<string, string> = { 'cache-control': 'no-store', 'content-type': 'text/plain; charset=utf-8' }
-    if (error !== undefined) headers[ERROR_HEADER] = error
+    if (error !== undefined) { headers[ERROR_HEADER] = error; this.report(error) }
     res.writeHead(code, headers)
     res.end('remote workspace access denied')
   }
@@ -167,6 +178,7 @@ export class AuthProxy {
     const navigation = (req.method === 'GET' || req.method === 'HEAD')
       && (req.headers.accept ?? '').includes('text/html')
     if (!navigation) { this.reject(res, 401, LOCAL_AUTH_REQUIRED); return }
+    this.report(LOCAL_AUTH_REQUIRED)
     res.writeHead(401, {
       'cache-control': 'no-store',
       [ERROR_HEADER]: LOCAL_AUTH_REQUIRED,
@@ -264,7 +276,8 @@ export class AuthProxy {
       || typeof req.headers['sec-websocket-key'] !== 'string') {
       // The same fixed code as the HTTP path, so a page can tell "authorization is gone" from
       // "the proxy is paused" without parsing a localized message.
-      const code = missingAuth ? LOCAL_AUTH_REQUIRED : this.paused ? 'PROXY_PAUSED' : 'FORBIDDEN'
+      const code: RemoteErrorCode = missingAuth ? LOCAL_AUTH_REQUIRED : this.paused ? 'PROXY_PAUSED' : 'FORBIDDEN'
+      this.report(code)
       socket.end(`HTTP/1.1 403 Forbidden\r\nConnection: close\r\n${ERROR_HEADER}: ${code}\r\n\r\n`)
       return
     }

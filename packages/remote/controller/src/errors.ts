@@ -147,3 +147,18 @@ export function classifyHelperFailure(stderr: string, code: number | null, contr
   if (/UNSAFE_PATH|UNSAFE_FILE/u.test(stderr)) return 'HELPER_UNSAFE'
   return 'HELPER_BAD_CONFIG'
 }
+
+/** Local authorization is missing or does not match the live proxy instance. */
+export const LOCAL_AUTH_REQUIRED = 'LOCAL_AUTH_REQUIRED'
+
+/** Raised when the remote instance is not the one this target pinned. */
+export class IdentityMismatch extends Error {}
+
+/** Raised when the remote Harness itself rejected our remote session Cookie (a real 401). */
+export class UpstreamAuthRequired extends Error {}
+
+/** Raised when the remote service is not listening yet; this is not an authentication failure. */
+export class ServiceStopped extends Error {}
+
+/** Raised when the upstream is reachable but not answering usefully. */
+export class UpstreamUnreachable extends Error {}

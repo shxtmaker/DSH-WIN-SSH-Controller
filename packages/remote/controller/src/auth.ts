@@ -1,6 +1,7 @@
 /** Authenticate the one approved remote authority and verify its live identity. */
 import { request } from 'node:http'
 import WebSocket from 'ws'
+import { UpstreamAuthRequired, UpstreamUnreachable } from './errors.ts'
 import type { RemoteDescriptor, RemoteIdentity } from './types.ts'
 
 interface HttpReply { readonly status: number; readonly headers: import('node:http').IncomingHttpHeaders; readonly body: Buffer }
@@ -45,7 +46,14 @@ export async function authenticate(port: number, remotePort: number, descriptor:
   const token = launchToken(descriptor.launchUrl, remotePort)
   const authority = `127.0.0.1:${String(remotePort)}`
   const reply = await read(port, authority, `/?token=${encodeURIComponent(token)}`)
-  if (reply.status !== 303 || reply.headers.location !== './') throw new Error('remote-workspace: remote authentication rejected')
+  if (reply.status === 401 || reply.status === 403) {
+    // The remote Harness answered and refused us: that is a real authentication result and must
+    // never be reported as an unreachable service.
+    throw new UpstreamAuthRequired('remote-workspace: remote authentication rejected')
+  }
+  if (reply.status !== 303 || reply.headers.location !== './') {
+    throw new UpstreamUnreachable('remote-workspace: remote authentication unavailable')
+  }
   const setCookie = reply.headers['set-cookie']
   if (setCookie?.length !== 1) throw new Error('remote-workspace: remote session Cookie missing')
   const cookie = setCookie[0]?.split(';', 1)[0]
@@ -70,7 +78,12 @@ function identity(value: unknown): RemoteIdentity {
 /** Read Companion identity through Harness's authenticated /api transport. */
 export async function readIdentity(port: number, remotePort: number, cookie: string): Promise<RemoteIdentity> {
   const reply = await read(port, `127.0.0.1:${String(remotePort)}`, '/api/remote-workspace/identity', cookie)
-  if (reply.status !== 200) throw new Error('remote-workspace: authenticated identity unavailable')
+  if (reply.status === 401 || reply.status === 403) {
+    // The remote Cookie the Host holds is no longer accepted upstream. This is exactly the
+    // case the operator must resolve with an explicit re-authentication, not with a reconnect.
+    throw new UpstreamAuthRequired('remote-workspace: remote session Cookie rejected')
+  }
+  if (reply.status !== 200) throw new UpstreamUnreachable('remote-workspace: authenticated identity unavailable')
   return identity(JSON.parse(reply.body.toString('utf8')) as unknown)
 }
 
