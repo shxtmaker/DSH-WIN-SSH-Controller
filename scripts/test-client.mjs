@@ -6,6 +6,7 @@ import { readFile, mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
 import { root, workspace } from './runtime.mjs'
 
@@ -20,6 +21,14 @@ const assert = new Proxy(assertModule, {
 })
 const { values } = parseArgs({ options: { workspace: { type: 'string' } } })
 const target = workspace(values.workspace)
+const targetRequire = createRequire(join(target, 'package.json'))
+const bundlerRequire = createRequire(targetRequire.resolve('tsdown'))
+const { rolldown } = await import(pathToFileURL(bundlerRequire.resolve('rolldown')).href)
+const zodBuild = await rolldown({ input: targetRequire.resolve('zod'), platform: 'browser' })
+const zodOutput = await zodBuild.generate({ format: 'iife', name: 'fixtureZod' })
+await zodBuild.close()
+const zodScript = zodOutput.output.find(entry => entry.type === 'chunk')?.code
+if (zodScript === undefined) throw new Error('Missing browser Zod fixture')
 const webRequire = createRequire(join(target, 'apps/web/package.json'))
 const reactRequire = createRequire(join(target, 'packages/client/ui-renderer/package.json'))
 const { chromium } = webRequire('playwright')
@@ -36,6 +45,7 @@ files.set('/native-input.css', join(native, 'ui-primitives/src/Input.module.css'
 const theme = (await Promise.all(['base.css', 'design-platform.css', 'gradient-shadow-text.css', 'corner-shape.css', 'focus.css'].map(name =>
   readFile(join(native, 'ui-theme/src/styles', name), 'utf8')))).join('\n')
 const server = createServer(async (req, res) => {
+  if (req.url === '/zod.js') { res.setHeader('content-type', 'text/javascript'); res.end(zodScript); return }
   if (req.url === '/theme.css') { res.setHeader('content-type', 'text/css'); res.end(theme); return }
   const file = files.get(req.url)
   if (!file) { res.writeHead(404); res.end(); return }
@@ -75,7 +85,7 @@ try {
   browser = await launchBrowser()
   const page = await browser.newPage({ viewport: { width: 1080, height: 1000 } })
   const errors = []
-  page.on('pageerror', error => errors.push(error.message))
+  page.on('pageerror', error => { errors.push(error.message); console.error(`Browser error: ${error.message}`) })
   const origin = `http://127.0.0.1:${server.address().port}`
   await page.goto(origin)
   const alias = page.getByPlaceholder('选择或输入，如 harness-lan')

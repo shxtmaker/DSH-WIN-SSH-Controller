@@ -55,7 +55,7 @@ The default page asks for one SSH alias and discovers instance details automatic
 ## Further Exploration
 
 - [Remote package group](../README.md) — the controller and bundle.
-- [Sidebar Browser](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.0-rc.2/packages/client/ui-sidebar-browser/README.md) — tab ownership and native guest behavior.
+- [Sidebar Browser](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.1-rc.2/packages/client/ui-sidebar-browser/README.md) — tab ownership and native guest behavior.
 
 -----
 

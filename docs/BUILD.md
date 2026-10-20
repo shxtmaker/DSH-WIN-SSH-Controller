@@ -1,6 +1,6 @@
 # 从源码构建
 
-需要 Git、Node.js 24 和 Corepack。固定上游使用 pnpm 11.7.0，提交由 source-baseline.json 声明。构建脚本只使用当前项目源码和固定上游，不读取另一端项目。
+需要 Git、Node.js 24 和 Corepack。固定上游使用 pnpm 11.28.5，提交由 source-baseline.json 声明。构建脚本只使用当前项目源码和固定上游，不读取另一端项目。
 
 ## 准备与构建
 
@@ -8,7 +8,7 @@
 
 ```text
 node scripts/verify-project.mjs
-node --test tests/project.test.mjs
+node --test tests/*.test.mjs
 node scripts/prepare-upstream.mjs
 node scripts/build.mjs
 node scripts/test-integration.mjs
@@ -16,6 +16,8 @@ node scripts/test-client.mjs
 node scripts/verify-artifacts.mjs out/remote
 node scripts/test-git-install.mjs --harness /absolute/path/to/built-harness
 ```
+
+使用已安装的同版本 CLI 验证三个独立安装包时，执行 `node scripts/test-git-install.mjs --installation /path/to/isolated-cli-installation --artifacts`。该模式使用新的临时目录安装 `dist/remote/` 中的三个包，检查组合包、真实 Loader、认证接口及 Client/Host 方法元数据。
 
 每条命令成功后再继续。准备脚本只接受 .build/ 下尚不存在的目标目录。已有目录会被保留。新准备目录使用 node scripts/prepare-upstream.mjs .build/upstream-2；后续构建和集成检查使用 --workspace .build/upstream-2。
 
@@ -43,6 +45,6 @@ test 检查本端源码、构建补丁和安装包隔离，并验证破损包、
 
 `test-git-install.mjs` 在临时 profile 中执行真实 Git 安装，验证组合包识别、运行入口、Typert 导出及 Client 模块，并通过 Harness 的运行时解析器与真实 Loader 加载安装后的控制端。认证 HTTP 状态查询及未认证访问拒绝均纳入检查。Client 模块工厂在隔离环境执行，检查其模块身份与挂载契约是否和 Host 一致。临时测试目录在结束时清理。
 
-测试接受 `--harness /path/to/built-harness`，或 `--installation /path/to/isolated-cli-installation`。后者的独立目录须由 pnpm 安装 `@deepseek-ai/dsh@0.2.0-rc.2`；测试额外使用 `react@18.3.1` 执行 Client 模块工厂。此模式调用发行版 `dsh plugin add`，并检查 profile 已选中组合包。`--spec` 可指定远程 Git URL 和提交，用于推送后的复验。上述检查不包含已安装 Desktop 的视觉交互或实机 SSH/frp 业务验收。
+测试接受 `--harness /path/to/built-harness`，或 `--installation /path/to/isolated-cli-installation`。后者的独立目录须由 pnpm 安装 `@deepseek-ai/dsh@0.2.1-rc.2`；测试额外使用 `react@18.3.1` 执行 Client 模块工厂。此模式调用发行版 `dsh plugin add`，并检查 profile 已选中组合包。`--spec` 可指定远程 Git URL 和提交，用于推送后的复验。上述检查不包含已安装 Desktop 的视觉交互或实机 SSH/frp 业务验收。
 
 本地构建和模拟代理测试不能代替 Desktop 与 Linux 双机业务验收。完整上游文档站点校验不属于本项目的最小构建入口。

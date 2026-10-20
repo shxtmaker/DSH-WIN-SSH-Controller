@@ -1,0 +1,9 @@
+PASS native light theme: title, intro, button and input computed styles match Harness
+PASS native dark theme: title, intro, button and input computed styles match Harness
+PASS B11 layered diagnostics: every check state renders distinctly, unknown is never healthy
+PASS B11 service: CONTROL_UNSUPPORTED hides actions, stop/restart confirm the interruption, refresh never resubmits, outcome-unknown and failed are not success
+PASS B11 open entry points: the system browser works without a local Session, tickets regenerate, and the in-app path is preserved
+PASS B11 re-authentication: upstream offers an explicit renewal, local authorization asks for a reopen
+PASS native theme screenshots and expanded manual form at 390px
+PASS packaged Client: searchable SSH and saved-target lists, keyboard selection without connection, empty and no-match states, selection preservation, manual alias fallback, circular help, duplicate suppression, selected-session opening, error recovery, narrow layout and stale Host route recovery
+RESULT 123/123 assertions passed, 0 failed

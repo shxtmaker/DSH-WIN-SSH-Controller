@@ -4,32 +4,13 @@
 
 ## 环境要求
 
-安装包版本为 0.1.0，适用于 DeepSeek Harness 0.2.0-rc.2。使用 Desktop 自带的 dsh 核对版本。本机需要 Windows 或 macOS、系统 OpenSSH，以及已核对主机密钥且可以无交互登录的 SSH alias。被控端需按 [被控端说明](http://192.168.3.100:3300/lqy/DSH-WIN-SSH-Agent) 安装并配置 Companion。
+安装包版本为 0.2.0-alpha.2，适用于 DeepSeek Harness 0.2.1-rc.2。使用 Desktop 自带的 dsh 核对版本。本机需要 Windows 或 macOS、系统 OpenSSH，以及已核对主机密钥且可以无交互登录的 SSH alias。被控端需按 [被控端说明](http://192.168.3.100:3300/lqy/DSH-WIN-SSH-Agent) 安装并配置 Companion。
 
 ## 安装
 
-### 从 Git 仓库安装
+当前适配候选以本目录中的 `.tgz` 文件交付。不要使用远程默认分支或旧预览分支代替这些文件。
 
-在 Harness Desktop 的插件管理器中选择 Git 仓库安装，填入：
-
-```text
-https://github.com/shxtmaker/DSH-WIN-SSH-Controller
-```
-
-该方式安装 `dsh-win-ssh-controller-source`。包内包含控制端服务、远程连接页面、Typert 通信契约和组合包配置，无需另外安装三个 `.tgz` 文件，也无需运行源码构建。
-
-安装或升级完成后，完全退出 DeepSeek Harness（包括托盘进程），再重新打开。仅刷新页面不会重新加载本机服务接口。
-
-若此前出现“这个包没有声明组合包，不能作为插件管理”，重新提交上述地址安装即可。仍命中旧缓存时，在地址末尾附加修复提交 SHA：`https://github.com/shxtmaker/DSH-WIN-SSH-Controller#<commit-sha>`。
-
-使用命令行时，先完全退出 Desktop，再使用 Desktop 自带的同版本 `dsh` 执行：
-
-```powershell
-dsh plugin --profile desktop add https://github.com/shxtmaker/DSH-WIN-SSH-Controller
-dsh plugin --profile desktop list
-```
-
-Git 安装与独立安装包安装选择一种方式。切换方式时，在退出 Desktop 后先卸载原安装方式，避免同一 profile 重复启用控制端服务。
+已有 Git 安装与独立安装包安装应选择一种方式，避免在同一 profile 重复启用组件。切换安装方式前保留现有 profile、目标配置和实例身份，并完全退出相应 Harness 进程。安装完成后重新启动。
 
 ### 从独立安装包安装
 
@@ -40,7 +21,7 @@ Git 安装与独立安装包安装选择一种方式。切换方式时，在退�
 ```powershell
 node scripts/verify-artifacts.mjs
 dsh --version
-dsh plugin --profile desktop add file:./dist/remote/harness-remote-controller-0.1.0.tgz file:./dist/remote/harness-remote-client-0.1.0.tgz file:./dist/remote/harness-remote-workspace-0.1.0.tgz
+dsh plugin --profile desktop add file:./dist/remote/harness-remote-controller-0.2.0-alpha.2.tgz file:./dist/remote/harness-remote-client-0.2.0-alpha.2.tgz file:./dist/remote/harness-remote-workspace-0.2.0-alpha.2.tgz
 dsh plugin --profile desktop list
 ```
 

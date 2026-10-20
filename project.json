@@ -16,6 +16,6 @@
     "ssh_config.macos.example"
   ],
   "protocolVersion": 1,
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0-alpha.2",
   "peerProject": "DSH-WIN-SSH-Agent"
 }

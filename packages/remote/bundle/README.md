@@ -9,7 +9,7 @@ English | [中文](README.zh.md)
 
 ## Summary
 
-Add the remote workspace connection controls to a Desktop profile. This bundle inserts the controller and client rows as one opt-in layer; it does not replace the built-in Host or any Web business plugin. The controller and client packages must be available locally when the layer resolves. Use a Desktop runtime matching the package's `0.2.0-rc.2` peers.
+Add the remote workspace connection controls to a Desktop profile. This bundle inserts the controller and client rows as one opt-in layer; it does not replace the built-in Host or any Web business plugin. The controller and client packages must be available locally when the layer resolves. Use a Desktop runtime matching the package's `0.2.1-rc.2` peers.
 
 ## Table of Contents
 
@@ -49,7 +49,7 @@ The bundle's patch has two insert rows and no executable behavior. The controlle
 ## Further Exploration
 
 - [Remote package group](../README.md) — the inserted packages.
-- [Desktop runtime](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.0-rc.2/apps/desktop/README.md) — profile initialization and the bundled CLI.
+- [Desktop runtime](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.1-rc.2/apps/desktop/README.md) — profile initialization and the bundled CLI.
 
 -----
 

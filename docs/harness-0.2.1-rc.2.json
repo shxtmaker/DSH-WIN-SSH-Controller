@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-21",
+  "project": "DSH-WIN-SSH-Controller",
+  "baseBranch": "preview/plan-b-0.2.0-alpha.1",
+  "baseCommit": "fb8c88d2aef7e22a36f496ae1fe0aa9cad896ac4",
+  "localBranch": "codex/harness-0.2.1-rc.2",
+  "baseline": {
+    "repository": "https://github.com/deepseek-ai/deepseek-harness.git",
+    "commit": "687f282e8625c6b8d11ff58211a90524be2e4317",
+    "tag": "dsh-v0.2.1-rc.2",
+    "harnessVersion": "0.2.1-rc.2",
+    "pluginVersion": "0.2.0-alpha.2",
+    "nodeVersionTested": "24.19.0",
+    "packageManager": "pnpm@11.28.5",
+    "sourceRepository": "https://github.com/shxtmaker/DSH-WIN-SSH-Controller.git",
+    "sourceCommit": "fb8c88d2aef7e22a36f496ae1fe0aa9cad896ac4"
+  },
+  "checks": {
+    "cleanPinnedBuild": {
+      "status": "PASS",
+      "workspace": ".build/validation",
+      "command": "node scripts/build.mjs --workspace .build/validation"
+    },
+    "artifactAndGitRuntimeVerification": {
+      "status": "PASS",
+      "commands": [
+        "node scripts/verify-artifacts.mjs",
+        "node scripts/verify-project.mjs"
+      ]
+    },
+    "discoveryProtocol": 1,
+    "controlProtocol": 1,
+    "sharedControlContractSha256": "2849b077a752cda02ef324feaeb968a9dd6b01a6ccbaf07bcedd7a8ec74f486d",
+    "installedDesktopInteraction": {
+      "status": "NOT_RUN"
+    },
+    "liveSshLanWanFrp": {
+      "status": "NOT_RUN"
+    },
+    "realProviderGeneration": {
+      "status": "NOT_RUN"
+    },
+    "productionDeployment": {
+      "status": "NOT_RUN"
+    },
+    "remotePushAndRelease": {
+      "status": "NOT_RUN"
+    },
+    "projectTests": {
+      "status": "PASS",
+      "passed": 18,
+      "skipped": 0,
+      "command": "node --max-old-space-size=512 --test tests/*.test.mjs"
+    },
+    "harnessIntegration": {
+      "status": "PASS",
+      "passed": 32,
+      "files": 5,
+      "command": "node scripts/test-integration.mjs --workspace .build/validation",
+      "scope": "Real Harness Loader, Connection, RemoteAccess, Gateway, signed browser-cookie exchange and event readiness; fixture identity and local HTTP/WS."
+    },
+    "packagedBrowser": {
+      "status": "PASS",
+      "assertions": 123,
+      "command": "node scripts/test-client.mjs --workspace .build/validation",
+      "scope": "Packaged Client factory, real React/Zod, fixture Host responses, light/dark native style parity and 390px layout."
+    },
+    "publishedCliGitInstall": {
+      "status": "PASS",
+      "platform": "Windows",
+      "harnessVersion": "0.2.1-rc.2",
+      "command": "node scripts/test-git-install.mjs --installation ../runtime-windows",
+      "scope": "Temporary DSH_HOME/profile; real CLI Git installation, Loader, authenticated state and alias routes, unauthenticated 401, Client/Host method metadata agreement."
+    },
+    "publishedCliStandaloneInstall": {
+      "status": "PASS",
+      "platform": "Windows",
+      "harnessVersion": "0.2.1-rc.2",
+      "scope": "All three packages installed together in a fresh profile; actual Loader, authentication and Client metadata."
+    }
+  },
+  "artifacts": [
+    {
+      "file": "dist/remote/harness-remote-client-0.2.0-alpha.2.tgz",
+      "sha256": "dfce280a477a33fb01a93499cf3377bcccd2155eb5bc62ac7e6af8bcb47a572a",
+      "bytes": 41150
+    },
+    {
+      "file": "dist/remote/harness-remote-controller-0.2.0-alpha.2.tgz",
+      "sha256": "5925d6a22ae78e0b819b8ea1c927a20df50f5da6f0232bd2f1ca458ea1cf3416",
+      "bytes": 50888
+    },
+    {
+      "file": "dist/remote/harness-remote-workspace-0.2.0-alpha.2.tgz",
+      "sha256": "9948574add5dcb9548cab598ba32255e8c82200eda6ac1403bdae9b6c42d4768",
+      "bytes": 3948
+    }
+  ]
+}

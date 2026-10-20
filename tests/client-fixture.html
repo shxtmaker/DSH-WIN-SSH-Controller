@@ -9,7 +9,7 @@
 <style>#app{height:100vh}#native-reference{visibility:hidden;position:fixed;left:-10000px;top:0}</style>
 <div id="native-reference" aria-hidden="true"><h1 class="pageTitle">插件</h1><p class="pageIntro">管理已安装的插件</p><button class="button md primary">安装</button><div class="wrap"><input class="input"></div></div>
 <div id="app"></div>
-<script src="/react.js"></script><script src="/react-dom.js"></script>
+<script src="/react.js"></script><script src="/react-dom.js"></script><script src="/zod.js"></script>
 <script>
 window.dshDesktop = {};
 window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
@@ -102,7 +102,7 @@ window.__ModuleLoader__ = { load(module) { window.clientModule = module } };
     layout: { panelInfo: { getSnapshot() { return { activePanelId: ui.panel } } }, selectPanel(panel) { ui.panel = panel } },
   };
   const jsx = (type, props, key) => React.createElement(type, key === undefined ? props : { ...props, key });
-  const client = window.clientModule.factory(name => name === 'react' ? React : name === 'react/jsx-runtime' ? { jsx, jsxs: jsx, Fragment: React.Fragment } : (() => { throw Error(name) })());
+  const client = window.clientModule.factory(name => name === 'zod' ? fixtureZod : name === 'react' ? React : name === 'react/jsx-runtime' ? { jsx, jsxs: jsx, Fragment: React.Fragment } : (() => { throw Error(name) })());
   await client.apply(ctx);
   const { props, Component } = slots.get('main');
   const face = props.inject();

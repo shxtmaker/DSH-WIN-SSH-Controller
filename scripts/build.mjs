@@ -16,7 +16,13 @@ if (!values['pack-only']) {
   pnpm(['install', '--frozen-lockfile', ...(values.offline ? ['--offline'] : [])], target)
   await cp(join(root, 'scripts/build-host.config.mjs'), join(target, 'tsdown.remote.config.mjs'))
   if (project.role === 'controller') {
-    pnpm(['exec', 'tsc', '-b', 'tsconfig.host.json'], target)
+    pnpm(['exec', 'tsc', '-b',
+      'packages/remote/controller/tsconfig.json',
+      'packages/remote/client/tsconfig.host.json',
+      'packages/remote/bundle/tsconfig.json',
+      'packages/typert/generator/tsconfig.json',
+      'packages/util/crypto/tsconfig.json',
+    ], target)
     pnpm(['exec', 'tsdown', '--config', 'tsdown.remote.config.mjs'], target)
     pnpm(['exec', 'tsc', '-b', 'packages/remote/client/tsconfig.client.json'], target)
     pnpm(['exec', 'tsdown', '--env.DSH_BUILD_FACE', 'client'], join(target, 'packages/remote/client'))

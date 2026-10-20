@@ -55,7 +55,7 @@ workspace bundle 挂载 Host 入口；Desktop 加载 Client 模块后提供页�
 ## 延伸阅读
 
 - [远程包组](../README.zh.md) — controller 和 bundle。
-- [侧栏 Browser](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.0-rc.2/packages/client/ui-sidebar-browser/README.zh.md) — tab 归属和原生 guest 行为。
+- [侧栏 Browser](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.1-rc.2/packages/client/ui-sidebar-browser/README.zh.md) — tab 归属和原生 guest 行为。
 
 -----
 

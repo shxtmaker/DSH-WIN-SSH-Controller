@@ -1,7 +1,7 @@
 {
   "name": "@harness-remote/client",
   "description": "Desktop connection page for an attached Linux Harness workspace",
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0-alpha.2",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",

@@ -6,21 +6,13 @@ DeepSeek Harness SSH 远程工作区控制端。
 
 ## 安装文件
 
-在 Harness Desktop 的插件管理器中选择 Git 仓库安装，填入以下地址：
+本目录为适配 Harness 0.2.1-rc.2 的本地候选版本。请使用下列独立安装包；远程仓库的默认分支及原预览分支不代表本次适配版本。
 
-```text
-https://github.com/shxtmaker/DSH-WIN-SSH-Controller
-```
+- [harness-remote-controller-0.2.0-alpha.2.tgz](dist/remote/harness-remote-controller-0.2.0-alpha.2.tgz)
+- [harness-remote-client-0.2.0-alpha.2.tgz](dist/remote/harness-remote-client-0.2.0-alpha.2.tgz)
+- [harness-remote-workspace-0.2.0-alpha.2.tgz](dist/remote/harness-remote-workspace-0.2.0-alpha.2.tgz)
 
-Git 安装包包含控制端、连接页面和组合包配置，安装时无需构建 Harness。安装与更新步骤见[安装与使用说明](docs/INSTALL.md)。
-
-也可使用三个独立安装包：
-
-- [harness-remote-controller-0.1.0.tgz](dist/remote/harness-remote-controller-0.1.0.tgz)
-- [harness-remote-client-0.1.0.tgz](dist/remote/harness-remote-client-0.1.0.tgz)
-- [harness-remote-workspace-0.1.0.tgz](dist/remote/harness-remote-workspace-0.1.0.tgz)
-
-安装包版本为 0.1.0，适用于 Harness 0.2.0-rc.2。校验值见 [SHA256SUMS.txt](dist/remote/SHA256SUMS.txt)。在仓库根目录执行 node scripts/verify-artifacts.mjs 即可验证。
+安装包版本为 0.2.0-alpha.2，适用于 Harness 0.2.1-rc.2。校验值见 [SHA256SUMS.txt](dist/remote/SHA256SUMS.txt)。在仓库根目录执行 node scripts/verify-artifacts.mjs 即可验证。
 
 ## 使用
 

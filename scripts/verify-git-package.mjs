@@ -31,7 +31,8 @@ export async function verifyGitPackage(directory = root) {
     for (const [path, bytes] of entries) {
       if (!path.startsWith('package/lib/')) continue
       const output = `runtime/${role}/${path.slice('package/lib/'.length)}`
-      assert.deepEqual(await readFile(join(directory, output)), gitRuntimeBytes(bytes, manifest.name), `Stale Git runtime or contract: ${output}`)
+      assert.ok((await readFile(join(directory, output))).equals(gitRuntimeBytes(bytes, manifest.name)),
+        `Stale Git runtime or contract: ${output}`)
     }
   }
 }

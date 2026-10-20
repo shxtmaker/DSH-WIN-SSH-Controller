@@ -7,6 +7,8 @@
   name: '@deepseek-ai/dsh-typert-registry'
 - id: gateway
   name: '@deepseek-ai/dsh-api-gateway'
+- id: remote-access
+  name: '@deepseek-ai/dsh-api-remote-access'
 - id: connection
   name: '@deepseek-ai/dsh-client-connection'
 - id: remote-workspace-controller

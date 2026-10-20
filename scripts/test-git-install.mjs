@@ -1,4 +1,4 @@
-/** Exercise the Git package through the same bundle reader used by the Harness manager. */
+/** Exercise Git or standalone packages through the Harness installer and runtime resolver. */
 import assert from 'node:assert/strict'
 import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -8,10 +8,11 @@ import { createRequire } from 'node:module'
 import { spawnSync } from 'node:child_process'
 import { parseArgs } from 'node:util'
 import { runInNewContext } from 'node:vm'
-import { root, pnpm, run } from './runtime.mjs'
+import { root, project, pnpm, run } from './runtime.mjs'
 
-const { values } = parseArgs({ options: { harness: { type: 'string' }, installation: { type: 'string' }, spec: { type: 'string' } } })
+const { values } = parseArgs({ options: { harness: { type: 'string' }, installation: { type: 'string' }, spec: { type: 'string' }, artifacts: { type: 'boolean', default: false } } })
 if (!values.harness && !values.installation) throw new Error('Specify --harness /path/to/built-harness or --installation /path/to/isolated-cli-installation')
+if (values.artifacts && values.spec) throw new Error('--artifacts and --spec are mutually exclusive')
 const installation = values.installation && resolve(values.installation)
 const installedRequire = installation && createRequire(await realpath(join(installation, 'node_modules/@deepseek-ai/dsh/package.json')))
 const operations = installedRequire ? installedRequire.resolve('@deepseek-ai/dsh-plugin-manager/operations') : join(resolve(values.harness), 'packages/boot/plugin-manager/lib/types/operations.js')
@@ -21,7 +22,7 @@ const { bundlePatchPaths, loadOverlayPatches, composeEntries, resolveBundleDir, 
 const temporary = await mkdtemp(join(tmpdir(), 'dsh-controller-git-install-'))
 try {
   let spec = values.spec
-  if (!spec) {
+  if (!spec && !values.artifacts) {
     const repository = join(temporary, 'repository')
     await mkdir(repository)
     const tracked = spawnSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd: root, encoding: 'utf8', windowsHide: true })
@@ -36,10 +37,19 @@ try {
     run('git', ['-c', 'user.name=Installation Test', '-c', 'user.email=test@localhost', '-c', 'core.hooksPath=/dev/null', 'commit', '--quiet', '-m', 'Installation fixture'], repository)
     spec = `git+${pathToFileURL(repository).href}#main`
   }
+  const specifications = []
+  if (values.artifacts) {
+    for (const role of project.artifacts) {
+      const file = `harness-remote-${role}-${project.version}.tgz`
+      const archive = join(temporary, file)
+      await copyFile(join(root, 'dist/remote', file), archive)
+      specifications.push(`file:${archive.replaceAll('\\', '/')}`)
+    }
+  } else specifications.push(spec)
   const profile = installation ? join(temporary, 'dsh-home/profiles/git-install-check') : join(temporary, 'profile')
   if (installation) {
     const cli = join(dirname(await realpath(join(installation, 'node_modules/@deepseek-ai/dsh/package.json'))), 'lib/bin.js')
-    const result = spawnSync(process.execPath, [cli, 'plugin', '--profile', 'git-install-check', 'add', spec], {
+    const result = spawnSync(process.execPath, [cli, 'plugin', '--profile', 'git-install-check', 'add', ...specifications], {
       cwd: temporary, encoding: 'utf8', timeout: 120_000, maxBuffer: 4 * 1024 * 1024,
       env: { ...process.env, DSH_HOME: join(temporary, 'dsh-home'), DSH_TELEMETRY: '0' },
     })
@@ -49,31 +59,35 @@ try {
   } else {
     await mkdir(profile)
     await writeFile(join(profile, 'package.json'), JSON.stringify({ name: 'controller-installation-test', private: true, type: 'module' }) + '\n')
-    pnpm(['add', spec, '--ignore-scripts', '--config.auto-install-peers=false'], profile)
+    pnpm(['add', ...specifications, '--ignore-scripts', '--config.auto-install-peers=false'], profile)
   }
   const installed = JSON.parse(await readFile(join(profile, 'package.json'), 'utf8'))
   const names = Object.keys(installed.dependencies)
-  assert.equal(names.length, 1, 'The isolated profile must contain exactly the requested Git package')
-  const name = names[0]
+  assert.equal(names.length, values.artifacts ? 3 : 1, 'The isolated profile must contain exactly the requested packages')
+  const name = values.artifacts ? '@harness-remote/workspace' : names[0]
+  const controllerName = values.artifacts ? '@harness-remote/controller' : name
+  const clientName = values.artifacts ? '@harness-remote/client' : name
   if (installation) assert.ok(installed.dsh.profile.bundles.includes(name), 'CLI must select the installed bundle in the profile')
   const manifest = bundleManifest(name, profile, join(profile, 'package.json'))
   assert.ok(manifest, 'not-bundle: 这个包没有声明组合包，不能作为插件管理')
   const directory = resolveBundleDir('dsh', name, join(profile, 'package.json'), profile)
   const patches = bundlePatchPaths(directory, manifest.dsh.bundle).flatMap(file => loadOverlayPatches('dsh', file))
   const rows = composeEntries([patches])
-  assert.deepEqual(rows.map(row => row.id), ['remote-workspace-controller'])
-  assert.deepEqual(rows.map(row => row.name), [name])
+  assert.deepEqual(rows.map(row => row.id), values.artifacts
+    ? ['remote-workspace-controller', 'remote-workspace-client'] : ['remote-workspace-controller'])
+  assert.deepEqual(rows.map(row => row.name), values.artifacts ? [controllerName, clientName] : [name])
   assert.equal(rows[0].config.helperPath, '/usr/local/bin/dsh-remote-info')
-  const require = createRequire(await realpath(join(directory, 'package.json')))
+  const require = createRequire(join(profile, 'package.json'))
   for (const row of rows) {
     const entry = require.resolve(row.name)
     assert.ok((await readFile(entry)).length > 0)
   }
-  assert.equal(manifest.dsh.client.platform, 'web')
-  assert.ok((await readFile(require.resolve(`${name}/client`), 'utf8')).includes(`id: "${name}"`))
-  assert.ok((await readFile(require.resolve(`${name}/typert`))).length > 0)
-  assert.ok((await readFile(require.resolve(`${name}/remote`))).length > 0)
-  console.log(`PASS Git installation: ${name}; bundle, Controller runtime, Typert exports and Client module resolve without build scripts`)
+  const clientManifest = JSON.parse(await readFile(require.resolve(`${clientName}/package.json`), 'utf8'))
+  assert.equal(clientManifest.dsh.client.platform, 'web')
+  assert.ok((await readFile(require.resolve(`${clientName}/client`), 'utf8')).includes(`id: "${clientName}"`))
+  assert.ok((await readFile(require.resolve(`${controllerName}/typert`))).length > 0)
+  assert.ok((await readFile(require.resolve(`${controllerName}/remote`))).length > 0)
+  console.log(`PASS ${values.artifacts ? 'standalone' : 'Git'} installation: ${name}; bundle, Controller runtime, Typert exports and Client module resolve without build scripts`)
   const hostRequire = installedRequire ?? createRequire(appBoot)
   const { Context } = await import(pathToFileURL(hostRequire.resolve('@deepseek-ai/cordis')).href)
   const ctx = new Context()
@@ -96,11 +110,17 @@ try {
       { name: '@deepseek-ai/dsh-host-webserver', config: { host: '127.0.0.1', port: 0 } },
       { name: '@deepseek-ai/dsh-typert-registry' },
       { name: '@deepseek-ai/dsh-api-gateway' },
+      { name: '@deepseek-ai/dsh-api-remote-access' },
       { name: '@deepseek-ai/dsh-client-connection' },
       ...rows,
     ]) await ctx.loader.create(row)
     await ctx.loader.await()
-    assert.deepEqual(ctx.remoteWorkspace.getState(), { phase: 'idle', generation: 0 })
+    const initialState = ctx.remoteWorkspace.getState()
+    assert.equal(initialState.phase, 'idle')
+    assert.equal(initialState.generation, 0)
+    assert.deepEqual(initialState.diagnostics.map(check => check.name),
+      ['ssh', 'helper', 'service', 'descriptor', 'listener', 'identity', 'authentication', 'events', 'application'])
+    assert.ok(initialState.diagnostics.every(check => check.state === 'unknown'))
     const origin = `http://127.0.0.1:${ctx.webServer.port}`
     const launch = new URL(ctx.connection.authenticatedUrl(origin))
     let browserCookie
@@ -113,7 +133,7 @@ try {
     assert.equal(denied.status, 401)
     const response = await fetch(`${origin}/api/remoteWorkspace/getState`, { method: 'POST', headers: { 'content-type': 'application/json', cookie: browserCookie }, body })
     assert.equal(response.status, 200)
-    assert.deepEqual(await response.json(), { type: 'server-response', rpcId: 'git-controller-state', result: { ok: true, value: { phase: 'idle', generation: 0 } } })
+    assert.deepEqual(await response.json(), { type: 'server-response', rpcId: 'git-controller-state', result: { ok: true, value: initialState } })
     console.log('PASS installed Controller: real Loader composition and authenticated Typert HTTP state route; unauthenticated access rejected')
 
     const quickBody = JSON.stringify({ type: 'client-request', rpcId: 'git-controller-quick', method: 'remoteWorkspace/quickConnect',
@@ -137,16 +157,16 @@ try {
     console.log('PASS installed quick connection routes: unauthenticated 401, malformed alias rejected without persistence, public alias enumeration')
 
     let clientModule
-    runInNewContext(await readFile(require.resolve(`${name}/client`), 'utf8'), { window: { __ModuleLoader__: { load: module => { clientModule = module } } } })
-    assert.equal(clientModule.id, name)
+    runInNewContext(await readFile(require.resolve(`${clientName}/client`), 'utf8'), { window: { __ModuleLoader__: { load: module => { clientModule = module } } } })
+    assert.equal(clientModule.id, clientName)
     const renderer = ctx.pluginPackages.packageOf('@deepseek-ai/dsh-client-ui-renderer', pathToFileURL(join(profile, 'package.json')).href)
     assert.ok(renderer, 'The Harness installation must provide the Client renderer')
     const reactRequire = createRequire(join(renderer.dir, 'package.json'))
-    const client = clientModule.factory(specifier => reactRequire(specifier))
+    const client = clientModule.factory(specifier => specifier === 'zod' ? hostRequire(specifier) : reactRequire(specifier))
     let mountedContract
     const release = await client.apply({ remote: { async $mount(contract) { mountedContract = contract; return async () => {} } } })
-    assert.equal(mountedContract.package, name)
-    const hostContract = (await import(pathToFileURL(require.resolve(`${name}/typert`)).href)).TYPERT
+    assert.equal(mountedContract.package, controllerName)
+    const hostContract = (await import(pathToFileURL(require.resolve(`${controllerName}/typert`)).href)).TYPERT
     assert.deepEqual(Array.from(mountedContract.descriptors, method => method.id), hostContract.invocations.map(method => method.id))
     await release()
     console.log('PASS installed Client factory: module identity and mounted method contracts match the installed Host package')

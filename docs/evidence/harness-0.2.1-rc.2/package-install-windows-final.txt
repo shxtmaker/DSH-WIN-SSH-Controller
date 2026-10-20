@@ -1,0 +1,24 @@
+Progress: resolved 0, reused 0, downloaded 1, added 0
+[WARN] Issues with peer dependencies found. Run "pnpm peers check" to list them.
+
+dependencies:
++ @harness-remote/client file:C:/Users/sissy/AppData/Local/Temp/dsh-controller-git-install-7MUAaz/harness-remote-client-0.2.0-alpha.2.tgz
++ @harness-remote/controller file:C:/Users/sissy/AppData/Local/Temp/dsh-controller-git-install-7MUAaz/harness-remote-controller-0.2.0-alpha.2.tgz
++ @harness-remote/workspace file:C:/Users/sissy/AppData/Local/Temp/dsh-controller-git-install-7MUAaz/harness-remote-workspace-0.2.0-alpha.2.tgz
+
+Packages: +8
+++++++++
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: C:\Users\sissy\AppData\Local\pnpm\store\v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 8, reused 5, downloaded 3, added 8, done
+Done in 761ms using pnpm v11.25.0
+
+dsh: initialized profile git-install-check at C:\Users\sissy\AppData\Local\Temp\dsh-controller-git-install-7MUAaz\dsh-home\profiles\git-install-check
+dsh: warning: @harness-remote/client declares no dsh.bundle — installed as a plain dependency, not a profile layer
+dsh: warning: @harness-remote/controller declares no dsh.bundle — installed as a plain dependency, not a profile layer
+
+PASS standalone installation: @harness-remote/workspace; bundle, Controller runtime, Typert exports and Client module resolve without build scripts
+PASS installed Controller: real Loader composition and authenticated Typert HTTP state route; unauthenticated access rejected
+PASS installed quick connection routes: unauthenticated 401, malformed alias rejected without persistence, public alias enumeration
+PASS installed Client factory: module identity and mounted method contracts match the installed Host package

@@ -2,7 +2,8 @@
 import type {
   RemoteResult,
   RemoteStreamHandle,
-  TypertRemoteContribution,
+  TypertRemoteInfo,
+  TypertRemoteMethod,
 } from '@deepseek-ai/dsh-typert-protocol'
 import type { EndpointRef, RemoteInspection, RemoteSnapshot, RemoteTarget, ServiceOperationState } from 'dsh-win-ssh-controller-source/types'
 
@@ -42,6 +43,20 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
   }
 }
 
-export declare const TYPERT_REMOTE: TypertRemoteContribution
+export declare const TYPERT_REMOTE: TypertRemoteInfo<{
+  readonly 'remoteWorkspace/connect': TypertRemoteMethod<{ readonly 'targetId': string; readonly 'endpointId': string; readonly 'operationId': string }, RemoteSnapshot>
+  readonly 'remoteWorkspace/createOpenTicket': TypertRemoteMethod<{ readonly 'connectionId': string }, string>
+  readonly 'remoteWorkspace/disconnect': TypertRemoteMethod<{ readonly 'connectionId': string }, RemoteSnapshot>
+  readonly 'remoteWorkspace/getServiceOperation': TypertRemoteMethod<{ readonly 'ref': EndpointRef; readonly 'operationId': string }, ServiceOperationState>
+  readonly 'remoteWorkspace/getState': TypertRemoteMethod<{  }, RemoteSnapshot>
+  readonly 'remoteWorkspace/inspectEndpoint': TypertRemoteMethod<{ readonly 'ref': EndpointRef; readonly 'operationId': string }, RemoteInspection>
+  readonly 'remoteWorkspace/listAliases': TypertRemoteMethod<{  }, string[]>
+  readonly 'remoteWorkspace/listTargets': TypertRemoteMethod<{  }, RemoteTarget[]>
+  readonly 'remoteWorkspace/quickConnect': TypertRemoteMethod<{ readonly 'sshAlias': string; readonly 'instanceKey': string; readonly 'operationId': string }, RemoteSnapshot>
+  readonly 'remoteWorkspace/refreshAuthentication': TypertRemoteMethod<{ readonly 'connectionId': string; readonly 'operationId': string }, RemoteSnapshot>
+  readonly 'remoteWorkspace/saveTarget': TypertRemoteMethod<{ readonly 'target': RemoteTarget }, RemoteTarget[]>
+  readonly 'remoteWorkspace/serviceAction': TypertRemoteMethod<{ readonly 'ref': EndpointRef; readonly 'action': 'start' | 'stop' | 'restart'; readonly 'operationId': string; readonly 'issuedAt': string; readonly 'registrationRevision': string; readonly 'expectedInstanceId'?: string }, ServiceOperationState>
+  readonly 'remoteWorkspace/watch': TypertRemoteMethod<{  }, RemoteSnapshot, 'stream'>
+}>
 export default TYPERT_REMOTE
 //# sourceMappingURL=typert.remote-client.d.ts.map

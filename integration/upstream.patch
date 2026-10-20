@@ -1,24 +1,7 @@
 diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
-index dfaa1653..0151990a 100644
 --- a/pnpm-lock.yaml
 +++ b/pnpm-lock.yaml
-@@ -115,12 +115,12 @@ importers:
-       '@types/node':
-         specifier: ^22.20.1
-         version: 22.20.1
--      '@types/semver':
--        specifier: ^7.8.0
--        version: 7.8.0
-       '@types/papaparse':
-         specifier: ^5.5.2
-         version: 5.5.2
-+      '@types/semver':
-+        specifier: ^7.8.0
-+        version: 7.8.0
-       '@types/spdx-expression-parse':
-         specifier: ^4.0.0
-         version: 4.0.0
-@@ -11375,6 +11375,100 @@ importers:
+@@ -11771,6 +11771,103 @@
          specifier: workspace:*
          version: link:../../util/timeout
  
@@ -97,6 +80,9 @@ index dfaa1653..0151990a 100644
 +      '@deepseek-ai/dsh-api-gateway':
 +        specifier: workspace:*
 +        version: link:../../api/gateway
++      '@deepseek-ai/dsh-api-remote-access':
++        specifier: workspace:*
++        version: link:../../api/remote-access
 +      '@deepseek-ai/dsh-app-boot':
 +        specifier: workspace:*
 +        version: link:../../boot/app-boot
@@ -119,84 +105,29 @@ index dfaa1653..0151990a 100644
    packages/sandbox/sandbox:
      dependencies:
        '@deepseek-ai/dsh-util-values':
-@@ -15641,10 +15735,6 @@ importers:
- 
- packages:
- 
--  papaparse@5.5.3:
--    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
--
--
-   '@agentclientprotocol/sdk@1.4.0':
-     resolution: {integrity: sha512-/eufudw+aFY1LKLolT6yFE6UMmYRl7fMJ/DEONSIyR6wI3slHWITBsANRGqXEY8FRzqUxwh7QEaGiZHcJPVThg==}
-     peerDependencies:
-@@ -17323,10 +17413,12 @@ packages:
- 
-   '@modelcontextprotocol/server-everything@2026.8.31':
-     resolution: {integrity: sha512-5U3OZh8Xq0Li4nA26l6uNvV9/1suMDuWSn+NjLZIhzinhMY6N3A4DCrxVecBGPf2PsNFKTEv5krxGPRwzxc7jQ==}
-+    deprecated: 'Date-based versions are no longer published. This package has resumed semantic versioning at 1.0.0: install the latest version.'
-     hasBin: true
- 
-   '@modelcontextprotocol/server-filesystem@2026.8.31':
-     resolution: {integrity: sha512-kKaFkyAh6oipvc9+EAbJ552JafnMnOq5nzmzWkp1jJdBhTAAGpmIpWihUG1+rfNhmEFM98gUZDdCHCDD4v6a7Q==}
-+    deprecated: 'Date-based versions are no longer published. This package has resumed semantic versioning at 1.0.0: install the latest version.'
-     hasBin: true
- 
-   '@modelcontextprotocol/server@2.2.0':
-@@ -21701,6 +21793,9 @@ packages:
-   pako@1.0.11:
-     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
- 
-+  papaparse@5.5.3:
-+    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
-+
-   papaparse@5.7.0:
-     resolution: {integrity: sha512-qBGxg/7Q3Kl9Wfhrz2Z74UnvnHTXLNG6jmKJFeBvP2+y4lV7So+7SR62+Zd47JvdrCkX+nDcnr0ObPzek/+6RA==}
- 
-@@ -23227,9 +23322,6 @@ packages:
- 
- snapshots:
- 
--  papaparse@5.5.3: {}
--
--
-   '@agentclientprotocol/sdk@1.4.0(zod@4.4.3)':
-     dependencies:
-       zod: 4.4.3
-@@ -29443,6 +29535,8 @@ snapshots:
- 
-   pako@1.0.11: {}
- 
-+  papaparse@5.5.3: {}
-+
-   papaparse@5.7.0: {}
- 
-   parse-ms@4.0.0: {}
-diff --git a/tsconfig.client.json b/tsconfig.client.json
-index a8f0a9ed..72e7de83 100644
---- a/tsconfig.client.json
-+++ b/tsconfig.client.json
-@@ -146,6 +146,7 @@
-     { "path": "./packages/api/workspace-files/tsconfig.client.json" },
-     { "path": "./packages/client/web" },
-     { "path": "./packages/context/file-reference" },
--    { "path": "./apps/web" }
-+    { "path": "./apps/web" },
-+    { "path": "./packages/remote/client/tsconfig.client.json" }
-   ]
- }
 diff --git a/tsconfig.host.json b/tsconfig.host.json
-index af38cdb3..e37e5e9d 100644
 --- a/tsconfig.host.json
 +++ b/tsconfig.host.json
-@@ -508,6 +508,9 @@
-     { "path": "./packages/lsp/tool-lsp" },
+@@ -533,6 +533,9 @@
      { "path": "./apps/cli" },
+     { "path": "./apps/plugin-market-generator" },
      { "path": "./apps/desktop-host" },
 -    { "path": "./apps/desktop/tsconfig.host.json" }
 +    { "path": "./apps/desktop/tsconfig.host.json" },
 +    { "path": "./packages/remote/controller" },
 +    { "path": "./packages/remote/client/tsconfig.host.json" },
 +    { "path": "./packages/remote/bundle" }
+   ]
+ }
+diff --git a/tsconfig.client.json b/tsconfig.client.json
+--- a/tsconfig.client.json
++++ b/tsconfig.client.json
+@@ -152,6 +152,7 @@
+     { "path": "./packages/api/workspace-files/tsconfig.client.json" },
+     { "path": "./packages/client/web" },
+     { "path": "./packages/context/file-reference" },
+-    { "path": "./apps/web" }
++    { "path": "./apps/web" },
++    { "path": "./packages/remote/client/tsconfig.client.json" }
    ]
  }

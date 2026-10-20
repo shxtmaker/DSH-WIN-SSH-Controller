@@ -1,0 +1,32 @@
+▶ management contract
+  ✔ keeps discovery protocol 1 untouched and gives management its own version (0.4008ms)
+  ✔ declares exactly the implemented action set (0.3946ms)
+  ✔ declares exactly the implemented error vocabulary (0.2093ms)
+  ✔ never accepts an arbitrary command, unit or path (0.0806ms)
+  ✔ bounds every caller-supplied identifier (0.1191ms)
+✔ management contract (2.1128ms)
+▶ error classification
+  ✔ separates host-key and authentication failures from a generic transport failure (0.2069ms)
+  ✔ treats only a structured BAD_INPUT on --control as an old helper (0.2415ms)
+  ✔ redacts credentials and remote paths from any diagnostic string (0.3057ms)
+✔ error classification (0.9067ms)
+▶ control response validation
+  ✔ accepts a well-formed status and rejects a partially parsed one (0.2564ms)
+  ✔ accepts a capability payload only when every action is known (0.1666ms)
+  ✔ keeps an unknown outcome distinguishable from a completed one (0.1317ms)
+✔ control response validation (0.6628ms)
+✔ the Git bundle includes consistent Host, Client and Typert runtime contracts (13.7286ms)
+✔ missing Git bundle metadata and stale Typert contracts are rejected (77.9546ms)
+✔ the standalone project contains only its own role and installable packages (94.9405ms)
+✔ a modified installation archive is rejected (15.2247ms)
+✔ an archive from the other role is rejected (13.3712ms)
+✔ duplicate or missing checksum rows are rejected (16.377ms)
+✔ preparation refuses an existing workspace without overwriting its content (77.2328ms)
+ℹ tests 18
+ℹ suites 3
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 403.8735

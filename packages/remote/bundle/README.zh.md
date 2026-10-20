@@ -9,7 +9,7 @@ kind: "package-bundle"
 
 ## 概述
 
-为 Desktop profile 加入远程工作区连接控件。此 bundle 作为一个可选层插入 controller 和 client 行，不替换内置 Host 或 Web 业务插件。解析该层时，本地必须具备 controller 和 client 包。Desktop 运行时版本应与包的 `0.2.0-rc.2` peer 匹配。
+为 Desktop profile 加入远程工作区连接控件。此 bundle 作为一个可选层插入 controller 和 client 行，不替换内置 Host 或 Web 业务插件。解析该层时，本地必须具备 controller 和 client 包。Desktop 运行时版本应与包的 `0.2.1-rc.2` peer 匹配。
 
 ## 目录
 
@@ -49,7 +49,7 @@ Desktop 初始化 profile 且完全退出后，由其自带的 `dsh plugin --pro
 ## 延伸阅读
 
 - [远程包组](../README.zh.md) — 此层插入的包。
-- [Desktop 运行时](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.0-rc.2/apps/desktop/README.zh.md) — profile 初始化与内置 CLI。
+- [Desktop 运行时](https://github.com/deepseek-ai/deepseek-harness/blob/dsh-v0.2.1-rc.2/apps/desktop/README.zh.md) — profile 初始化与内置 CLI。
 
 -----
 

@@ -7,10 +7,13 @@ import { Context } from '@deepseek-ai/cordis'
 import Include from '@deepseek-ai/cordis-plugin-include'
 import Loader from '@deepseek-ai/cordis-plugin-loader'
 import TypertGatewayService from '@deepseek-ai/dsh-api-gateway'
+import RemoteAccessService from '@deepseek-ai/dsh-api-remote-access'
 import * as ConnectionPlugin from '@deepseek-ai/dsh-client-connection'
 import WebServer from '@deepseek-ai/dsh-host-webserver'
 import TypertRegistry from '@deepseek-ai/dsh-typert-registry'
 import RemoteWorkspaceController from '../src/index.ts'
+import { authenticate, probeEventStream, readIdentity } from '../src/auth.ts'
+import { UpstreamAuthRequired } from '../src/errors.ts'
 
 let context: Context | undefined
 
@@ -40,6 +43,7 @@ it('serves the controller state through authenticated Typert HTTP after Loader c
     ['@deepseek-ai/dsh-host-webserver', WebServer],
     ['@deepseek-ai/dsh-typert-registry', TypertRegistry],
     ['@deepseek-ai/dsh-api-gateway', TypertGatewayService],
+    ['@deepseek-ai/dsh-api-remote-access', RemoteAccessService],
     ['@deepseek-ai/dsh-client-connection', ConnectionPlugin],
     ['@harness-remote/controller', RemoteWorkspaceController],
   ])
@@ -98,4 +102,34 @@ it('serves the controller state through authenticated Typert HTTP after Loader c
     body: JSON.stringify({ type: 'client-request', rpcId: 'alias-test', method: 'remoteWorkspace/listAliases', payload: { args: {} } }),
   })
   expect(await aliases.json()).toMatchObject({ result: { ok: true, value: expect.any(Array) } })
+
+  // Use the current Harness authentication and event carrier, not a canned HTTP response.
+  const port = ctx.webServer.port
+  if (port === undefined) throw new Error('Web listener did not bind')
+  const identity = { protocolVersion: 1 as const, instanceKey: 'default', instanceId: 'compat-instance',
+    bootId: 'compat-boot', profile: 'web', workspaceHint: '/compat-workspace',
+    version: '0.2.1-rc.2', capabilities: ['web', 'remote.mux'] }
+  ctx.effect(() => ctx.webServer.register({
+    kind: 'exact', path: '/',
+    handler(req, res) {
+      if (!ctx.connection.authorizeIndex(req, res)) return
+      res.writeHead(200, { 'content-type': 'text/html' })
+      res.end('<!doctype html><title>Compatibility fixture</title>')
+    },
+  }), 'compatibility: browser index')
+  ctx.effect(() => ctx.connection.fetch.register({
+    path: '/api/remote-workspace/identity', methods: ['GET'], requestBody: 'buffered',
+    fetch: () => Promise.resolve(Response.json(identity)),
+  }), 'compatibility: identity fixture')
+  ctx.effect(() => ctx.typertGateway.registerRemoteEvents(async function* (signal) {
+    if (signal.aborted) return
+    await new Promise<void>(resolve => signal.addEventListener('abort', () => resolve(), { once: true }))
+  }, { home: '/compat-home' }), 'compatibility: idle event source')
+  const descriptor = { ...identity, port, launchUrl: ctx.connection.authenticatedUrl(`${origin}/`) }
+  const remoteCookie = await authenticate(port, port, descriptor)
+  expect(await readIdentity(port, port, remoteCookie)).toEqual(identity)
+  await expect(probeEventStream(port, port, remoteCookie)).resolves.toBeUndefined()
+  await expect(readIdentity(port, port, 'invalid=credential')).rejects.toBeInstanceOf(UpstreamAuthRequired)
+  await expect(authenticate(port, port, { ...descriptor,
+    launchUrl: `${origin}/?token=invalid-launch-credential` })).rejects.toBeInstanceOf(UpstreamAuthRequired)
 })
