@@ -6,7 +6,7 @@ DeepSeek Harness SSH 远程工作区控制端。
 
 ## 安装文件
 
-本目录为适配 Harness 0.2.1-rc.2 的本地候选版本。请使用下列独立安装包；远程仓库的默认分支及原预览分支不代表本次适配版本。
+本版本适配 Harness 0.2.1-rc.2。可从 GitHub 的 `main` 分支安装组合包，或使用下列独立安装包。旧预览分支仍保留原版本。
 
 - [harness-remote-controller-0.2.0-alpha.2.tgz](dist/remote/harness-remote-controller-0.2.0-alpha.2.tgz)
 - [harness-remote-client-0.2.0-alpha.2.tgz](dist/remote/harness-remote-client-0.2.0-alpha.2.tgz)
@@ -16,7 +16,7 @@ DeepSeek Harness SSH 远程工作区控制端。
 
 ## 使用
 
-按 [安装与使用说明](docs/INSTALL.md) 配置本端，再与 [DSH-WIN-SSH-Agent](http://192.168.3.100:3300/lqy/DSH-WIN-SSH-Agent) 配合使用。两侧通过协议版本 1 通信。
+按 [安装与使用说明](docs/INSTALL.md) 配置本端，再与 [DSH-WIN-SSH-Agent](https://github.com/shxtmaker/DSH-WIN-SSH-Agent) 配合使用。两侧通过协议版本 1 通信。
 
 默认只需选择或输入一个 SSH 别名，点击“一键连接”。程序自动读取实例身份、profile、工作区和 Web 端口，保存目标并建立连接；有选中的本机会话时自动打开远端页面。自定义实例键和多入口配置可在折叠选项中填写，标题旁的圆圈问号提供点击帮助。
 

@@ -1,5 +1,7 @@
 # Harness 0.2.1-rc.2 兼容升级
 
+> 本文记录升级提交 `230fccd` 的本地验证。推送前的最终检查及安装包哈希见 [main 交付检查](main-publication-preflight.json)。
+
 日期：2026-10-21。插件候选版本：`0.2.0-alpha.2`。
 
 ## 基线

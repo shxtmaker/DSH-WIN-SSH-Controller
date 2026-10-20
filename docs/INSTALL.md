@@ -4,13 +4,17 @@
 
 ## 环境要求
 
-安装包版本为 0.2.0-alpha.2，适用于 DeepSeek Harness 0.2.1-rc.2。使用 Desktop 自带的 dsh 核对版本。本机需要 Windows 或 macOS、系统 OpenSSH，以及已核对主机密钥且可以无交互登录的 SSH alias。被控端需按 [被控端说明](http://192.168.3.100:3300/lqy/DSH-WIN-SSH-Agent) 安装并配置 Companion。
+安装包版本为 0.2.0-alpha.2，适用于 DeepSeek Harness 0.2.1-rc.2。使用 Desktop 自带的 dsh 核对版本。本机需要 Windows 或 macOS、系统 OpenSSH，以及已核对主机密钥且可以无交互登录的 SSH alias。被控端需按 [被控端说明](https://github.com/shxtmaker/DSH-WIN-SSH-Agent) 安装并配置 Companion。
 
 ## 安装
 
-当前适配候选以本目录中的 `.tgz` 文件交付。不要使用远程默认分支或旧预览分支代替这些文件。
+GitHub 的 `main` 分支提供适配 Harness 0.2.1-rc.2 的组合包，`dist/remote/` 提供同版本独立安装包。旧预览分支仍保留原版本。
 
 已有 Git 安装与独立安装包安装应选择一种方式，避免在同一 profile 重复启用组件。切换安装方式前保留现有 profile、目标配置和实例身份，并完全退出相应 Harness 进程。安装完成后重新启动。
+
+### 从 Git 仓库安装
+
+在 Desktop 的插件管理器中选择 Git 仓库安装，填写 `https://github.com/shxtmaker/DSH-WIN-SSH-Controller#main`。组合包包含控制端、客户端和工作区组件，安装无需构建 Harness。需要固定版本时，将 `main` 替换为完整提交 SHA。更新后完全退出并重新启动 Desktop。
 
 ### 从独立安装包安装
 

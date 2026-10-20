@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-21",
+  "target": "GitHub refs/heads/main",
+  "harnessVersion": "0.2.1-rc.2",
+  "pluginVersion": "0.2.0-alpha.2",
+  "upgradeCommit": "230fccde041b9167fd056301e54f015647a914e0",
+  "previousMain": "7d509569131cb3e3a1ac8cf4421f4226443cd0cb",
+  "artifacts": [
+    {
+      "file": "harness-remote-client-0.2.0-alpha.2.tgz",
+      "sha256": "dfce280a477a33fb01a93499cf3377bcccd2155eb5bc62ac7e6af8bcb47a572a",
+      "bytes": 41150
+    },
+    {
+      "file": "harness-remote-controller-0.2.0-alpha.2.tgz",
+      "sha256": "5925d6a22ae78e0b819b8ea1c927a20df50f5da6f0232bd2f1ca458ea1cf3416",
+      "bytes": 50888
+    },
+    {
+      "file": "harness-remote-workspace-0.2.0-alpha.2.tgz",
+      "sha256": "9948574add5dcb9548cab598ba32255e8c82200eda6ac1403bdae9b6c42d4768",
+      "bytes": 3948
+    }
+  ],
+  "checks": {
+    "projectAndArtifactVerification": "PASS",
+    "GitInstallationWindows": "PASS at unchanged upgrade runtime"
+  },
+  "liveDeployment": "NOT_RUN",
+  "formalRelease": "NOT_RUN",
+  "merge": "Fast-forward; only installation and publication documentation changed after the upgrade."
+}
